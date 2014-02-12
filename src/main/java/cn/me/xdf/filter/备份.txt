@@ -1,0 +1,61 @@
+package cn.me.xdf.filter;
+
+import javax.servlet.ServletRequest;
+import javax.servlet.ServletResponse;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import org.apache.shiro.authc.AuthenticationException;
+import org.apache.shiro.authc.AuthenticationToken;
+import org.apache.shiro.authc.UsernamePasswordToken;
+import org.apache.shiro.subject.Subject;
+import org.apache.shiro.web.filter.authc.FormAuthenticationFilter;
+import org.springframework.beans.factory.annotation.Autowired;
+
+import cn.me.xdf.sso.IGetUserFromTokenService;
+import cn.me.xdf.sso.e2.constant.SSOToE2Constant;
+import cn.me.xdf.sso.e2.util.CookieHelper;
+import cn.me.xdf.sso.e2.vo.UserModel;
+
+public class ShiroSsoFilter extends FormAuthenticationFilter {
+
+	@Autowired
+	private IGetUserFromTokenService ssoGetUserFromTokenService;
+
+	@Autowired
+	private SSOToE2Constant ssoToE2Constant;
+
+	@Override
+	protected boolean executeLogin(ServletRequest request,
+			ServletResponse response) throws Exception {
+		AuthenticationToken token = null;
+		if (ssoToE2Constant.isOpen()) {//是否启用SSO
+			HttpServletRequest req = (HttpServletRequest) request;
+			HttpServletResponse res = (HttpServletResponse) response;
+			// "E2TOKEN"
+			String cookieName = CookieHelper.getCookie(req,
+					ssoToE2Constant.getCookieName());
+
+			UserModel userModel = ssoGetUserFromTokenService.getCurrentUser(
+					req, res, cookieName);
+			String host = getHost(request);
+			token = new UsernamePasswordToken(userModel.getLoginName(), "",
+					false, host);
+		} else {
+			token = createToken(request, response);
+		}
+
+		if (token == null) {
+			String msg = "createToken method implementation returned null. A valid non-null AuthenticationToken "
+					+ "must be created in order to execute a login attempt.";
+			throw new IllegalStateException(msg);
+		}
+		try {
+			Subject subject = getSubject(request, response);
+			subject.login(token);
+			return onLoginSuccess(token, subject, request, response);
+		} catch (AuthenticationException e) {
+			return onLoginFailure(token, e, request, response);
+		}
+	}
+}
