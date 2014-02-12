@@ -20,7 +20,7 @@
                     <a href="${ctx}/course/courseIndex?userId={{=item.user.link}}" class="face" target="_blank">
                         <img src="{{?item.user.imgUrl.indexOf('http')>-1}}{{=item.user.imgUrl}}{{??}}${ctx}/{{=item.user.imgUrl}}{{?}}" class="media-object img-polaroid" alt="头像"/>
                     </a>
-                    <a href="#" class="send msg" ><i class="icon-msg"></i>发私信</a>
+                    <a href="#" class="send msg" data-flag="{{=item.user.flag}}" data-fdId="{{=item.user.link}}" ><i class="icon-msg"></i>发私信</a>
                     <a href="mailto:{{=item.user.mail}}" class="send" ><i class="icon-envelope"></i>发邮件</a>
                 </div>
                 <div class="media-body">
@@ -104,7 +104,7 @@
 	           <div class="page-header" data-spy="affix" data-offset-top="20">
                     <span class="muted">我正在看：</span>批改作业 -
                     <span id="nowSee">
-        			<c:if test="${param.fdType==null||param.fdType=='unchecked'}">
+        			<c:if test="${param.fdType!='checked'}">
                         		未批改的作业
                     </c:if>
                     <c:if test="${param.fdType=='checked'}">
@@ -116,7 +116,7 @@
 
                     <section class="section box-control">
                         <ul class="nav nav-tabs" id="navTabs">
-                        	<c:if test="${param.fdType==null||param.fdType=='unchecked'}">
+                        	<c:if test="${param.fdType!='checked'}">
                         		<li class="active"><a href="#unchecked" >未批改的</a></li>
                             	<li><a href="#checked" >批改过的</a></li>
                         	</c:if>
@@ -226,6 +226,9 @@ var pageendFn= doT.template(document.getElementById("pageEndTemplate").text);
 
     $(function(){
        
+       if($("#fdType").val()==''){
+    		$("#fdType").val("unchecked");
+    	}
         initlistTeacher($("#fdType").val());//初始化列表
         
         //loadList("unchecked");//默认加载未批改的
@@ -424,8 +427,14 @@ function loadList(fdType){
                                 e.stopPropagation();
                                 if($target.add($parent).hasClass("msg")){
                                     e.preventDefault();
-                                    //发私信
-                                    alert("发私信");
+                                    //send msg
+                                    var fdId = $target.attr("data-fdId");
+                                    var flag = $target.attr("data-flag");
+                                    if(flag=="true"){
+                                    	jalert("您不能给自己发私信！");	
+                                    }else{
+                                    	window.open("${ctx}/letter/letterDetail?fdId=" + fdId,"_blank");
+                                    } 
                                 }
                             }  else{
                                 window.open("${ctx}/adviser/checkTaskDetail?noteId=" + $(this).attr("data-fdid")+"&fdType="+fdType,"_self");//打开详情页面

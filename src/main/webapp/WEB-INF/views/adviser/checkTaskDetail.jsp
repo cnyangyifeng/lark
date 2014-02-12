@@ -27,7 +27,7 @@ request.setAttribute("time", time);
                 <a href="${ctx}/course/courseIndex?userId={{=item.user.link}}" class="face" target="_blank">
                     <img src="{{?item.user.imgUrl.indexOf('http')>-1}}{{=item.user.imgUrl}}{{??}}${ctx}/{{=item.user.imgUrl}}{{?}}" class="media-object img-polaroid" alt="头像"/>
                 </a>
-                <a href="#" class="send msg" ><i class="icon-msg"></i>发私信</a>
+                <a href="javascript:void(0)"  class="send msg" onclick="sendLetter('{{=item.user.flag}}','{{=item.user.link}}');"><i class="icon-msg"></i>发私信</a>
                 <a href="mailto:{{=item.user.mail}}" class="send" ><i class="icon-envelope"></i>发邮件</a>
             </div>
             <div class="media-body">
@@ -315,6 +315,15 @@ function downloadMater(attId,fileNetId){
   } else {
 	  jalert("您好！该附件不存在");
   } 
+}
+</script>
+<script type="text/javascript">
+function sendLetter(flag,fdId){
+     if(flag=="true"){
+     	jalert("您不能给自己发私信！");	
+     }else{
+     	window.open("${ctx}/letter/letterDetail?fdId=" + fdId,"_blank");
+     } 
 }
 </script>
 <script type="text/javascript">

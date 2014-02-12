@@ -5,8 +5,8 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-<link href="${ctx}/resources/css/bootstrap.min.css" rel="stylesheet" type="text/css">
-<link href="${ctx}/resources/css/login.css" rel="stylesheet" type="text/css">
+<link rel="stylesheet" href="${ctx}/resources/css/global.min.css" />
+<link href="${ctx}/resources/css/login.css?id=22" rel="stylesheet" type="text/css">
 </head>
 
 <body>

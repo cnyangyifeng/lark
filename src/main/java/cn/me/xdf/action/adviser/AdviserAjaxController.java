@@ -239,6 +239,11 @@ public class AdviserAjaxController {
 		user.put("phone", person.getFdWorkPhone());
 		user.put("mail", person.getFdEmail());
 		user.put("link", person.getFdId());
+		if(person.getFdId().equals(ShiroUtils.getUser().getId())){
+			user.put("flag", true);
+		}else{
+			user.put("flag", false);
+		}
 		introData.put("user", user);////封装人员信息
 		return JsonUtils.writeObjectToJson(introData);
 	}
@@ -398,6 +403,11 @@ public class AdviserAjaxController {
 				user.put("phone", person.getFdWorkPhone());
 				user.put("mail", person.getFdEmail());
 				user.put("link", person.getFdId());//人员id
+				if(person.getFdId().equals(ShiroUtils.getUser().getId())){
+					user.put("flag", true);
+				}else{
+					user.put("flag", false);
+				}
 				map.put("user", user);////封装人员信息
 				CourseInfo courseInfo = courseService.get((String)pageMap.get("FDCOURSEID"));
 				map.put("courseName", courseInfo.getFdTitle());//课程名字

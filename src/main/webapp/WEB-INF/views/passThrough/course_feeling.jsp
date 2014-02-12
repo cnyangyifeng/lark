@@ -1,4 +1,5 @@
 <%@ page contentType="text/html;charset=UTF-8"%>
+<%@page import="java.util.Random"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib prefix="tags" tagdir="/WEB-INF/tags"%>
 <c:set var="ctx" value="${pageContext.request.contextPath}" />
@@ -251,7 +252,7 @@
             </div>
             <div class="pull-right box1">
                 <div class="mainCourse">
-                    <img class="cover" src="{{?it.courseImg!=""}}${ctx}/common/file/image/{{=it.courseImg}}{{??}}${ctx}/resources/images/temp-newClass.jpg{{?}}" alt="">
+                    <img class="cover" src="{{?it.courseImg!=""}}${ctx}/common/file/image/{{=it.courseImg}}?n=<%=new Random().nextInt(100) %>{{??}}${ctx}/resources/images/temp-newClass.jpg{{?}}" alt="">
                     <a href="${ctx}/passThrough/getCourseHome/${courseId}" class="courseLink">
                         <h1>{{=it.courseName}}</h1>
                         <p class="sub">{{=it.courseAuther}}</p>

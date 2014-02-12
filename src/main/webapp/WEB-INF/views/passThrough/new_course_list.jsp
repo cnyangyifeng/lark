@@ -1,4 +1,5 @@
 <%@ page language="java" contentType="text/html;charset=UTF-8" pageEncoding="UTF-8"%>
+<%@page import="java.util.Random"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib prefix="tags" tagdir="/WEB-INF/tags"%>
 <%@ taglib prefix="j" uri="/WEB-INF/tld/formtag.tld"%>
@@ -12,7 +13,7 @@
 			<img src="${ctx}/resources/images/default-cover.png" alt="">
 		{{?}}
 		{{?item.ATTID != ''}}
-			<img src="${ctx}/common/file/image/{{=item.ATTID}}" alt="">
+			<img src="${ctx}/common/file/image/{{=item.ATTID}}?n=<%=new Random().nextInt(100) %>" alt="">
 		{{?}}
         <span class="mask"></span>
         <span class="caption">

@@ -180,7 +180,7 @@
 .newClass .ab_r{right:20px;}
 .newClass .list-class{padding:0 17px;padding-bottom:6px;}
 .newClass .list-class > a{display:block;position:relative;margin-bottom:10px;overflow: hidden}
-.newClass .list-class > a > img{max-width:240px;height: 106px;margin-left: -25px;}
+.newClass .list-class > a > img{max-width:240px;width:240px;height: 106px;margin-left: -25px;}
 .newClass .mask{background-color:#000; opacity:0.5; filter: alpha(opacity=50);position:absolute;height:50px;width:100%;left:0;bottom:0;}
 .newClass .list-class .caption{position:absolute;left:0;bottom:0;height:50px;padding-left:10px;font-size:12px;}
 .newClass a:hover .mask{background-color:rgb(67, 145, 187);opacity:1; filter: alpha(opacity=100);}
