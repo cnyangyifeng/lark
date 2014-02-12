@@ -1,0 +1,45 @@
+@charset "utf-8";
+body {background-color:#f4f4f4;
+}
+#upgrade-browser {
+  text-align: center;
+  color: #555;
+  text-shadow: 0 1px #fff;
+}
+#upgrade-browser #big-logo img {
+  width: 200px;
+  margin-top: 60px;
+}
+#upgrade-browser #we {
+  font-size: 22px;
+  line-height: 1.2;
+  margin-top: 30px;
+}
+#upgrade-browser #please {
+  margin-top: 20px;
+  font-size: 30px;
+  font-weight: bold;
+}
+#upgrade-browser #browsers a {
+  display: inline-block;
+  margin: 10px;
+}
+#upgrade-browser #browsers a:before {
+  content: '';
+  display: block;
+  width: 64px;
+  height: 64px;
+  background: url("../images/ico-browser.png");
+}
+#upgrade-browser #browsers a.br1:before {
+  background-position: 0 0;
+}
+#upgrade-browser #browsers a.br2:before {
+  background-position: -64px 0;
+}
+#upgrade-browser #browsers a.br3:before {
+  background-position: -128px 0;
+}
+#upgrade-browser #browsers a.br4:before {
+  background-position: -192px 0;
+}

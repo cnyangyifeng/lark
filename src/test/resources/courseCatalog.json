@@ -1,0 +1,49 @@
+[
+    {
+        "fdId": "142265f91343d657aa133214fe299d9d",
+        "version": 0,
+        "hbmParent": null,
+        "fdName": "123",
+        "fdDescription": null,
+        "fdRemark": null,
+        "fdTotalPart": 1,
+        "fdTotalContent": null,
+        "fdStudyTime": null,
+        "fdNo": 1,
+        "fdTotalNo": 0,
+        "fdPassCondition": null,
+        "fdMaterialType": null,
+        "fdType": 0
+    },
+    {
+        "fdId": "142265fa4e0e3df357fce90422fadd2d",
+        "version": 0,
+        "hbmParent": {
+            "fdId": "142265f91343d657aa133214fe299d9d",
+            "version": 0,
+            "hbmParent": null,
+            "fdName": "123",
+            "fdDescription": null,
+            "fdRemark": null,
+            "fdTotalPart": 1,
+            "fdTotalContent": null,
+            "fdStudyTime": null,
+            "fdNo": 1,
+            "fdTotalNo": 0,
+            "fdPassCondition": null,
+            "fdMaterialType": null,
+            "fdType": 0
+        },
+        "fdName": "11",
+        "fdDescription": "2121212121212121大大大大大大大",
+        "fdRemark": null,
+        "fdTotalPart": null,
+        "fdTotalContent": 1,
+        "fdStudyTime": "20",
+        "fdNo": 1,
+        "fdTotalNo": 1,
+        "fdPassCondition": null,
+        "fdMaterialType": "01",
+        "fdType": 1
+    }
+]

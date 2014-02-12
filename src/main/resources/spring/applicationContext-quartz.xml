@@ -1,0 +1,176 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+	 http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
+
+
+    <bean id="simpleThreadPoolTaskExecutor"
+          class="org.springframework.scheduling.quartz.SimpleThreadPoolTaskExecutor">
+        <property name="makeThreadsDaemons" value="true"/>
+        <property name="threadCount" value="7"/>
+        <property name="threadNamePrefix" value="DataForIndexOperation"/>
+        <property name="waitForJobsToCompleteOnShutdown" value="true"/>
+    </bean>
+
+    <bean name="quartzScheduler"
+          class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
+        <property name="startupDelay" value="1200"/>
+        <property name="triggers">
+            <list>
+            	<ref local="logClearTrigger" />
+            	<!-- 
+            	<ref local="letterClearTrigger" />
+            	 -->
+                <ref local="attMainInterfaceTrigger" />
+                <ref local="attMainClearTodoTrigger"/>
+                <ref local="organInTrigger"/>
+                <ref local="attMainToFileNetQuartzTrigger"/>
+                <ref local="diskFileClearTrigger"/>
+            </list>
+        </property>
+        <property name="taskExecutor">
+            <ref bean="simpleThreadPoolTaskExecutor"/>
+        </property>
+    </bean>
+
+
+    <bean id="organInTodoDetail"
+          class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+        <property name="targetObject">
+            <bean class="cn.me.xdf.quartz.OrganInLdapQuartz"></bean>
+        </property>
+        <property name="targetMethod">
+            <value>executeTodo</value>
+        </property>
+    </bean>
+
+    <bean id="organInTrigger" class="org.springframework.scheduling.quartz.CronTriggerBean">
+        <property name="jobDetail">
+            <ref bean="organInTodoDetail"/>
+        </property>
+        <property name="cronExpression">
+            <value>0 15 3 * * ?</value>
+        </property>
+    </bean>
+
+    <bean id="attMainInterfaceTodoDetail"
+          class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+        <property name="targetObject">
+            <bean class="cn.me.xdf.quartz.AttMainInterfaceQuartz"></bean>
+        </property>
+        <property name="targetMethod">
+            <value>executeTodo</value>
+        </property>
+    </bean>
+
+    <bean id="attMainInterfaceTrigger" class="org.springframework.scheduling.quartz.CronTriggerBean">
+        <property name="jobDetail">
+            <ref bean="attMainInterfaceTodoDetail"/>
+        </property>
+        <property name="cronExpression">
+            <value>0 0/4 1-23 * * ?</value>
+        </property>
+    </bean>
+    
+    <!-- 清除磁盘上的视频文件 -->
+    <bean id="diskFileClearDetail"
+          class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+        <property name="targetObject">
+            <bean class="cn.me.xdf.quartz.DiskFileClearQuartz"></bean>
+        </property>
+        <property name="targetMethod">
+            <value>executeTodo</value>
+        </property>
+    </bean>
+
+    <bean id="diskFileClearTrigger" class="org.springframework.scheduling.quartz.CronTriggerBean">
+        <property name="jobDetail">
+            <ref bean="diskFileClearDetail" />
+        </property>
+        <property name="cronExpression">
+            <value>0 10 11 L * ?</value><!-- 每月最后一天的 11:10 -->
+        </property>
+    </bean> 
+
+    <bean id="letterClearDetail"
+          class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+        <property name="targetObject">
+            <bean class="cn.me.xdf.quartz.LetterClearQuartz"></bean>
+        </property>
+        <property name="targetMethod">
+            <value>executeTodo</value>
+        </property>
+    </bean>
+
+    <bean id="letterClearTrigger" class="org.springframework.scheduling.quartz.CronTriggerBean">
+        <property name="jobDetail">
+            <ref bean="letterClearDetail" />
+        </property>
+        <property name="cronExpression">
+            <value>0 15 6 * * ?</value>
+        </property>
+    </bean>
+    
+    <bean id="logClearDetail"
+          class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+        <property name="targetObject">
+            <bean class="cn.me.xdf.quartz.LogClearQuartz"></bean>
+        </property>
+        <property name="targetMethod">
+            <value>executeTodo</value>
+        </property>
+    </bean>
+
+    <bean id="logClearTrigger" class="org.springframework.scheduling.quartz.CronTriggerBean">
+        <property name="jobDetail">
+            <ref bean="logClearDetail" />
+        </property>
+        <property name="cronExpression">
+            <value>0 15 1 L * ?</value>
+        </property>
+    </bean>
+
+
+    <bean id="attMainClearTodoDetail"
+          class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+        <property name="targetObject">
+            <bean class="cn.me.xdf.quartz.AttMainClearQuartz"></bean>
+        </property>
+        <property name="targetMethod">
+            <value>executeTodo</value>
+        </property>
+    </bean>
+    <!-- 0 0/5 * * * ? -->
+    <bean id="attMainClearTodoTrigger" class="org.springframework.scheduling.quartz.CronTriggerBean">
+        <property name="jobDetail">
+            <ref bean="attMainClearTodoDetail"/>
+        </property>
+        <property name="cronExpression">
+            <value>0 15 1 * * ?</value>
+        </property>
+    </bean>
+
+
+    <bean id="attMainToFileNetQuartzDetail"
+          class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+        <property name="targetObject">
+            <bean class="cn.me.xdf.quartz.AttMainToFileNetQuartz"></bean>
+        </property>
+        <property name="targetMethod">
+            <value>executeTodo</value>
+        </property>
+    </bean>
+
+
+    <bean id="attMainToFileNetQuartzTrigger" class="org.springframework.scheduling.quartz.CronTriggerBean">
+        <property name="jobDetail">
+            <ref bean="attMainToFileNetQuartzDetail"/>
+        </property>
+        <property name="cronExpression">
+            <value>0 0/15 1-23 * * ?</value>
+        </property>
+    </bean>
+
+
+</beans>

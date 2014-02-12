@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<dynamic-hibernate-statement>
+
+    <!--根据组织架构编号查询-->
+    <sql-query name="selectElementByKey">
+        <![CDATA[
+		SELECT FDID FROM SYS_ORG_ELEMENT WHERE FD_NO=:PARENTID
+		]]>
+    </sql-query>
+
+
+    <!--根据组织架构编号查询-->
+    <sql-query name="saveElement">
+        <![CDATA[
+		INSERT INTO SYS_ORG_ELEMENT(FDID,AVAILABLE,CREATETIME,FD_NAME,FD_NO,FD_ORG_TYPE,LDAPDN)
+		VALUES(:FDID,:AVAILABLE,:CREATETIME,:FD_NAME,:FD_NO,:FD_ORG_TYPE,:LDAPDN)
+		]]>
+    </sql-query>
+
+
+    <!--更新组织架构-->
+    <sql-query name="updateElement">
+        <![CDATA[
+		UPDATE SYS_ORG_ELEMENT SET AVAILABLE=:AVAILABLE,CREATETIME=:CREATETIME,
+		FD_NAME=:FD_NAME, FD_ORG_TYPE=:FD_ORG_TYPE,LDAPDN=:LDAPDN,FD_PARENTID=:FD_PARENTID
+		WHERE FDID=:FDID
+		]]>
+    </sql-query>
+
+    <!--更新组织架构的层级-->
+    <sql-query name="updateElementParent">
+        <![CDATA[
+		UPDATE SYS_ORG_ELEMENT SET FD_PARENTID=:FD_PARENTID
+		WHERE FD_NO=:FD_NO
+		]]>
+    </sql-query>
+
+</dynamic-hibernate-statement>
+

@@ -1,0 +1,11 @@
+.view {
+	overflow: hidden;
+}
+
+.view:hover img,.view:hover h5 {
+	left: -60px;
+}
+.view:hover h5{display:block;}
+.view div.view-back {
+	background: #666;
+}

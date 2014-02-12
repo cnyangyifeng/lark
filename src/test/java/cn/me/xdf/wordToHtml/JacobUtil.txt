@@ -1,0 +1,164 @@
+package cn.me.xdf.wordToHtml;
+
+import com.jacob.activeX.ActiveXComponent;
+import com.jacob.com.ComThread;
+import com.jacob.com.Dispatch;
+import com.jacob.com.Variant;
+
+import java.io.File;
+
+
+public class JacobUtil {
+
+    public static final int WORD_HTML = 8;
+
+    public static final int WORD_TXT = 7;
+
+    public static final int EXCEL_HTML = 44;
+
+
+    /**
+     * WORD转HTML
+     *
+     * @param docfile  WORD文件全路径
+     * @param htmlfile 转换后HTML存放路径
+     */
+
+    public static void wordToHtml(String docfile, String htmlfile) {
+
+        ActiveXComponent app = new ActiveXComponent("Word.Application"); // 启动word
+
+        try {
+
+            // 设置word不可见
+
+            app.setProperty("Visible", new Variant(false));
+
+            //获得documents对象
+
+            Dispatch docs = (Dispatch) app.getProperty("Documents")
+
+                    .toDispatch();
+
+            //打开文件
+
+            Dispatch doc = Dispatch.invoke(
+
+                    docs,
+
+                    "Open",
+
+                    Dispatch.Method,
+
+                    new Object[]{docfile, new Variant(false),
+
+                            new Variant(true)}, new int[1]).toDispatch();
+            //Dispatch.call(doc, "EndKey", new Variant(6));
+            //Dispatch.call(doc,  "InsertBreak" ,  new Variant(7) );
+
+            //保存新的文件
+
+            Dispatch.invoke(doc, "SaveAs", Dispatch.Method, new Object[]{
+
+                    htmlfile, new Variant(WORD_HTML)}, new int[1]);
+
+            Variant f = new Variant(false);
+
+            Dispatch.call(doc, "Close", f);
+
+        } catch (Exception e) {
+
+            e.printStackTrace();
+
+        } finally {
+
+            app.invoke("Quit", new Variant[]{});
+
+        }
+
+    }
+
+
+    /**
+     * <code>exceltoHTML</code>excel转换成html
+     *
+     * @param excelFilename 要转换的excel文件  htmlFilename  目标文件
+     * @author Helen
+     * @version 2009-01-06
+     * @see java.lang.Class
+     * @since JDK1.6.0_03
+     */
+    public static void exceltoHTML(String excelFilename, String htmlFilename) {
+        ComThread.InitSTA();
+        ActiveXComponent xl = new ActiveXComponent("Excel.Application");
+
+        try {
+            File fo = new File(htmlFilename);
+            if (fo.exists() && fo.canRead()) {
+                fo.delete();
+            }
+            xl.setProperty("Visible", new Variant(false));
+            Dispatch workbooks = xl.getProperty("Workbooks").toDispatch();
+            Dispatch workbook = Dispatch.invoke(workbooks, "Open", Dispatch.Method, new Object[]
+                    {excelFilename, new Variant(false), new Variant(true)},// 是否以只读方式打开
+                    new int[1]).toDispatch();
+
+            Dispatch.invoke(workbook, "SaveAs", Dispatch.Method, new Object[]
+                    {htmlFilename, new Variant(44)}, new int[1]); // 44,45
+
+            Dispatch.call((Dispatch) workbook, "Close", new Variant(false));
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            xl.invoke("Quit", new Variant[]
+                    {});
+            ComThread.Release();
+        }
+    }
+
+    public static void pptToHtml(String pptPath, String htmlPath) {
+        ActiveXComponent offCom = new ActiveXComponent("PowerPoint.Application");
+        try
+        {
+            offCom.setProperty("Visible", new Variant(true));
+            Dispatch excels = offCom.getProperty("Presentations").toDispatch();
+            Dispatch excel = Dispatch.invoke(excels,
+                    "Open",Dispatch.Method, new Object[] { pptPath, new Variant(false),  new Variant(false) }, new int[1]).toDispatch();
+            Dispatch.invoke(excel, "SaveAs", Dispatch.Method, new Object[] {
+                    htmlPath, new Variant(12) }, new int[1]);
+            Variant f = new Variant(false);
+            Dispatch.call(excel, "Close");
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+        }
+        finally
+        {
+            offCom.invoke("Quit", new Variant[] {});
+        }
+    }
+
+    public static void main(String[] args) {
+        //String docfile = "D:\\a.docx";
+
+        // String htmlfile = "D:\\2012.html";
+
+        // wordToHtml(docfile, htmlfile);
+
+
+
+        /*String docfile = "D:\\a.xlsx";
+
+        String htmlfile = "D:\\2013.html";
+
+        exceltoHTML(docfile, htmlfile);*/
+
+        String docfile = "D:\\a.pptx";
+
+        String htmlfile = "D:\\ppt.html";
+
+        pptToHtml(docfile, htmlfile);
+    }
+}

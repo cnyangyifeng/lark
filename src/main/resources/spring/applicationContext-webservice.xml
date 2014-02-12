@@ -1,0 +1,26 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:jaxws="http://cxf.apache.org/jaxws"
+	xsi:schemaLocation="
+http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+http://cxf.apache.org/jaxws http://cxf.apache.org/schemas/jaxws.xsd">
+
+	<!-- <bean id="wclient" class="cn.xdf.me.otp.model.webservice.Client"> <property 
+		name="adUrl" value="http://10.200.27.68:8080/ekp/sys/webservice/toAdTdsWebService?wsdl"></property> 
+		<property name="attUrl" value="http://10.200.27.68:8080/ekp/sys/webservice/attMainWebService?wsdl"></property> 
+		</bean> -->
+		<!-- 
+	<bean id="attMainWebService" class="com.landray.kmss.xdf.webservice.IAttMainWebService"
+		factory-bean="clientFactory" factory-method="create" />
+	<bean id="clientFactory" class="org.apache.cxf.jaxws.JaxWsProxyFactoryBean">
+		<property name="serviceClass"
+			value="com.landray.kmss.xdf.webservice.IAttMainWebService" />
+		<property name="address"
+			value="http://192.168.25.168:8085/ekp/sys/webservice/attMainWebService?wsdl" />
+	</bean> -->
+	<!-- <bean id="toAdTdsWebService" class="com.landray.kmss.xdf.webservice.adtds.IToAdTdsWebService" 
+		factory-bean="toAdTdsClientlientFactory" factory-method="create" /> <bean 
+		id="toAdTdsClientlientFactory" class="org.apache.cxf.jaxws.JaxWsProxyFactoryBean"> 
+		<property name="serviceClass" value="com.landray.kmss.xdf.webservice.adtds.IToAdTdsWebService" 
+		/> <property name="address" value="http://192.168.25.168:8080/xdf/sys/webservice/toAdTdsWebService?wsdl" 
+		/> </bean> -->
+</beans> 
