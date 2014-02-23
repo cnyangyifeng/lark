@@ -10,7 +10,7 @@
 <!--[if gt IE 8]><!--> <html class=""> <!--<![endif]-->
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-<title>新东方在线教师备课平台</title>
+<title>企业在线教师学习平台</title>
 <link rel="stylesheet" href="${ctx}/resources/theme-profile/default/css/global.min.css" />
 <link href="${ctx}/resources/theme-profile/default/css/home-course.min.css" rel="stylesheet" type="text/css">
 <link href="${ctx}/resources/theme-profile/default/css/webimOfSide.min.css" rel="stylesheet" type="text/css">
@@ -278,7 +278,7 @@
                         <dd class="text-info">{{=it.lastTime}}</dd>
                         <dt>在线统计</dt>
                         <dd class="text-info">{{=it.onlineDay}}&nbsp;天</dd>
-                        <dt>备课进度</dt>
+                        <dt>学习进度</dt>
                         <dd class="text-info">{{=it.currLecture}}</dd>
                         <dt>心路历程</dt>
                         <dd class="text-info">{{=it.messageCount}}&nbsp;条记录</dd>
@@ -338,7 +338,7 @@
                 	<c:if test="${isMe=='true'}">
                     <textarea name="field-mood" onkeydown="return pushMessage();" required maxlength="200" id="field-mood" class="input-block-level textarea"  rows="3"></textarea>
                     <div class="clearfix">
-                        <button type="submit" class="btn btn-primary pull-right">写备课心情</button>
+                        <button type="submit" class="btn btn-primary pull-right">写学习心情</button>
                     </div>
                     </c:if>
                 </form>

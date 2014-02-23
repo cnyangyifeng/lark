@@ -6,7 +6,7 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-<title>新东方在线教师备课平台</title>
+<title>企业在线教师学习平台</title>
 <link rel="stylesheet" href="${ctx}/resources/css/global.min.css" />
 <link href="${ctx}/resources/css/iAmMentor.css" rel="stylesheet" type="text/css">
 

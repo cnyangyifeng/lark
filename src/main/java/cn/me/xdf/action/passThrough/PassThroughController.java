@@ -279,7 +279,7 @@ public class PassThroughController {
 	}
 	
 	/**
-	 * 备课心情页面
+	 * 学习心情页面
 	 * @param request
 	 */
 	@RequestMapping(value = "getCourseFeeling")
@@ -303,7 +303,7 @@ public class PassThroughController {
 		
 	}
 	/**
-	 * 备课心情页面
+	 * 学习心情页面
 	 * @param request
 	 */
 	@RequestMapping(value = "getCourseFeelingByBamId")

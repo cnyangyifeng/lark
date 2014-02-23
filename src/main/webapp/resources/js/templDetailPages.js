@@ -236,11 +236,11 @@
         	/*
 			 * data = { learnTime: "", sectionsIntro: "", mediaList: [ { id:
 			 * "fdid4258924985", index: 2, title: "俞老师对国外考试项目新教师致辞" }, { id:
-			 * "fdid4255", index: 1, title: "新东方2013校园招聘" }, { id:
-			 * "fdid425511111", index: 4, title: "国外考试新教师备课致辞" }, { id:
-			 * "fdid425522222", index: 3, title: "国外部项目备课致辞" }, { id:
+			 * "fdid4255", index: 1, title: "企业2013校园招聘" }, { id:
+			 * "fdid425511111", index: 4, title: "国外考试新教师学习致辞" }, { id:
+			 * "fdid425522222", index: 3, title: "国外部项目学习致辞" }, { id:
 			 * "fdid425500", index: 5, title: "BC官员雅思考试解读" }, { id:
-			 * "fdid43454545222", index: 6, title: "国外考试新教师在线备课平台介绍" } ] }
+			 * "fdid43454545222", index: 6, title: "国外考试新教师在线学习平台介绍" } ] }
 			 * data.pageTitle = opt.title; data.lectureIndex =
 			 * numParseCN(opt.index); data.typeTxt = "视频"; data.uploadIntro =
 			 * "上传视频（支持MP4、AVI、WMV格式的视频，建议小于10G）：成功上传的视频将会显示在下面的视频列表中。";
@@ -1016,8 +1016,8 @@
 			});
 			/*
 			 * data = {//ajax 成功后删除 action: "#",//模板详情_基本信息 的form表单action
-			 * courseTit: "集团英联邦项目雅思强化口语备课课程", subTit: "", keyword:
-			 * ["雅思","新教师备课"], courseType: "1", courseTypeList: [ {title:
+			 * courseTit: "集团英联邦项目雅思强化口语学习课程", subTit: "", keyword:
+			 * ["雅思","新教师学习"], courseType: "1", courseTypeList: [ {title:
 			 * "国外考试", id: "1"}, {title: "国内考试", id: "2"}, {title: "英语学习", id:
 			 * "3"}, {title: "优能中学", id: "4"}, {title: "优能小学", id: "5"}] }
 			 * data.pageTitle = title; //ajax 成功后删除

@@ -208,7 +208,7 @@ public class StudyTrackAjaxController {
 
 	
 	/**
-	 * 删除备课信息
+	 * 删除学习信息
 	 * @param request
 	 */
 	@RequestMapping(value = "deleBam")

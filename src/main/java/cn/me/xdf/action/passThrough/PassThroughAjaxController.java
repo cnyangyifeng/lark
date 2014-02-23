@@ -688,7 +688,7 @@ public class PassThroughAjaxController {
 		}
 		
 		/**
-		 * 获取备课心情
+		 * 获取学习心情
 		 * 
 		 * 
 		 */
@@ -809,7 +809,7 @@ public class PassThroughAjaxController {
 		private StudyTrackService studyTrackService;
 		
 		/**
-		 * 备课心情页面，活跃天数
+		 * 学习心情页面，活跃天数
 		 * @param request
 		 */
 		@RequestMapping(value = "getCourseFeelingActive")
@@ -857,7 +857,7 @@ public class PassThroughAjaxController {
 		
 		
 		/**
-		 * 备课心情页面，进度条
+		 * 学习心情页面，进度条
 		 * @param request
 		 */
 		@RequestMapping(value = "getCourseFeelingSchedule")
@@ -930,7 +930,7 @@ public class PassThroughAjaxController {
 		}
 		
 		/**
-		 * 备课心情页面，进度条
+		 * 学习心情页面，进度条
 		 * @param request
 		 */
 		@RequestMapping(value = "getVisitorsInfo")

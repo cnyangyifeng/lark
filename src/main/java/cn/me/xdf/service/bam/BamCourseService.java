@@ -26,7 +26,7 @@ import jodd.util.StringUtil;
  * User: xiaobin268
  * Date: 13-11-4
  * Time: 上午9:47
- * 备课老师对应课程存储的service
+ * 学习老师对应课程存储的service
  * <p/>
  * 一定要小心操作BamCourse类，危险！
  */
@@ -77,7 +77,7 @@ public class BamCourseService extends SimpleService {
     }
 
     /**
-     * 根据备课老师和课程的ID获取此次备课的信息
+     * 根据学习老师和课程的ID获取此次学习的信息
      *
      * @param userId
      * @param courseId
@@ -93,10 +93,10 @@ public class BamCourseService extends SimpleService {
      * *********************************************************************************************
      */
     /**
-     * 对备课老师授权课程
+     * 对学习老师授权课程
      *
      * @param course 课程信息
-     * @param userId 备课老师ID
+     * @param userId 学习老师ID
      */
     @Transactional(readOnly = false)
     public void saveBamCourse(CourseInfo course, String userId) {
@@ -128,7 +128,7 @@ public class BamCourseService extends SimpleService {
      * 重新根据课程模板更新进程
      *
      * @param course 课程信息
-     * @param userId 备课老师ID
+     * @param userId 学习老师ID
      */
     public BamCourse updateBamCourse(CourseInfo course, String userId) {
         //课程章节

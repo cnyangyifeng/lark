@@ -8,7 +8,7 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-<title>新东方在线教师备课平台</title>
+<title>企业在线教师学习平台</title>
 </head>
 <body>
        <div class="page-body box-control" id="pageBody"> 

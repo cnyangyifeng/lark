@@ -183,7 +183,7 @@ public class MessageAjaxController {
 	}
 	
 	/**
-	 * 添加备课心情
+	 * 添加学习心情
 	 * 
 	 */
 	@RequestMapping(value = "addMessageFeeling")
@@ -238,7 +238,7 @@ public class MessageAjaxController {
 	
 	
 	/**
-	 * 添加评论的评论(针对备课心情，当前用户)
+	 * 添加评论的评论(针对学习心情，当前用户)
 	 * 
 	 */
 	@RequestMapping(value = "addFeelingMessagesMessage")

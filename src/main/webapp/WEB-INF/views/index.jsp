@@ -55,7 +55,7 @@
             <li class="thumbnail">
                 <i class="icon-intro-1"></i>
                 <h4>开放在线课程</h4>
-                <p>新东方自己的<em>MOOC</em>，大规模开放在线课程平台。像<em><a href="https://www.coursera.org" target="_blank">Coursera</a></em>、<em><a href="https://www.edx.org" target="_blank">edX</a></em>一样，加入这场风靡全球的教育变革吧。</p>
+                <p>企业自己的<em>MOOC</em>，大规模开放在线课程平台。像<em><a href="https://www.coursera.org" target="_blank">Coursera</a></em>、<em><a href="https://www.edx.org" target="_blank">edX</a></em>一样，加入这场风靡全球的教育变革吧。</p>
             </li>
             <li class="divider">
                 <i class="icon-circle-home"></i>
@@ -71,7 +71,7 @@
             <li class="thumbnail">
                 <i class="icon-intro-3"></i>
                 <h4>教师职业发展</h4>
-                <p>为新东方教师的职业生涯规划提供完整的<em>培训课程体系</em>，解决不同的<em>岗位素质要求</em>与教师能力成长的匹配问题。</p>
+                <p>为企业教师的职业生涯规划提供完整的<em>培训课程体系</em>，解决不同的<em>岗位素质要求</em>与教师能力成长的匹配问题。</p>
             </li>
             <li class="divider">
                 <i class="icon-circle-home"></i>
@@ -79,7 +79,7 @@
             <li class="thumbnail">
                 <i class="icon-intro-4"></i>
                 <h4>名师公开课堂</h4>
-                <p>海内存知己，天涯若比邻。新东方<em>最优秀</em>教师们的绝代风华<em>近在咫尺</em>，<em>震撼登场</em>。让我们一起来领略名师风采吧。</p>
+                <p>海内存知己，天涯若比邻。企业<em>最优秀</em>教师们的绝代风华<em>近在咫尺</em>，<em>震撼登场</em>。让我们一起来领略名师风采吧。</p>
             </li>
             <li class="divider">
                 <i class="icon-circle-home"></i>
@@ -114,7 +114,7 @@
     			<div><p><i class="icon-shyhl"></i><span name="intro">在这里发现很多熟悉的培训师视频教程，真心不错！</span><i class="icon-shyhr"></i></p></div>
     		</div>
     		<div class="tab-pane" id="tab4">
-    			<div><p><i class="icon-shyhl"></i><span name="intro">手头的资料大多是零散知识片段，真想学点什么的时候总缺乏系统性的知识体系。在线备课平台很不错，把知识有机的组织在一起，让人耳目一新。足见信息的组织精炼同样非常重要！</span><i class="icon-shyhr"></i></p></div>
+    			<div><p><i class="icon-shyhl"></i><span name="intro">手头的资料大多是零散知识片段，真想学点什么的时候总缺乏系统性的知识体系。在线学习平台很不错，把知识有机的组织在一起，让人耳目一新。足见信息的组织精炼同样非常重要！</span><i class="icon-shyhr"></i></p></div>
     		</div>
    	  </div>
    	  <ul class="nav nav-tabs" id="myTabs">
@@ -143,7 +143,7 @@
    	  </ul>
     </div>
      <div class="page-header">
-		<h3>新东方与你同在</h3>
+		<h3>企业与你同在</h3>
 	</div>
 	<div class="grid clearfix" id="grid">
         <div class="pull-left">

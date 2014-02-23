@@ -28,7 +28,7 @@
 <meta content="yes" name="apple-mobile-web-app-capable" />
 <meta content="black" name="apple-mobile-web-app-status-bar-style" />
 <meta content="telephone=no" name="format-detection" />
-<title>新东方教师在线备课平台</title>
+<title>企业教师在线学习平台</title>
 <link rel="shortcut icon" href="${ctx}/resources/img/favicon.ico" />
 <!--[if lt IE 9]>
 	<script src="${ctx}/resources/js/html5.js"></script>

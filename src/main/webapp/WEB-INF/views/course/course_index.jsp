@@ -10,7 +10,7 @@
 <!--[if gt IE 8]><!--> <html class=""> <!--<![endif]-->
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-<title>新东方在线教师备课平台</title>
+<title>企业在线教师学习平台</title>
 <link href="${ctx}/resources/theme-profile/default/css/global.min.css" rel="stylesheet" type="text/css">
 <link href="${ctx}/resources/theme-profile/default/css/home-course.min.css" rel="stylesheet" type="text/css">
 <!--[if lt IE 9]>

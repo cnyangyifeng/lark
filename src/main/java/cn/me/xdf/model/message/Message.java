@@ -31,7 +31,7 @@ import cn.me.xdf.model.organization.SysOrgPerson;
 public class Message extends IdEntity{
 	
 	/**
-	 * 消息类型：01评论，02备课心情，03系统消息，04评论回复
+	 * 消息类型：01评论，02学习心情，03系统消息，04评论回复
 	 */
 	private String fdType;
 	

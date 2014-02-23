@@ -11,7 +11,7 @@
 <!--<![endif]-->
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-<title>新东方在线教师备课平台</title>
+<title>企业在线教师学习平台</title>
 <link href="${ctx}/resources/css/global.min.css" rel="stylesheet"
 	type="text/css">
 <link href="${ctx}/resources/css/DTotal.min.css" rel="stylesheet"
@@ -63,7 +63,7 @@
                 </div>
                 <div class="control-group">
                     <label class="control-label" for="examStem">试题题干</label>
-                    <div class="controls"><textarea placeholder="{{?!it.examType || it.examType == 'multiple' || it.examType == 'single'}}请详细填写试题内容{{??}}请使用#...#标记填空题的答案，例如：新东方教育科技集团的创始人是#俞敏洪#先生{{?}}" rows="4"
+                    <div class="controls"><textarea placeholder="{{?!it.examType || it.examType == 'multiple' || it.examType == 'single'}}请详细填写试题内容{{??}}请使用#...#标记填空题的答案，例如：发现相对论的是#爱因斯坦#先生{{?}}" rows="4"
                                                     class="input-block-level" required id="examStem"
                                                     name="examStem">{{=it.examStem || ''}}</textarea><label id="examStemErr" for="examStem" class="error"></label>
                     </div>
@@ -814,7 +814,7 @@ $("#exportExamPaper").click(function(e){
 									$("#examType").val(this.id);
 									if (this.id == "completion") {
 										$("#examAnswer").addClass("hide");
-										$("#examStem").attr("placeholder","请使用#...#标记填空题的答案，例如：新东方教育科技集团的创始人是#俞敏洪#先生");
+										$("#examStem").attr("placeholder","请使用#...#标记填空题的答案，例如：发现相对论的是#爱因斯坦#先生");
 									} else {
 										$("#examAnswer").removeClass("hide");
 										if (this.id == "single") {

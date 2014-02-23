@@ -13,7 +13,7 @@ public class ComUtils {
 	public static String HTTP_URL = "http://ntp.xdf.cn/otp";
 
 	/**
-	 * 根据新东方的email邮件获取登录名
+	 * 根据企业的email邮件获取登录名
 	 * 
 	 * @param email
 	 * @return

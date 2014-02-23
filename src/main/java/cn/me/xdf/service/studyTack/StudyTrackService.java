@@ -93,17 +93,17 @@ public class StudyTrackService extends SimpleService  {
 	 */
 	public Pagination getStudyTrack(String selectType,String userId,int pageNo,int pageSize,String orderType,String key){
 		Pagination pagination=null;
-		if(selectType.equals("myGuidance")){//我指导的备课ok
+		if(selectType.equals("myGuidance")){//我指导的学习ok
 			pagination=bamCourseService.getPageBySql(getStudyTrackByMyGuidance(orderType,key), pageNo, pageSize);
-		}else if(selectType.equals("myOrganized")){//我组织的备课ok
+		}else if(selectType.equals("myOrganized")){//我组织的学习ok
 			pagination=bamCourseService.getPageBySql(getStudyTrackByMyOrganized(orderType,key), pageNo, pageSize);
 			
-		}else if(selectType.equals("myDepart")){//我所在部门的备课
+		}else if(selectType.equals("myDepart")){//我所在部门的学习
 			pagination=bamCourseService.getPageBySql(getStudyTrackByMyDepart(orderType,key), pageNo, pageSize);
-		}else if(selectType.equals("myOrg")){//我所在机构的备课
+		}else if(selectType.equals("myOrg")){//我所在机构的学习
 			pagination=bamCourseService.getPageBySql(getStudyTrackByMyOrg(orderType,key), pageNo, pageSize);
 			
-		}else if(selectType.equals("myManaged")){//我所管理的备课ok
+		}else if(selectType.equals("myManaged")){//我所管理的学习ok
 			pagination=bamCourseService.getPageBySql(getStudyTrackByMyManaged(orderType,key), pageNo, pageSize);
 		}
 		return pagination;
@@ -121,24 +121,24 @@ public class StudyTrackService extends SimpleService  {
 	 */
 	public List<Map> getStudyTrackAll(String selectType,String orderType,String key,int pageNo){
 		List<Map> bamCourses=null;
-		if(selectType.equals("myGuidance")){//我指导的备课ok
+		if(selectType.equals("myGuidance")){//我指导的学习ok
 			bamCourses= (List<Map>) bamCourseService.getPageBySql(getStudyTrackByMyGuidance(orderType,key), pageNo, 20000).getList();
-		}else if(selectType.equals("myOrganized")){//我组织的备课ok
+		}else if(selectType.equals("myOrganized")){//我组织的学习ok
 			bamCourses= (List<Map>) bamCourseService.getPageBySql(getStudyTrackByMyGuidance(orderType,key), pageNo, 20000).getList();
-		}else if(selectType.equals("myDepart")){//我所在部门的备课
-			bamCourses= (List<Map>) bamCourseService.getPageBySql(getStudyTrackByMyGuidance(orderType,key), pageNo, 20000).getList();
-			
-		}else if(selectType.equals("myOrg")){//我所在机构的备课
+		}else if(selectType.equals("myDepart")){//我所在部门的学习
 			bamCourses= (List<Map>) bamCourseService.getPageBySql(getStudyTrackByMyGuidance(orderType,key), pageNo, 20000).getList();
 			
-		}else if(selectType.equals("myManaged")){//我所管理的备课ok
+		}else if(selectType.equals("myOrg")){//我所在机构的学习
+			bamCourses= (List<Map>) bamCourseService.getPageBySql(getStudyTrackByMyGuidance(orderType,key), pageNo, 20000).getList();
+			
+		}else if(selectType.equals("myManaged")){//我所管理的学习ok
 			bamCourses= (List<Map>) bamCourseService.getPageBySql(getStudyTrackByMyGuidance(orderType,key), pageNo, 20000).getList();
 		}
 		return bamCourses;
 	}
 	
 	/**
-	 * 我组织的备课
+	 * 我组织的学习
 	 * 
 	 * @param pageNo
 	 * @param pageSize
@@ -164,7 +164,7 @@ public class StudyTrackService extends SimpleService  {
 	}
 	
 	/**
-	 * 我指导的备课
+	 * 我指导的学习
 	 * @param pageNo
 	 * @param pageSize
 	 * @return
@@ -184,7 +184,7 @@ public class StudyTrackService extends SimpleService  {
 	}
 	
 	/**
-	 * 我所在部门的备课
+	 * 我所在部门的学习
 	 * @param pageNo
 	 * @param pageSize
 	 * @return
@@ -205,7 +205,7 @@ public class StudyTrackService extends SimpleService  {
 	}
 	
 	/**
-	 * 我所在机构的备课
+	 * 我所在机构的学习
 	 * @param pageNo
 	 * @param pageSize
 	 * @return
@@ -228,7 +228,7 @@ public class StudyTrackService extends SimpleService  {
 	}
 	
 	/**
-	 * 我所管理的备课
+	 * 我所管理的学习
 	 * @param pageNo
 	 * @param pageSize
 	 * @return
@@ -356,7 +356,7 @@ public class StudyTrackService extends SimpleService  {
 	}
 	
 	/**
-	 * 获取备课跟踪
+	 * 获取学习跟踪
 	 * 
 	 * @param bamId
 	 * @return

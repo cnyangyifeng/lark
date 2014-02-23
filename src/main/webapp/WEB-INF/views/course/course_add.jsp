@@ -9,7 +9,7 @@
 <!--[if gt IE 8]><!--> <html class=""> <!--<![endif]-->
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-<title>新东方在线教师备课平台</title>
+<title>企业在线教师学习平台</title>
 <link href="${ctx}/resources/css/global.min.css" rel="stylesheet" type="text/css">
 <link href="${ctx}/resources/css/template_detail.css" rel="stylesheet" type="text/css">
 <link rel="stylesheet" type="text/css" href="${ctx}/resources/css/jquery.autocomplete.min.css">
@@ -384,7 +384,7 @@ toggle="tab" href="#encrypt">加密</a></li>
 						<div class="tab-pane{{?it.permission == 'open' || it.permission == ''}} 
 
 active{{?}}" id="open">
-						提示："公开"课程将允许所有NTP用户（新东方集团教职员工）访问。而"私密"课程将
+						提示："公开"课程将允许所有NTP用户（企业集团教职员工）访问。而"私密"课程将
 
 提醒课程负责主管手动授权或者密码访问。
 						</div>

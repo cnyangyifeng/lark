@@ -72,7 +72,6 @@ public class LoginController {
 	private TrustedSsoAuthenticationToken doDbLogin(String username,String password) {
 		try {
 			SysOrgPerson user = accountService.findUserByLoginName(username);
-			System.out.println(MD5Util.getMD5String(password));
 			if (user == null)
 				return null;
 			if(!user.getPassword().equals(MD5Util.getMD5String(password))){

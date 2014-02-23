@@ -92,7 +92,7 @@ public class BamCourse extends IdEntity implements BamProcess {
     private Date endDate;
 
     /**
-     * 备课老师
+     * 学习老师
      */
     private String preTeachId;
 
@@ -315,7 +315,7 @@ public class BamCourse extends IdEntity implements BamProcess {
 
 
     /**
-     * 备课老师
+     * 学习老师
      */
     private SysOrgPerson preTeach;
 
@@ -325,7 +325,7 @@ public class BamCourse extends IdEntity implements BamProcess {
     private SysOrgPerson guideTeach;
 
     /**
-     * 备课老师
+     * 学习老师
      *
      * @return
      */
@@ -334,7 +334,7 @@ public class BamCourse extends IdEntity implements BamProcess {
     }
 
     /**
-     * 备课老师
+     * 学习老师
      *
      * @param preTeach
      */

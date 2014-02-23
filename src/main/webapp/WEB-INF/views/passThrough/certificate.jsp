@@ -5,7 +5,7 @@
 <!DOCTYPE HTML>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-<title>新东方在线教师备课平台</title>
+<title>企业在线教师学习平台</title>
     <style type="text/css">
         body{background-color: #efefef;font-size: 14px;line-height: 20px;}
         body,button{font-family: "Microsoft Yahei", "微软雅黑", arial;}
@@ -31,7 +31,7 @@
 
 <body>
 <div class="box-certificate">
-    <div class="hd"><h2>新东方认证教师</h2></div>
+    <div class="hd"><h2>企业认证教师</h2></div>
     <div class="bd">
         <div class="media">
             <a class="pull-left" href="#">

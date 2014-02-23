@@ -93,7 +93,7 @@ public class Constant {
 	public static final String MESSAGE_TYPE_REVIEW = "01";
 	
 	/**
-	 * 消息类型：02备课心情
+	 * 消息类型：02学习心情
 	 */
 	public static final String MESSAGE_TYPE_MOOD = "02";
 	

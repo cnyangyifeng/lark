@@ -89,10 +89,10 @@
         <property name="hibernateProperties">
             <value>
                 <!-- org.hibernate.dialect.Oracle9Dialect -->
-                <!--hibernate.dialect=org.hibernate.dialect.MySQLDialect-->
-                hibernate.dialect=org.hibernate.dialect.Oracle9Dialect
-                hibernate.show_sql=false
-                hibernate.format_sql=false
+               hibernate.dialect=org.hibernate.dialect.MySQLDialect
+                <!-- hibernate.dialect=org.hibernate.dialect.Oracle9Dialect-->
+                hibernate.show_sql=true
+                hibernate.format_sql=true
                 hibernate.query.substitutions=true 1,false 0
                 hibernate.jdbc.batch_size=20
                 <!-- hibernate.hbm2ddl.auto=${jdbc.hbm2ddl.auto} -->
