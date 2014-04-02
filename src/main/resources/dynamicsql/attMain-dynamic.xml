@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<dynamic-hibernate-statement>
+
+	<sql-query name="insertToXdfDB">
+		<![CDATA[
+		insert into db_ixdf.sys_att_swf(FD_ID,FD_ATT_ID,FD_FILE_PATH,FD_FILE_NAME,FD_ATT_SEQUENCE,
+			FD_SAVE_TYPE,FD_SAVE_PARAM,FD_ATT_SWF_STATUS,FD_ENABLED,FD_TYPE)
+		VALUES(:FD_ID,:FD_ATT_ID,:FD_FILE_PATH,:FD_FILE_NAME,:FD_ATT_SEQUENCE,:FD_SAVE_TYPE,:FD_SAVE_PARAM,:FD_ATT_SWF_STATUS,:FD_ENABLED,:FD_TYPE)
+		]]>
+	</sql-query>
+	
+	
+	<sql-query name="selectXdfDB">
+		<![CDATA[
+		SELECT FD_ID FROM db_ixdf.sys_att_swf WHERE FD_ID=:FD_ID
+		]]>
+	</sql-query>
+	
+	
+	<sql-query name="updateXdfDB">
+		<![CDATA[
+		UPDATE db_ixdf.sys_att_swf SET FD_FILE_NAME=:FD_FILE_NAME,FD_ATT_SWF_STATUS=0 WHERE FD_ID=:FD_ID
+		]]>
+	</sql-query>
+
+</dynamic-hibernate-statement>

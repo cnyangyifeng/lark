@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:jdbc="http://www.springframework.org/schema/jdbc" xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:util="http://www.springframework.org/schema/util"
+	xsi:schemaLocation="
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.1.xsd
+		http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-3.1.xsd
+		http://www.springframework.org/schema/util  
+     http://www.springframework.org/schema/util/spring-util-3.1.xsd"
+	default-lazy-init="true">
+
+	<!-- E2常量 -->
+	<bean id="ssoToE2Constant" class="cn.xdf.me.otp.sso.e2.constant.SSOToE2Constant">
+		<property name="appId" value="202" />
+		<property name="e2AppKey" value="test_a202_AppKey" />
+		<property name="e2AppEn32Key" value="a3_test_test_test_test_test_test" />
+		<property name="e2Token32Key" value="tk_test_test_test_test_test_test" />
+		<property name="e2RootUrl" value="http://e2.testxdf.cn/" />
+		<property name="e2TopDomain" value=".testxdf.cn" />
+		<property name="maxAge" value="1440" />
+		<property name="cookieName" value="E2Token"></property>
+		<property name="open" value="true"></property>
+	</bean>
+
+	<bean id="ssoLoginService" class="cn.xdf.me.otp.sso.e2.impl.E2LoginServiceImp">
+		<property name="ssoToE2Constant" ref="ssoToE2Constant" />
+	</bean>
+
+	<bean id="ssoLogoutService" class="cn.xdf.me.otp.sso.e2.impl.E2LogoutServiceImpl">
+		<property name="ssoToE2Constant" ref="ssoToE2Constant" />
+	</bean>
+
+	<bean id="ssoGetUserFromTokenService" class="cn.xdf.me.otp.sso.e2.impl.E2GetUserFormTokenServiceImpl">
+		<property name="ssoToE2Constant" ref="ssoToE2Constant"></property>
+	</bean>
+	
+	<!-- /////////////////////////////////////////////////////////////////////////////////////// -->
+	
+	<!-- Shiro's main business-tier object for web-enabled applications -->
+	<bean id="securityManager" class="org.apache.shiro.web.mgt.DefaultWebSecurityManager">
+		<property name="realm" ref="shiroDbRealm" />
+		<property name="cacheManager" ref="shiroEhcacheManager" />
+	</bean>
+
+	<bean id="userDao" class="cn.xdf.me.otp.dao.impl.UserDaoImpl"></bean>
+
+	<!-- 項目自定义的Realm, 所有accountService依赖的dao都需要用depends-on声明 -->
+	<bean id="shiroDbRealm" class="cn.xdf.me.otp.service.ShiroSsoRealm"
+		depends-on="userDao">
+		<property name="accountService" ref="accountService" />
+	</bean>
+
+	<bean id="ssoFilter" class="cn.xdf.me.otp.filter.ShiroSsoFilter"></bean>
+	<bean id="ssoLogoutFilter" class="cn.xdf.me.otp.filter.ShirSsoLogoutFilter"></bean>
+
+	<!-- 详细配置请参阅: http://kdboy.iteye.com/blog/1103794 http://kdboy.iteye.com/blog/1154644 
+		http://kdboy.iteye.com/blog/1154652 http://kdboy.iteye.com/blog/1155450 http://kdboy.iteye.com/blog/1169631 
+		http://kdboy.iteye.com/blog/1169637 -->
+	<!-- Shiro Filter -->
+	<bean id="shiroFilter" class="org.apache.shiro.spring.web.ShiroFilterFactoryBean">
+		<property name="securityManager" ref="securityManager" /> 
+		<property name="filters"> 
+			<util:map> 
+				<entry key="myauthc" value-ref="ssoFilter"/>
+				<entry key="ssologout" value-ref="ssoLogoutFilter"/> 
+			</util:map> 
+		</property>
+		<!-- 
+		<property name="loginUrl" value="http://e3.testxdf.cn:8080/xdf/j_acegi_security_check?j_redirectto=ixdf/iwork/index.jsp" />
+		<property name="unauthorizedUrl" value="http://e3.testxdf.cn:8080/xdf/j_acegi_security_check?j_redirectto=ixdf/iwork/index.jsp" />
+		-->
+		<property name="loginUrl" value="/login" />
+		<property name="unauthorizedUrl" value="/login" />
+		<property name="successUrl" value="/" />
+		<property name="filterChainDefinitions">
+			<value>
+				#authc
+				/e2/** = anon
+				/login = anon
+				/logout = ssologout
+				/resources/** = anon
+				/register/** = anon
+				/register2/** = anon
+				/intro/** = anon
+				<!--权限目录 -->
+				/** = myauthc
+				/group/** =myauthc, roles[group]
+				/dashboard =myauthc
+				/admin/** =myauthc,  roles[admin]
+				/coach/** =myauthc, roles[coach]
+				/console/** =myauthc, roles[admin,group,campus]
+				/trainee/** =myauthc, roles[trainee]
+			</value>
+		</property>
+	</bean>
+
+	<!-- 用户授权信息Cache, 采用EhCache -->
+	<bean id="shiroEhcacheManager" class="org.apache.shiro.cache.ehcache.EhCacheManager">
+		<property name="cacheManagerConfigFile" value="classpath:ehcache/ehcache-shiro.xml" />
+	</bean>
+
+	<!-- 保证实现了Shiro内部lifecycle函数的bean执行 -->
+	<bean id="lifecycleBeanPostProcessor" class="org.apache.shiro.spring.LifecycleBeanPostProcessor" />
+
+
+	<!-- AOP式方法级权限检查 -->
+	<bean
+		class="org.springframework.aop.framework.autoproxy.DefaultAdvisorAutoProxyCreator"
+		depends-on="lifecycleBeanPostProcessor">
+		<property name="proxyTargetClass" value="true" />
+	</bean>
+	<bean
+		class="org.apache.shiro.spring.security.interceptor.AuthorizationAttributeSourceAdvisor">
+		<property name="securityManager" ref="securityManager" />
+	</bean>
+</beans>

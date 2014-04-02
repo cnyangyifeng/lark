@@ -1,0 +1,238 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:tx="http://www.springframework.org/schema/tx"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.1.xsd
+		http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-3.1.xsd http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd"
+       default-lazy-init="true">
+    <!-- 开启AOP监听 只对当前配置文件有效 -->
+    <aop:aspectj-autoproxy expose-proxy="true"/>
+    <!-- Root Context: defines shared resources visible to all other web components -->
+    <!-- 使用annotation 自动注册bean, 并保证@Required、@Autowired的属性被注入 -->
+    <context:component-scan base-package="com.kuxue">
+        <context:exclude-filter type="annotation"
+                                expression="org.springframework.stereotype.Controller"/>
+    </context:component-scan>
+
+    <!-- JSR303 Validator定义 -->
+    <bean id="validator"
+          class="org.springframework.validation.beanvalidation.LocalValidatorFactoryBean"/>
+
+
+    <bean id="propertyConfigurer"
+          class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+        <property name="locations">
+            <list>
+                <value>classpath*:/development.properties</value>
+                <value>classpath*:/production.properties</value>
+            </list>
+        </property>
+    </bean>
+
+
+    <bean id="machineListener" class="com.kuxue.filter.hibernate.MachineListener"
+            />
+    <!--
+ <bean id="hibernateEventWiring" class="com.kuxue.filter.hibernate.HibernateEventWiring"
+         />
+
+         -->
+
+    <bean id="sessionFactory"
+          class="org.springframework.orm.hibernate4.LocalSessionFactoryBean">
+        <property name="dataSource" ref="dataSource"/>
+        <property name="packagesToScan">
+            <list>
+                <!-- start 基础信息 -->
+                <value>com.kuxue.model.base</value>
+                <!-- end 基础信息 -->
+
+                <!--评分 -->
+                <value>com.kuxue.model.score</value>
+                <!--end 评分 -->
+
+                <!--组织架构 -->
+                <value>com.kuxue.model.organization</value>
+                <!--end 组织架构 -->
+
+                <!--消息 -->
+                <value>com.kuxue.model.message</value>
+                <!-- end 消息 -->
+
+                <!-- 课程-->
+                <value>com.kuxue.model.course</value>
+
+                <!-- 试题 -->
+                <value>com.kuxue.model.material</value>
+
+                <!--测试-->
+                <value>com.kuxue.model.demo</value>
+                
+                 <!--私信-->
+                <value>com.kuxue.model.letter</value>
+
+                <!-- 日志 -->
+                <value>com.kuxue.model.log</value>
+
+                <!---->
+                <value>com.kuxue.model.process</value>
+
+                <value>com.kuxue.model.bam</value>
+
+                <value>com.kuxue.model.system</value>
+
+            </list>
+        </property>
+        <property name="hibernateProperties">
+            <value>
+                <!-- org.hibernate.dialect.Oracle9Dialect -->
+                hibernate.dialect=org.hibernate.dialect.MySQLDialect
+                <!--hibernate.dialect=org.hibernate.dialect.Oracle9Dialect-->
+                hibernate.show_sql=true
+                hibernate.format_sql=true
+                hibernate.query.substitutions=true 1,false 0
+                hibernate.jdbc.batch_size=20
+                <!-- hibernate.hbm2ddl.auto=${jdbc.hbm2ddl.auto} -->
+                hibernate.hbm2ddl.auto=update
+                hibernate.cache.use_query_cache=true
+                hibernate.cache.use_second_level_cache=true
+                hibernate.cache.region.factory_class=org.hibernate.cache.ehcache.EhCacheRegionFactory
+                hibernate.cache.provider_configuration_file_resource_path=/spring/ehcache.xml
+                hibernate.current_session_context_class=org.springframework.orm.hibernate4.SpringSessionContext
+            </value>
+        </property>
+        <!-- <property name="namingStrategy" ref="namingStrategy" /> -->
+    </bean>
+
+    <!-- <bean id="namingStrategy" class="com.kuxue.common.hibernate4.JpaNamingStrategy"/> -->
+
+
+
+
+    <bean id="dynamicAssembleBuilder"
+          class="com.kuxue.common.hibernate4.dynamic.DefaultDynamicHibernateAssembleBuilder">
+        <property name="fileNames">
+            <list>
+                <value>classpath:dynamicsql/*-dynamic.xml</value>
+                <value>classpath:dynamicsql/ldap/*-dynamic.xml</value>
+                <value>classpath:dynamicsql/ldap/*/*-dynamic.xml</value>
+            </list>
+        </property>
+    </bean>
+    
+    <bean id="messageAssembleBuilder"
+          class="com.kuxue.service.message.MessageAssembleBuilder">
+        <property name="fileName">
+            <list>
+                <value>classpath:message/sys-message.xml</value>
+            </list>
+        </property>
+    </bean>
+    
+    <bean id="certificateBuilder"
+          class="com.kuxue.service.course.CertificateBuilder">
+        <property name="fileName">
+            <list>
+                <value>classpath:certificate/sys-certificate.xml</value>
+            </list>
+        </property>
+    </bean>
+
+    <bean id="fileRepository" class="com.kuxue.common.upload.FileRepository"/>
+
+    <!-- 使用annotation定义事务 -->
+
+
+
+    <bean id="dataSourceProxy" class="org.springframework.jdbc.datasource.TransactionAwareDataSourceProxy">
+        <property name="targetDataSource" ref="dataSource"/>
+    </bean>
+
+
+    <bean id="transactionManager"
+          class="org.springframework.orm.hibernate4.HibernateTransactionManager">
+        <property name="sessionFactory" ref="sessionFactory"/>
+    </bean>
+
+    <tx:advice id="txAdvice" transaction-manager="transactionManager">
+        <tx:attributes>
+            <tx:method name="save*" propagation="REQUIRES_NEW"/>
+            <tx:method name="meger" propagation="REQUIRES_NEW"/>
+            <tx:method name="add*" propagation="REQUIRES_NEW"/>
+            <tx:method name="update*" propagation="REQUIRES_NEW"/>
+            <tx:method name="saveOrUpdate*" propagation="REQUIRES_NEW"/>
+            <tx:method name="delete*" propagation="REQUIRES_NEW"/>
+			<tx:method name="findMaterialDetailInfo" propagation="REQUIRES_NEW"/>
+            <tx:method name="get*" propagation="REQUIRED" read-only="true"/>
+            <tx:method name="count*" propagation="REQUIRED" read-only="true"/>
+            <tx:method name="find*" propagation="REQUIRED" read-only="true"/>
+            <tx:method name="list*" propagation="REQUIRED" read-only="true"/>
+            <tx:method name="*" propagation="REQUIRED" read-only="true"/>
+        </tx:attributes>
+    </tx:advice>
+
+    <aop:config expose-proxy="true" proxy-target-class="true">
+        <!-- 只对业务逻辑层实施事务 -->
+        <aop:pointcut id="txPointcut" expression="bean(*Service)"/>
+        <aop:advisor id="txAdvisor" advice-ref="txAdvice" pointcut-ref="txPointcut"/>
+    </aop:config>
+
+    <!-- production环境 -->
+    <beans profile="production">
+        <bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource"
+              destroy-method="close">
+            <property name="driverClassName" value="${production.jdbc.driverClassName}"/>
+            <property name="url" value="${production.jdbc.url}"/>
+            <property name="username" value="${production.jdbc.username}"/>
+            <property name="password" value="${production.jdbc.password}"/>
+
+            <!-- Connection Pooling Info -->
+            <property name="maxActive" value="${production.dbcp.maxActive}"/>
+            <property name="maxIdle" value="${production.dbcp.maxIdle}"/>
+            <property name="defaultAutoCommit" value="true"/>
+            <!-- 初始化连接数 -->
+            <property name="initialSize" value="${production.dbcp.initialSize}"></property>
+            <property name="poolPreparedStatements" value="${production.dbcp.poolPreparedStatements}"></property>
+            <property name="maxOpenPreparedStatements"
+                      value="${production.dbcp.maxOpenPreparedStatements}"></property>
+            <!-- 连接Idle一个小时后超时 -->
+            <property name="timeBetweenEvictionRunsMillis"
+                      value="${production.dbcp.timeBetweenEvictionRunsMillis}"/>
+            <property name="minEvictableIdleTimeMillis"
+                      value="${production.dbcp.minEvictableIdleTimeMillis}"/>
+        </bean>
+
+        <!-- 初始化数据表结构
+        <jdbc:initialize-database data-source="dataSource"
+            ignore-failures="ALL">
+            <jdbc:script location="classpath:sql/oracle/schema.sql" />
+            <jdbc:script location="classpath:sql/oracle/import-data.sql" />
+        </jdbc:initialize-database>
+         -->
+    </beans>
+
+
+    <!-- local development环境 -->
+    <beans profile="development">
+        <bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource"
+              destroy-method="close">
+            <property name="driverClassName" value="${development.jdbc.driverClassName}"/>
+            <property name="url" value="${development.jdbc.url}"/>
+            <property name="username" value="${development.jdbc.username}"/>
+            <property name="password" value="${development.jdbc.password}"/>
+
+            <!-- Connection Pooling Info -->
+            <property name="maxActive" value="${development.dbcp.maxActive}"/>
+            <property name="maxIdle" value="${development.dbcp.maxIdle}"/>
+            <property name="defaultAutoCommit" value="true"/>
+            <!-- 连接Idle一个小时后超时 -->
+            <property name="timeBetweenEvictionRunsMillis"
+                      value="${development.dbcp.timeBetweenEvictionRunsMillis}"/>
+            <property name="minEvictableIdleTimeMillis"
+                      value="${development.dbcp.minEvictableIdleTimeMillis}"/>
+        </bean>
+    </beans>
+</beans>

@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<dynamic-hibernate-statement>
+
+    <!--查询章节下的素材（附件）-->
+    <hql-query name="findAttMainByCatalog">
+        <![CDATA[
+
+		]]>
+    </hql-query>
+
+
+    <!--查询章节下的测试题-->
+    <hql-query name="findQuestionByCatalog">
+        <![CDATA[
+
+         ]]>
+    </hql-query>
+
+</dynamic-hibernate-statement>

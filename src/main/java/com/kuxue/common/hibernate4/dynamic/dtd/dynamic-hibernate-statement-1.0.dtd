@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- SQL Hibernate Dynamic Statement Mapping DTD.
+
+<!DOCTYPE dynamic-hibernate-statement>
+-->
+
+<!--
+	The document root.
+ -->
+
+<!ELEMENT dynamic-hibernate-statement (
+	(hql-query|sql-query)*
+)>
+							<!-- default: none -->
+
+<!-- The query element declares a named Hibernate query string -->
+
+<!ELEMENT hql-query (#PCDATA)>
+	<!ATTLIST hql-query name CDATA #REQUIRED>
+
+<!-- The sql-query element declares a named SQL query string -->
+
+<!ELEMENT sql-query (#PCDATA)>
+	<!ATTLIST sql-query name CDATA #REQUIRED>

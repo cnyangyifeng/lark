@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<dynamic-hibernate-statement name="org">
+
+    <!--根据组织架构编号查询-->
+    <sql-query name="selectElementByKey">
+        <![CDATA[
+		SELECT FDID FROM SYS_ORG_ELEMENT WHERE FD_NO=:FD_NO
+		]]>
+    </sql-query>
+
+
+    <!--根据组织架构编号查询-->
+    <sql-query name="saveElement">
+        <![CDATA[
+		INSERT INTO SYS_ORG_DEPART(FDID) VALUES(:FDID)
+		]]>
+    </sql-query>
+</dynamic-hibernate-statement>

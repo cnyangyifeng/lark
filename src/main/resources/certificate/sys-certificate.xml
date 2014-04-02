@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<sys-certificate>
+    <certificate name="html">
+    <![CDATA[
+<!DOCTYPE HTML>
+<head>
+    <style type="text/css">
+        body,div,p,td{padding: 0;margin: 0;}
+    </style>
+</head>
+
+<body  bgcolor="#fff">
+<table border="0" width="940" bgcolor="#ffffff" align="center" style="font-family:'Microsoft Yahei', '微软雅黑', arial;font-size:14px;line-height: 20px;">
+    <tbody>
+    <tr>
+        <td colspan="4" align="center"><h2 style="font-weight: normal; font-size: 20px;text-align: center;margin: 55px 0 40px;">企业认证教师</h2></td>
+    </tr>
+    <tr valign='top'>
+        <td width="70"></td>
+        <td width="220"><img src="${userImg}" height="183" width="183" alt=""/></td>
+        <td style="font-size: 16px;">
+            <span style="color: #4391bb;">${userName}</span>老师，
+            <p style="line-height: 20px;"></p>
+            <hr style="border:1px dashed; height:1px" color="#000000">
+            <p style="line-height: 32px;"></p>
+            <p style="line-height: 32px;">已于 ${time} 完成《<span style="color: #4391bb;">${courseName}</span>》，特此认证。
+                This is to certify MR/MS <span style="text-transform: uppercase;">${userEName}</span> 's successful completion of the New Oriental Teacher Online Training.</p>
+            <p style="color: #999999;text-align: right;font-size: 14px;">颁发者：${dep}</p>
+        </td>
+        <td width="70"></td>
+    </tr>
+    <tr>
+        <td height="60" colspan="4"></td>
+    </tr>
+    </tbody>
+</table>
+
+</body>
+</html>
+
+    ]]>
+    </certificate>
+</sys-certificate>

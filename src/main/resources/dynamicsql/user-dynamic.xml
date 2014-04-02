@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="utf-8"?>
+<dynamic-hibernate-statement>
+    <sql-query name="findUserByLinkLoginAndRealName">
+        <![CDATA[
+		SELECT P.FDID,P.FD_MOBILE_NO,
+          P.FD_EMAIL,
+          P.FD_LOGIN_NAME,
+          P.FD_PASSWORD,
+          P.FD_INIT_PASSWORD,
+          P.FD_ATTENDANCE_CARD_NUMBER,
+          P.FD_WORK_PHONE,
+          P.FD_QQ,
+          P.FD_MSN,
+          P.FD_IDENTITY_CARD,
+          P.VERSION,
+          P.DEPATID,
+          P.REALNAME,
+          P.FD_SEX,
+          P.FD_IS_EMP,E.FD_NAME,P.FD_PHOTO_URL
+        FROM SYS_ORG_PERSON P,SYS_ORG_DEPART E
+        WHERE P.DEPATID=E.FDID
+        <#if key??>
+            and (P.FD_LOGIN_NAME LIKE '%${key}%' or
+            P.REALNAME LIKE '%${key}%')
+        </#if>
+	]]>
+    </sql-query>
+    
+    <sql-query name="findUserByLinkLoginOrRealNameAndRole">
+        <![CDATA[
+		SELECT P.FDID,P.FD_MOBILE_NO,
+          P.FD_EMAIL,
+          P.FD_LOGIN_NAME,
+          P.FD_PASSWORD,
+          P.FD_INIT_PASSWORD,
+          P.FD_ATTENDANCE_CARD_NUMBER,
+          P.FD_WORK_PHONE,
+          P.FD_QQ,
+          P.FD_MSN,
+          P.FD_IDENTITY_CARD,
+          P.VERSION,
+          P.DEPATID,
+          P.REALNAME,
+          P.FD_SEX,
+          P.FD_IS_EMP,E.FD_NAME,P.FD_PHOTO_URL
+        FROM SYS_ORG_PERSON P,SYS_ORG_DEPART E,SYS_USER_ROLE R
+        WHERE P.DEPATID=E.FDID AND P.FDID = R.PERSON_ID
+        <#if key??>
+            and (P.FD_INIT_PASSWORD LIKE '%${key}%' or
+            P.REALNAME LIKE '%${key}%')
+        </#if>
+        <#if role??>
+        	and R.PERSON_ROLE='${role}'
+        </#if>
+	]]>
+    </sql-query>
+
+
+    <sql-query name="findUserById">
+        <![CDATA[
+		SELECT P.FDID,P.FD_MOBILE_NO,
+          P.FD_EMAIL,
+          P.FD_LOGIN_NAME,
+          P.FD_PASSWORD,
+          P.FD_INIT_PASSWORD,
+          P.FD_ATTENDANCE_CARD_NUMBER,
+          P.FD_WORK_PHONE,
+          P.FD_QQ,
+          P.FD_MSN,
+          P.FD_IDENTITY_CARD,
+          P.VERSION,
+          P.DEPATID,
+          P.REALNAME,
+          P.FD_SEX,
+          P.FD_IS_EMP,E.FD_NAME,P.FD_PHOTO_URL
+        FROM SYS_ORG_PERSON P LEFT JOIN SYS_ORG_DEPART E ON
+         P.DEPATID=E.FDID WHERE P.FD_LOGIN_NAME IS NOT NULL
+        <#if id??>
+            and P.FDID=:id
+        </#if>
+	]]>
+    </sql-query>
+
+    <hql-query name="findModel">
+     <![CDATA[
+
+     ]]>
+    </hql-query>
+
+	<sql-query name="findUserByLinkLoginAndRealNameAndDept">
+        <![CDATA[
+		SELECT P.FDID,P.FD_MOBILE_NO,
+          P.FD_EMAIL,
+          P.FD_LOGIN_NAME,
+          P.FD_PASSWORD,
+          P.FD_INIT_PASSWORD,
+          P.FD_ATTENDANCE_CARD_NUMBER,
+          P.FD_WORK_PHONE,
+          P.FD_QQ,
+          P.FD_MSN,
+          P.FD_IDENTITY_CARD,
+          P.VERSION,
+          P.DEPATID,
+          P.REALNAME,
+          P.FD_SEX,
+          P.FD_IS_EMP,E.FD_NAME,P.FD_PHOTO_URL
+        FROM SYS_ORG_PERSON P,SYS_ORG_DEPART E
+        WHERE P.DEPATID=E.FDID
+        <#if key??>
+            and (P.FD_INIT_PASSWORD LIKE '%${key}%' or
+            P.REALNAME LIKE '%${key}%')
+        </#if>
+        <#if detpId??>
+            and E.FDID ='${detpId}'
+        </#if>
+	]]>
+    </sql-query>
+</dynamic-hibernate-statement>
