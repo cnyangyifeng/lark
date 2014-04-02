@@ -126,7 +126,7 @@ function findeCoursesByKey(pageNo,order){//查询数据
 		data : {
 			"fdTitle" : fdTitle,
 			"pageNo" : pageNo,
-			"order" : order,
+			"order" : order
 		},
 		cache: false, 
 		dataType: "html",
@@ -161,7 +161,7 @@ function findeCoursesByKey(pageNo,order){//查询数据
 			data : {
 				"fdName" : fdTitle,
 				"pageNo" : pageNo,
-				"order" : order,
+				"order" : order
 			},
 			cache: false, 
 			dataType: "html",
@@ -247,7 +247,7 @@ function deleteCourse(){
 		async:false,
 		 url: "${ctx}/ajax/course/deleteCourse",
 		data : {
-			"courseId":delekey,
+			"courseId":delekey
 		},
 		success:function(data){
 			
@@ -263,7 +263,7 @@ function deleteAllCourse(){
 		async:false,
 		 url: "${ctx}/ajax/course/deleteAllCoursesByKey",
 		data : {
-			"fdTitle":delekey,
+			"fdTitle":delekey
 		},
 		success:function(data){
 			window.location.href="${ctx}/course/findcourseInfos?order=fdcreatetime&fdType="+$('#cousetype').val();
@@ -330,7 +330,7 @@ function deleteSeries(){
 		async:false,
 		 url: "${ctx}/ajax/series/deleteSeries",
 		data : {
-			"seriesId":delekey,
+			"seriesId":delekey
 		},
 		success:function(data){
 			window.location.href="${ctx}/series/findSeriesInfos?order=fdcreatetime&fdType="+$('#cousetype').val();
@@ -344,7 +344,7 @@ function deleteAllSeries(){
 		async:false,
 		 url: "${ctx}/ajax/series/deleteAllSeries",
 		data : {
-			"fdTitle":delekey,
+			"fdTitle":delekey
 		},
 		success:function(data){
 			window.location.href="${ctx}/series/findSeriesInfos?order=fdcreatetime&fdType="+$('#cousetype').val();

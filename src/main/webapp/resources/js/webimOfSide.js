@@ -24,7 +24,7 @@ $(function(){
   		  url:$("#ctx").val()+"/ajax/passThrough/getLeaningTeacherTop",
   		  async: false,
   		  data:{
-  			fdCourseId:fdCourseId, 
+  			fdCourseId:fdCourseId
   		  },
   		  dataType:'json',
   		  success: function(result){
@@ -86,7 +86,7 @@ $(function(){
          	      async:false,
       		      url: $("#ctx").val()+"/ajax/letter/findPersonById",
 	      		  data:{
-	      			  fdId:fdId, 
+	      			  fdId:fdId
 	      		  },
 	      		  dataType:'json',
 	      		  success: function(result){
@@ -106,7 +106,7 @@ $(function(){
         		  url: $("#ctx").val()+"/ajax/letter/findLeftDetailLetter",
         		  async:false,
         		  data:{
-        			  fdId:fdId, 
+        			  fdId:fdId
         		  },
         		  dataType:'json',
         		  success: function(result){
@@ -149,7 +149,7 @@ $(function(){
            		  url:$("#ctx").val()+"/ajax/letter/saveLetter",
            		  data:{
            			fdId:fdId, 
-           			body:$("#webim_input").val(),
+           			body:$("#webim_input").val()
            		  },
            		  success: function(data){
            			$("#webim_input").val("");

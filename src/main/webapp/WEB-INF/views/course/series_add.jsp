@@ -402,7 +402,7 @@ function saveDirectory(){//触发一个提交事件
     function saveSeriesPic(){
     	$.post('${ctx}/ajax/series/saveSeriesPic',{
 			seriesId : $("#seriesId").val(),
-			attId: $("#attIdID").val(),
+			attId: $("#attIdID").val()
 			})
 		.success(function(){
 			jalert_tips("保存成功");

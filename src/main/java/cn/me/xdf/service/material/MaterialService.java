@@ -17,6 +17,7 @@ import cn.me.xdf.common.json.JsonUtils;
 import cn.me.xdf.common.page.Pagination;
 import cn.me.xdf.common.utils.array.ArrayUtils;
 import cn.me.xdf.common.utils.array.SortType;
+import cn.me.xdf.model.base.AttMain;
 import cn.me.xdf.model.base.Constant;
 import cn.me.xdf.model.material.ExamQuestion;
 import cn.me.xdf.model.material.MaterialAuth;
@@ -165,6 +166,25 @@ public class MaterialService extends BaseService {
 		}
 		return list;
 	}
+	
+	/**
+	 * 根据素材id获取素材权限信息
+	 * @param MaterialId
+	 *            yuhz
+	 * @return
+	 */
+	public String findFilePathByMaterialId(String attmid) {
+//		Finder finder = Finder
+//				.create("from AttMain attm ");
+//		finder.append("where attm.fdId = :attmid");
+//		finder.setParam("attmid", attmid);
+		AttMain attm = super.get(AttMain.class, attmid);
+//		List<MaterialAuth> list = super.find(finder);
+//		for (MaterialAuth materialAuth : list) {
+//			delete(materialAuth.getFdId());
+//		}
+		return attm.getFdFilePath();
+	}
 	/**
 	 * 编辑视频素材
 	 * 
@@ -292,7 +312,8 @@ public class MaterialService extends BaseService {
 					finder.append(" order by nvl(score.fdaverage,0) desc ");
 				}
 			}
-			finder.append(" ) ");
+			//WG 添加别名
+			finder.append(" ) YYY ");
 			Pagination page = getPageBySql(finder, pageNo, pageSize);
 			return page;
 		}
@@ -351,7 +372,7 @@ public class MaterialService extends BaseService {
 	public List<Map> getMaterialsTop10Bykey(String key, String type) {
 
 		Finder finder = Finder
-				.create("select info.FDID as id , info.FDNAME as name , info.fdCreatorId as creator , to_char(info.fdCreateTime,'yyyy-mm-dd hh24:mi:ss') as createtime from IXDF_NTP_MATERIAL info ");
+				.create("select info.FDID as id , info.FDNAME as name , info.fdCreatorId as creator , info.fdCreateTime as createtime from IXDF_NTP_MATERIAL info ");
 		if(!ShiroUtils.isAdmin()){
 			finder.append("left join IXDF_NTP_MATERIAL_AUTH auth ");
 			finder.append(" on info.FDID=auth.FDMATERIALID ");
@@ -373,18 +394,19 @@ public class MaterialService extends BaseService {
 		List<Map> maps = new ArrayList<Map>();
 		for (Map map1 : list) {
 			Map map = new HashMap();
-			map.put("id", map1.get("ID"));
-			map.put("name", map1.get("NAME"));
+			map.put("id", map1.get("id"));
+			map.put("name", map1.get("name"));
 			map.put("creator","");
-			if(map1.get("CREATOR")!=null){
-				SysOrgPerson person = sysOrgPersonService.get((String)map1.get("CREATOR"));
+			if(map1.get("creator")!=null){
+				SysOrgPerson person = sysOrgPersonService.get((String)map1.get("creator"));
 				if(person!=null){
 					map.put("creator",person.getFdName());
 				}
 			}
-			map.put("createtime", DateUtil.getInterval((String)map1.get("CREATETIME"),null));
+			map.put("createtime", map1.get("createtime"));
 			maps.add(map);
 		}
+
 		return maps;
 	}
 	

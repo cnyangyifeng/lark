@@ -305,7 +305,7 @@ public class ExpController {
     		exportExcel(list, "courseAuth.xls", response,"课程授权统计报表-"+info.getFdTitle()+"-"+DateUtil.convertDateToString(date, "yyyyMMddHHmmss")+".xls");
     	}else{
     		Pagination page = courseParticipateAuthService
-        			.findSingleCourseAuthList(courseId, order, 5000,SimplePage.DEF_COUNT, null);
+        			.findSingleCourseAuthList(courseId, order, 1,5000, null);
     		if(page.getTotalPage()==1){//全部导出（只导出一个模板，不需要打包）
     			list = courseService.findCourseInfoAuth(page.getList());
     			exportExcel(list, "courseAuth.xls",response, "课程授权统计报表-"+info.getFdTitle()+"-"+DateUtil.convertDateToString(date, "yyyyMMddHHmmss")+".xls");
@@ -313,7 +313,7 @@ public class ExpController {
     			String [] attMainIds= new String[page.getTotalPage()];
 				for(int i=1;i<=page.getTotalPage();i++){
 					Pagination pageZip = courseParticipateAuthService
-		        			.findSingleCourseAuthList(courseId, order, 5000,SimplePage.DEF_COUNT, null);
+		        			.findSingleCourseAuthList(courseId, order, i,5000, null);
 					AttMain attMain = AbsExportExcel.exportExcels(courseService.findCourseInfoAuth(pageZip.getList()), "courseAuth.xls");
 					attMainService.save(attMain);
 					attMainIds[i-1] = attMain.getFdId();

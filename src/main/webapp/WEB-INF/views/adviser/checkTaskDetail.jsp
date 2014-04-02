@@ -407,7 +407,7 @@ function sendLetter(flag,fdId){
 					async : false,
 					cache :false,
 					data : {
-						"noteId" : noteId,
+						"noteId" : noteId
 					},
 					dataType : 'json',
 					success : function(result) {
@@ -549,7 +549,7 @@ function sendLetter(flag,fdId){
 												cache :false,
 												data : {
 													"score" : taskData.score,
-													"fdComment" : txt,
+													"fdComment" : txt
 												},
 												success: function(result){
 													$this.next(".error").remove();
@@ -610,7 +610,7 @@ function sendLetter(flag,fdId){
 			}));
 			//$("#iframeVideo").attr("src","");
 			if(mtype=='04'||mtype=="05"){//文档
-          		 $("#iframeVideo").attr("src",'http://me.xdf.cn/iportal/sys/attachment/sys_att_swf/viewer.do;jsessionid=ubFBr_W9GMSBzUvrtu3cqdX?method=viewerOtp&fdId='+$ele.attr("fileNetId")+'&seq=0&type=otp&fileName='+$ele.attr("fileName"));
+          		 $("#iframeVideo").attr("src",'${ctx}/viewer/?fileName=' + $ele.attr("fileName"));
           	   }else if(mtype=='01'){//视频
           		   $("#iframeVideo").attr("src",'${ctx}/video.jsp?code=' + $ele.attr("playCode"));
           	   }

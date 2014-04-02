@@ -63,8 +63,8 @@
                 <div class="hd navbar" id="topSelect">
                 <div class="navbar-inner">
                 <ul class="nav" id="navCourse">
-                <li class="active" name="doing"><a href="#doing">正在学习（<span id="ingCourseSum"></span>）</a></li>
-                <li name="finish"><a href="#finish">完成学习（<span id="edCourseSum"></span>）</a></li>
+                <li class="active" name="doing"><a href="#doing" id="doing">正在学习（<span id="ingCourseSum"></span>）</a></li>
+                <li name="finish"><a href="#finish" id="finish">完成学习（<span id="edCourseSum"></span>）</a></li>
         </ul>
         </div>
         </div>
@@ -150,19 +150,19 @@
         <section class="pull-left w187" id="leftDiv">
            
             <ul class="nav nav-list sidenav mt20" id="sideNav">
-                <li class="active"><a href="#required"><i class="icon-book-open"></i>
+                <li class="active"><a href="#required" id="required"><i class="icon-book-open"></i>
              <j:ifelse test="${isMe}">
 				<j:then>我的必修课</j:then>
 				<j:else>TA的必修课</j:else>
 			 </j:ifelse>
                  </a></li>
-                <li><a href="#optional"><i class="icon-book-open-checkbox"></i>
+                <li><a href="#optional" id="optional"><i class="icon-book-open-checkbox"></i>
              <j:ifelse test="${isMe}">
 				<j:then>我的选修课</j:then>
 				<j:else>TA的选修课</j:else>
 			 </j:ifelse>
                 	</a></li>
-                <li><a href="#series"><i class="icon-book-two"></i> 系列课程</a></li>
+                <li><a href="#series" id="series"><i class="icon-book-two"></i> 系列课程</a></li>
             </ul>
             <c:if test="${isMe}">
             <ul class="nav nav-list sidenav mt20">
@@ -186,17 +186,16 @@
         e.preventDefault();
         $(this).parent().addClass("active").siblings().removeClass("active");
         $("#rightCont").html(rightContentFn());
-        
         $("#navCourse>li>a").click(function(e){
             e.preventDefault();
             $(this).parent().addClass("active").siblings().removeClass("active");
-            if($(this).attr("href").substring(1) == "doing"){//进行中的
-            	initCourse(1, 30, $("#sideNav .active a").attr("href").substring(1));
-            } else if($(this).attr("href").substring(1) == "finish"){//已完成的
-            	initCourse(1, 30, $("#sideNav .active a").attr("href").substring(1));
+            if($(this).attr("id") == "doing"){//进行中的
+            	initCourse(1, 30, $("#sideNav .active a").attr("id"));
+            } else if($(this).attr("id") == "finish"){//已完成的
+            	initCourse(1, 30, $("#sideNav .active a").attr("id"));
             }
         });
-        if($(this).attr("href").substring(1) == "series"){//系列课程
+        if($(this).attr("id") == "series"){//系列课程
         	$("#topSelect").addClass("hide");
         	initSeries(1, 30);
         } else if($(this).attr("href").substring(1) == "optional"){//选修课程
@@ -212,7 +211,7 @@
  
  function initCourse(pageNo, pageSize, type){
 	 var courseData = {};
-	 var studyType = $("#navCourse .active a").attr("href").substring(1);
+	 var studyType = $("#navCourse .active a").attr("id");
 	 //alert(studyType);
 	 var isCompulsoryCourse = type;
 	 $.ajax({
@@ -228,22 +227,23 @@
 		},
  		success : function(result) {
  			courseData=result;
+ 			
  		}
  	});
 	 var thumbnailsFn = doT.template(document.getElementById("thumbnailsTemplate").text);
-	 var listFn = doT.template(document.getElementById("listTemplate").text);
-	 $("#listCourse").html(thumbnailsFn(courseData)).find(".thumbnail").click(function(){
-		 window.location.href="${ctx}/passThrough/getCourseHome/"+$(this).attr("data-fdid");
-	 });
-	 if(courseData.list==null||courseData.list.length==0){
-		 $("#listCourse").html("<div class='moreCourse'></div>");
-	 }
-	 $("#ingCourseSum").html(courseData.ingCSum);
-	 $("#edCourseSum").html(courseData.edCSum);
-	 //alert(courseData.page.totalPage);
-	 if(courseData.page.totalPage>1){
-		 $("#pageDiv").html(listFn(courseData.page));
-	 }
+		 var listFn = doT.template(document.getElementById("listTemplate").text);
+		 $("#listCourse").html(thumbnailsFn(courseData)).find(".thumbnail").click(function(){
+			 window.location.href="${ctx}/passThrough/getCourseHome/"+$(this).attr("data-fdid");
+		 });
+		 if(courseData.list==null||courseData.list.length==0){
+			 $("#listCourse").html("<div class='moreCourse'></div>");
+		 }
+		 $("#ingCourseSum").html(courseData.ingCSum);
+		 $("#edCourseSum").html(courseData.edCSum);
+		 //alert(courseData.page.totalPage);
+		 if(courseData.page.totalPage>1){
+			 $("#pageDiv").html(listFn(courseData.page));
+		 }
  }
  
  function initDivS(pageNo ,pageSize){
@@ -269,7 +269,7 @@
 	 		dataType : 'json',
 	 		data:{
 				pageNo:pageNo,
-				pageSize:pageSize,
+				pageSize:pageSize
 			},
 	 		success : function(result) {
 	 			seriesData=result;

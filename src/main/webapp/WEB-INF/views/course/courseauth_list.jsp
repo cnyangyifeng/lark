@@ -91,7 +91,7 @@ function findeCoursesByKey(pageNo,order){
 		data : {
 			"fdTitle" : fdTitle,
 			"pageNo" : pageNo,
-			"order" : order,
+			"order" : order
 		},
 		cache: false, 
 		dataType: "html",

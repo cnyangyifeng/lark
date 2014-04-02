@@ -148,7 +148,7 @@
                                         <b class="text-warning" id="courseavg">0</b>
                             </div>
                             <div class="media-foot">
-                                <a class="btn btn-primary btn-large" id="coursedetail" href="javascript:void(0);">查看课程详情</a>
+                                <a class="btn btn-primary btn-large" target="_blank" id="coursedetail" href="javascript:void(0);">查看课程详情</a>
                             </div>
                         </div>
                     </div>
@@ -305,7 +305,7 @@ function exportData(){
                			if(data=='true'){
                				window.location.href="${ctx}/course/getSingleCourseAuthInfo?courseId=${param.courseId}&order=createtime&fdType=13";
                			}else{
-               				$("#showerror").html("<lable class='error'>当前所选教师已被其他授权人授权该课程!</lable>");
+               				$("#showerror").html("<lable class='error'>当前所选教师已被授权该课程!</lable>");
                				$("#teacher").val("");
                			}
                      });
@@ -594,7 +594,7 @@ function confirmDel(){
       	type: "post",
       	url: "${ctx}/ajax/course/deleteCouseParticAuthById",
       	data : {
-      		"cpaId" : delekey,
+      		"cpaId" : delekey
       	},
       	cache: false, 
       	dataType: "json",

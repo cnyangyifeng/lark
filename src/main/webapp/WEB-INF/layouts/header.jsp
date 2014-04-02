@@ -22,7 +22,7 @@ request.setAttribute("path", path[path.length-1]);
 	        <ul class="nav" id="topNav">
 	          <% if(user!=null){ %>
 	          		<li class="itemBg"></li>	
-	        	<li class="specific"><a href="${ctx}/course/courseIndexAll">全部课程</a></li>
+	        	<li class="specific"><a href="${ctx}/course/courseIndexAll">课程中心</a></li>
 	          <%} %>
 	          <shiro:hasRole name="admin">
 	         	<tags:navigation paths="<%=paths%>" checkString="/admin" showString="系统管理" url="${ctx}/admin/user/list"></tags:navigation>

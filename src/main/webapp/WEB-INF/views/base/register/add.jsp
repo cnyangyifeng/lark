@@ -196,7 +196,7 @@
 			type : "post",
 			url : "${ctx}/ajax/register/getDeparts",
 			data : {
-				"id" : id,
+				"id" : id
 			},
 			success : function(msg) {
 				msg = msg.substr(1, msg.length - 2);

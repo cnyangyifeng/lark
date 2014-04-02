@@ -1034,7 +1034,7 @@ $("#exportExamPaper").click(function(e){
 																		type: "post",
 																		data : {
 																			questionId : fdid,
-																			examId : "${param.fdId}",
+																			examId : "${param.fdId}"
 																		},
 																		success : function(
 																				result) {

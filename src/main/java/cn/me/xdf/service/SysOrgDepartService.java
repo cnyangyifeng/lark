@@ -46,7 +46,9 @@ public class SysOrgDepartService extends BaseService {
 	@SuppressWarnings("unchecked")
 	public List<SysOrgDepart> findTypeis1(){
 		Finder finder = Finder
-				.create("from SysOrgElement e where e.hbmParent is not null and e.fdOrgType=1  order by NLSSORT(e.fdName, 'NLS_SORT=SCHINESE_PINYIN_M')");
+				//TODO wg mysql:function nlssort does not exists.
+//				.create("from SysOrgElement e where e.hbmParent is not null and e.fdOrgType=1  order by NLSSORT(e.fdName, 'NLS_SORT=SCHINESE_PINYIN_M')");
+		.create("from SysOrgElement e where e.hbmParent is not null and e.fdOrgType=1 ");
 		return find(finder);
 	}
 	

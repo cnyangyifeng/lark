@@ -93,7 +93,7 @@ function refreshTrackList(type,pageNo,pageSize,order){
 			pageNo:pageNo,
 			pageSize:pageSize,
 			order:order,
-			key:$("#serach").val(),
+			key:$("#serach").val()
 		},
 		success : function(result) {
 			data = result.list;
@@ -188,7 +188,7 @@ function refreshTrackList(type,pageNo,pageSize,order){
 					type: "post",
 					data:{
 						bamId:$this.attr("bamId"),
-						userId:$this.attr("userId"),
+						userId:$this.attr("userId")
 					},
 					success : function(result) {
 						refreshTrackList('',1,10,$(this).attr("date-orderType"),$("#serach").val());

@@ -172,7 +172,7 @@ public class AttMain extends IdEntity {
                 // 文档、幻灯片
                 if ("04".equals(fdFileType) || "05".equals(fdFileType)) {
                     String fName = FileNameUtil.getName(fdFilePath);
-                    fileUrl = "http://me.xdf.cn/iportal/sys/attachment/sys_att_swf/viewer.do;jsessionid=ubFBr_W9GMSBzUvrtu3cqdX?method=viewerOtp&fdId=" + fileNetId + "&seq=0&type=otp&fileName=" + fName + "";
+                    fileUrl = "http://localhost:8080/JensProject/viewer/index.jsp?fileName=" + fName ;
                 } else if ("01".equals(fdFileType)) {// 视频
                     return "http://union.bokecc.com/player?vid="
                             + playCode

@@ -261,7 +261,7 @@ public class PassThroughAjaxController {
 			List list = page.getList();
 			for(int i=0;i<list.size();i++){
 				Map bam = (Map)list.get(i);
-				SysOrgPerson person = accountService.load((String)bam.get("PRETEACHID"));
+				SysOrgPerson person = accountService.load((String)bam.get("preTeachId"));
 				Map userMap = new HashMap();
 				if(fdId.equals(person.getFdId())){
 					userMap.put("isMe", true);
@@ -688,7 +688,7 @@ public class PassThroughAjaxController {
 		}
 		
 		/**
-		 * 获取学习心情
+		 * 获取备课心情
 		 * 
 		 * 
 		 */

@@ -702,7 +702,7 @@ function deleteMR(id){
 			dataType : 'json',
 			type: "post",
 			data:{
-				messageReplyId:id,
+				messageReplyId:id
 			},
 			success : function(result) {
 				$("#messR"+id).remove();

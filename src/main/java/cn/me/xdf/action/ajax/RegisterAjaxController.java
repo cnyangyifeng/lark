@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import cn.me.xdf.common.json.JsonUtils;
@@ -159,5 +160,21 @@ public class RegisterAjaxController {
         return JsonUtils.writeObjectToJson(map);
 	}
 	
+	/**
+     * 修改密码的方法
+     *
+     * @param sysOrgPersonTemp
+     * @param request
+     * @return
+     */
+    @RequestMapping(value = "updateTeacherPwd")
+    @ResponseBody
+    public void updateTeacherPwd(HttpServletRequest request) {
+        String fdId = ShiroUtils.getUser().getId();
+        String password = request.getParameter("password");
+        SysOrgPerson person = accountService.get(fdId);
+        person.setPassword(MD5Util.getMD5String(password));
+        accountService.save(person);
+    }
 
 }

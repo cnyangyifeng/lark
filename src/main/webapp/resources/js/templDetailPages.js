@@ -753,7 +753,7 @@
 					     			{title: "国外考试", imgUrl:  $('#ctx').val()+"/resources/images/courseSkin-01.png"},
 					    			{title: "国内考试", imgUrl:  $('#ctx').val()+"/resources/images/courseSkin-02.png"},
 					    			{title: "英语学习", imgUrl:  $('#ctx').val()+"/resources/images/courseSkin-03.png"},
-					    			{title: "优能小学", imgUrl:  $('#ctx').val()+"/resources/images/courseSkin-05.png"},
+					    			{title: "优能中学", imgUrl:  $('#ctx').val()+"/resources/images/courseSkin-05.png"},
 					    			{title: "泡泡少儿", imgUrl:  $('#ctx').val()+"/resources/images/courseSkin-04.png"}
 					    			];
 					  data.courseSkin= {title: "默认皮肤"};

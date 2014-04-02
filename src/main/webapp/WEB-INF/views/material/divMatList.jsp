@@ -340,7 +340,7 @@ function initStu(){
 			dataType : 'json',
 			type: "post",
 			data:{
-				materialId:id,
+				materialId:id
 			},
 			success : function(result) {
 				if(result=="noOk"){

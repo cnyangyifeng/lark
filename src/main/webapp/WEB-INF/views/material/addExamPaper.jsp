@@ -377,7 +377,7 @@ function confirmDeleteTask(){
 		type: "post",
 		url: "${ctx}/ajax/taskPaper/deleteTaskByTaskId",
 		data : {
-			"taskId":$("#taskId").val(),
+			"taskId":$("#taskId").val()
 		},
 		success:function(){
 			window.location.href="${ctx}/material/findList?order=FDCREATETIME&fdType="+$("#fdType").val();

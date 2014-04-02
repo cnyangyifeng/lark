@@ -39,8 +39,7 @@ public class ComUtils {
 	}
 
 	public static String getFileUrl(String fdId, String fileName) {
-		return "http://me.xdf.cn/iportal/sys/attachment/sys_att_swf/viewer.do?method=viewer&fdId="
-				+ fdId + "&seq=0&type=iwork&fileName=" + fileName;
+		return "http://localhost:8080/JensProject/viewer/?fileName=" + fileName;
 	}
 
 	// 调用得到人员头像URL

@@ -192,7 +192,7 @@ $(function(){
        		  url:"${ctx}/ajax/letter/saveLetter",
        		  data:{
        			fdId:$("#fdId").val(), 
-       			body:$("#body").val(),
+       			body:$("#body").val()
        		  },
        		  dataType:'json',
        		  success: function(rsult){
@@ -211,7 +211,7 @@ function deleteSingleLetter(tempId){
  		  url:"${ctx}/ajax/letter/deleteSingleLetter",
  		  data:{
  			fdId:tempId,
- 			personId:$("#fdId").val(),
+ 			personId:$("#fdId").val()
  		  },
  		  dataType:'json',
  		  success: function(result){

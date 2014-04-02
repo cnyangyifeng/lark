@@ -366,7 +366,7 @@ $("#verifyPwd").bind("click",function(){
 		cache :false,
 		data:{
 			"courseId":courseId,
-			"userPwd" :inputPassword,
+			"userPwd" :inputPassword
 		},
 		dataType : 'json',
 		success:function(data){

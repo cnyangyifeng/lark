@@ -83,7 +83,7 @@ public class Finder {
 			return rowCountSql;
 		}
 		String sql = hqlBuilder.toString();
-		return ROW_COUNT + " from ("+ sql +")";
+		return ROW_COUNT + " from ("+ sql +") XXX ";
 	}
 
 	public void setRowCountSql(String rowCountSql) {

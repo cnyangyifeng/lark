@@ -253,7 +253,7 @@ var pageendFn= doT.template(document.getElementById("pageEndTemplate").text);
         		async:false,
         		cache: false, 
         		data : {
-                  	"fdType":fdType,
+                  	"fdType":fdType
                 },
         		dataType : 'json',
         		success: function(result){
@@ -359,7 +359,7 @@ function pageNavClick(pageNo){
           	"order":order,
           	"pageNo" : pageNo,
           	"keyword":keyword,
-          	"fdType":fdType,
+          	"fdType":fdType
         },
         cache: false, 
         dataType: "json",

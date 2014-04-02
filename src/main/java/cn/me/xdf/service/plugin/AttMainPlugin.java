@@ -6,7 +6,13 @@ import cn.me.xdf.api.bokecc.util.DemoUtil;
 import cn.me.xdf.common.json.JsonUtils;
 import cn.me.xdf.model.base.AttMain;
 import cn.me.xdf.model.base.DocInterfaceModel;
+import cn.me.xdf.service.material.MaterialService;
 
+import com.converter.docConverter.DocConverter;
+import com.converter.pdfConverter.OpenOfficePDFConverter;
+import com.converter.pdfConverter.PDFConverter;
+import com.converter.swfConverter.SWFConverter;
+import com.converter.swfConverter.SWFToolsSWFConverter;
 import com.dreamwin.upfile.main.CCUploader;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpStatus;
@@ -19,12 +25,17 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 /**
  * Created with IntelliJ IDEA. User: xiaobin268 Date: 13-12-2 Time: 上午10:36 To
@@ -89,42 +100,67 @@ public class AttMainPlugin {
     }
 
     public static ByteArrayOutputStream getDocByAttId(AttMain attMain) {
-        try {
-            DocInterfaceModel model = new DocInterfaceModel(attMain,
-                    DocInterfaceModel.getDocByAttId, "");
-            HttpClient client = new HttpClient();
-            client.getParams().setParameter(
-                    HttpMethodParams.HTTP_CONTENT_CHARSET, "utf-8");
-            PostMethod filePost = new PostMethod(DocInterfaceModel.url);
-            filePost.getParams().setParameter(
-                    HttpMethodParams.HTTP_CONTENT_CHARSET, "utf-8");
-
-            filePost.addParameters(model.getDocByAttIdModel());
-
-            filePost.getParams().setParameter(HttpMethodParams.HTTP_CONTENT_CHARSET, "utf-8");
-            int status = client.executeMethod(filePost);
-            if (status == HttpStatus.SC_OK) {
-                log.info("获取附件成功");
-                InputStream inputStream = filePost.getResponseBodyAsStream();
-                ByteArrayOutputStream baos = new ByteArrayOutputStream();
-                byte[] buffer = new byte[1024];
-                int len;
-                while ((len = inputStream.read(buffer)) > -1) {
-                    baos.write(buffer, 0, len);
-                }
-                baos.flush();
-                return baos;
-            } else {
-                log.error("连接失败");
-                return null;
-            }
-        } catch (Exception e) {
-            log.error("addDoc:" + e.getCause());
-            //throw new RuntimeException("出现异常addDoc:" + e.getCause());
-            return null;
-        }
+           
+                InputStream inputStream;
+				try {
+					inputStream = new FileInputStream(new File(attMain.getFdFilePath()));
+					ByteArrayOutputStream baos = new ByteArrayOutputStream();
+	                byte[] buffer = new byte[1024];
+	                int len;
+	                while ((len = inputStream.read(buffer)) > -1) {
+	                    baos.write(buffer, 0, len);
+	                }
+	                baos.flush();
+	                return baos;
+				} catch (FileNotFoundException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+					return null;
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+					return null;
+				}
+                
+     
     }
-
+/*    public static ByteArrayOutputStream getDocByAttId(AttMain attMain) {
+    	try {
+    		DocInterfaceModel model = new DocInterfaceModel(attMain,
+    				DocInterfaceModel.getDocByAttId, "");
+    		HttpClient client = new HttpClient();
+    		client.getParams().setParameter(
+    				HttpMethodParams.HTTP_CONTENT_CHARSET, "utf-8");
+    		PostMethod filePost = new PostMethod(DocInterfaceModel.url);
+    		filePost.getParams().setParameter(
+    				HttpMethodParams.HTTP_CONTENT_CHARSET, "utf-8");
+    		
+    		filePost.addParameters(model.getDocByAttIdModel());
+    		
+    		filePost.getParams().setParameter(HttpMethodParams.HTTP_CONTENT_CHARSET, "utf-8");
+    		int status = client.executeMethod(filePost);
+    		if (status == HttpStatus.SC_OK) {
+    			log.info("获取附件成功");
+    			InputStream inputStream = filePost.getResponseBodyAsStream();
+    			ByteArrayOutputStream baos = new ByteArrayOutputStream();
+    			byte[] buffer = new byte[1024];
+    			int len;
+    			while ((len = inputStream.read(buffer)) > -1) {
+    				baos.write(buffer, 0, len);
+    			}
+    			baos.flush();
+    			return baos;
+    		} else {
+    			log.error("连接失败");
+    			return null;
+    		}
+    	} catch (Exception e) {
+    		log.error("addDoc:" + e.getCause());
+    		//throw new RuntimeException("出现异常addDoc:" + e.getCause());
+    		return null;
+    	}
+    }
+*/
     /**
      * 传输文档
      *
@@ -133,8 +169,22 @@ public class AttMainPlugin {
      */
     @SuppressWarnings("unchecked")
     public static String addDoc(AttMain attMain, String isConvert) {
-
-        try {
+        //不再存入filenet，仅仅作为文档的转换服务，其余保持不变。
+    	if("1".equals(isConvert)){
+    		System.out.println(attMain.getFdFileName().substring(attMain.getFdFileName().lastIndexOf(".")+1,attMain.getFdFileName().length()));
+    		if("pdf".equalsIgnoreCase(attMain.getFdFileName().substring(attMain.getFdFileName().lastIndexOf(".")+1,attMain.getFdFileName().length()))){
+    			SWFConverter swfConverter = new SWFToolsSWFConverter();
+        		DocConverter converter = new DocConverter(swfConverter);
+        		converter.ConvertPDF2SWF(attMain.getFdFilePath());
+    		}else{
+    			PDFConverter pdfConverter = new OpenOfficePDFConverter();
+        		SWFConverter swfConverter = new SWFToolsSWFConverter();
+        		DocConverter converter = new DocConverter(pdfConverter,swfConverter);
+        		converter.convert(attMain.getFdFilePath());
+    		}
+    	}
+		return UUID.randomUUID().toString();
+        /*try {
             log.info("附件开始传输到Filenet里");
             DocInterfaceModel model = new DocInterfaceModel(attMain,
                     DocInterfaceModel.addDoc, isConvert);
@@ -175,7 +225,7 @@ public class AttMainPlugin {
             //throw new RuntimeException("出现异常addDoc:" + e.getCause());
             return null;
             // e.printStackTrace();
-        }
+        }*/
     }
 
     /**

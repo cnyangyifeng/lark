@@ -663,7 +663,7 @@ bar"></span><span class="icon-bar"></span><span class="icon-bar"></span><span cl
 	        </div>
 			{{?}}
             <div class="section" >
-                <label>或者在下面的搜索框中输入<a id="gotoMaterial" href="#">课程素材库</a>中的{{=it.typeTxt}}名称，同样可以添加到上面的{{=it.typeTxt}}列表中。</label>
+                <label>在下面的搜索框中输入<a id="gotoMaterial" href="#">课程素材库</a>中的{{=it.typeTxt}}名称，可以添加到上面的{{=it.typeTxt}}列表中。</label>
                 <div class="autoCompleteWrap">
 					<input style="width:716px;" id="addMedia" type="text"/>
 					<!--
@@ -967,7 +967,7 @@ $.Placeholder.init();
 			 courseType: $("#courseType").val(),
 			 sectionOrder: $("#sectionOrder").val(),
 			 fdPrice:$("#fdPrice").val(),
-			 isCompulsoryCourse:$("#isCompulsoryCourse").val(),
+			 isCompulsoryCourse:$("#isCompulsoryCourse").val()
 			},
 			function(data){
 				$("#courseId").val(data.courseid);
@@ -998,7 +998,7 @@ $.Placeholder.init();
 			courseId : $("#courseId").val(),
 			isPublish: $("#permission").val(),
 			fdPassword:  $("#coursePwd").val(),
-			groupIds: groupIds,
+			groupIds: groupIds
 			})
 		.success(function(){
 			//提交成功跳转到详细信息
@@ -1033,7 +1033,7 @@ function successSelectArea(imgSrc){
     function saveCoursePic(){
     	$.post('${ctx}/ajax/course/cover',{
 			courseId : $("#courseId").val(),
-			attId: $("#attIdID").val(),
+			attId: $("#attIdID").val()
 			})
 		.success(function(){
        	   // urlRouter("accessRight");

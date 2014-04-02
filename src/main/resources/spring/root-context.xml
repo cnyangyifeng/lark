@@ -89,8 +89,8 @@
         <property name="hibernateProperties">
             <value>
                 <!-- org.hibernate.dialect.Oracle9Dialect -->
-               hibernate.dialect=org.hibernate.dialect.MySQLDialect
-                <!-- hibernate.dialect=org.hibernate.dialect.Oracle9Dialect-->
+                hibernate.dialect=org.hibernate.dialect.MySQLDialect
+                <!--hibernate.dialect=org.hibernate.dialect.Oracle9Dialect-->
                 hibernate.show_sql=true
                 hibernate.format_sql=true
                 hibernate.query.substitutions=true 1,false 0

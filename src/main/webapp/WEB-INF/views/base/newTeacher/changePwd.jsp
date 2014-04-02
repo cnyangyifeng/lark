@@ -12,9 +12,7 @@
 </head>
 <body>
        <div class="page-body box-control" id="pageBody"> 
-          <form id="subForm" onsubmit="return checkSubmit();" 
-                   action="${ctx}/register/updateTeacherPwd" method="post" 
-                                        class="reg_form form-horizontal">
+          <form  class="reg_form form-horizontal">
             <c:if test="${person.fdIsEmp=='0'}">
            <input type="hidden" id="fdId" name="fdId" value="${person.fdId}"/>
         	<p class="reg_form-intro">请确认您要修改的新密码。</p>
@@ -47,7 +45,7 @@
         	</div>           
             <div class="control-group" style="height: 40px;">
             	<div class="controls">
-                	<button type="submit" id="submitForm"  class="submit btn btn-primary btn-large" >确认修改</button>
+                	<button type="button" onclick="submitUpdatePwd();"  class="submit btn btn-primary btn-large" >确认修改</button>
                 </div>
             </div>
              </c:if>
@@ -73,6 +71,7 @@
         <script type="text/javascript">
 $.Placeholder.init();
 </script>
+<script src="${ctx}/resources/js/jquery.jalert.min.js" type="text/javascript"></script>
 <script type="text/javascript">
 function checkOldPwd(){
 	var oldPwd=$("#oldPwd").val();
@@ -84,7 +83,7 @@ function checkOldPwd(){
 		url : "${ctx}/ajax/register/checkOldPwd",
 		data : {
 			"str" : oldPwd,
-			"fdId": $("#fdId").val(),
+			"fdId": $("#fdId").val()
 		},
 		success : function(data) {
 			var flag = data.flag;
@@ -154,6 +153,24 @@ function checkSubmit(){
 		  }
 		  return false;// 阻止提交
 		}
+}
+function submitUpdatePwd(){
+	if(checkSubmit()){
+		$.ajax({
+			type : "post",
+			cache :false,
+			url : "${ctx}/ajax/register/updateTeacherPwd",
+			data : {
+				"password": $("#confirmPwd").val()
+			},
+			success : function() {
+				jalert("您好，修改密码成功!");
+				$("#oldPwd").val("");
+				$("#newPwd").val("");
+				$("#confirmPwd").val("");
+			}
+		}); 
+	} 
 }
 </script>
 </body>

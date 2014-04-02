@@ -117,7 +117,7 @@ function initCommentLines(modelName,modelId,pageNo){
 			  modelName :modelName,
 			  modelId :modelId,
 			  pageNo:pageNo,
-			  pageSize:pageSize,
+			  pageSize:pageSize
 		  },
 		  type:"post",
 		  success: function(result){

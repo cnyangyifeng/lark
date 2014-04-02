@@ -4,6 +4,7 @@ import java.io.File;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.UUID;
 import java.util.regex.Pattern;
 
 import org.apache.commons.io.FilenameUtils;
@@ -26,8 +27,9 @@ public class UploadUtils {
 			"/yyyyMM/ddHHmmss");
 
 	public static String generateFilename(String path, String ext) {
-		return path + MONTH_FORMAT.format(new Date())
-				+ RandomStringUtils.random(4, Num62.N36_CHARS) + "." + ext;
+		/*return path + MONTH_FORMAT.format(new Date())
+				+ RandomStringUtils.random(4, Num62.N36_CHARS) + "." + ext;*/
+		return UUID.randomUUID() + "." + ext;
 	}
 
 	protected static final Pattern ILLEGAL_CURRENT_FOLDER_PATTERN = Pattern

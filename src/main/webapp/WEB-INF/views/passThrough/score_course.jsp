@@ -56,7 +56,7 @@ function addMessagemethod(){
 		  dataType : 'json',
 		  data:{
 			  courseId:"${param.courseId}",
-			  fdContent:mess,
+			  fdContent:mess
 		  },
 		  success: function(result){
 			//jalert("评论发布成功");
@@ -77,7 +77,7 @@ $.ajax({
 	  type: "post",
 	  dataType : 'json',
 	  data:{
-		  fdModelId:"${param.courseId}",
+		  fdModelId:"${param.courseId}"
 	  },
 	  success: function(result){
 		  $("#ratingDo  i").each(function(index){	
@@ -115,7 +115,7 @@ function scoreing(){
 		  dataType : 'json',
 		  data:{
 			  fdModelId:"${param.courseId}",
-			  fdScore:s,
+			  fdScore:s
 		  },
 		  success: function(result){
 			  $("#goTop").trigger("click");
@@ -159,7 +159,7 @@ function setCourseScore(){
 		  type: "post",
 		  dataType : 'json',
 		  data:{
-			  fdModelId:"${param.courseId}",
+			  fdModelId:"${param.courseId}"
 		  },
 		  success: function(result){
 			  courseScore=result[0].fdAverage;

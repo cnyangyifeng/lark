@@ -132,9 +132,9 @@ public class CourseParticipateAuthService extends BaseService{
 		finder.append("         (course.fdId in  ");
 		finder.append("                      (select ga.fdCourseId from IXDF_NTP_COURSE_GROUP_AUTH ga  ");
 		finder.append("                      where ga.fdgroupid in  ");
-		finder.append("                           （select ga.fdgroupid from sys_org_group_element soge ,sys_org_element soe1org,sys_org_element soe2dep,sys_org_element soe3per ");
+		finder.append("                           ( select ga.fdgroupid from sys_org_group_element soge ,sys_org_element soe1org,sys_org_element soe2dep,sys_org_element soe3per ");
 		finder.append("                            where ga.fdgroupid = soge.fd_groupid and (soe1org.fdid = soe2dep.fd_parentid and soe2dep.fdid = soe3per.fd_parentid and soe3per.fdid='"+userId+"' ) and ( soge.fd_elementid = soe1org.fdid or  soge.fd_elementid = soe3per.fdid or  soge.fd_elementid = soe2dep.fdid ) ");
-		finder.append("                            ） ");
+		finder.append("                            ) ");
 		finder.append("                       ) ");
 		finder.append("          )  ");
 		finder.append("          or ");

@@ -249,7 +249,7 @@
 			{{?it.type!='txt'&&it.type!='exam'&&it.type!='task'}}
 			<li>
 				<div class="line">
- 				<div  class="line">{{?it.type == 'video'}}视频{{??it.type == 'doc'}}文档{{??it.type == 'ppt'}}幻灯片{{?}}名称：<b class="videoName">{{=it.defaultMedia.name}}</b>&nbsp;&nbsp;<span id="fpassStauts" style="font-weight:bold;color:rgb(48, 124, 72);">{{?it.defaultMedia.isPass}}[已学会]{{?}}</div>
+ 				<div  class="line">{{?it.type == 'video'}}视频{{??it.type == 'doc'}}文档{{??it.type == 'ppt'}}幻灯片{{?}}名称：<b class="videoName">{{=it.defaultMedia.name}}</b>&nbsp;&nbsp;<span id="fpassStauts" style="font-weight:bold;color:rgb(48, 124, 72);">{{?it.defaultMedia.isPass}}[已学会]{{?}}</span></div>
 
 				</div>
 			</li>
@@ -283,11 +283,13 @@
     <script id="examPaperDetailTemplate" type="x-dot-template">
         <div class="accordion-inner">
                 <div class="hd">
-                <h2><span class="icon-state-bg
+                <h2>
+		<span class="icon-state-bg
 						{{?it.examPaperStatus == 'fail'}} error">未通过
                         {{??it.examPaperStatus == 'pass'}} success">通过
                         {{??it.examPaperStatus == 'finish'}} info">答完
-                        {{??it.examPaperStatus == 'unfinish'}}">待答{{?}}</span> {{?it.type=='exam'}}试卷{{??it.type=='task'}}作业包{{?}}{{=it.num}} <span class="examName">{{=it.name}}</span> 共计 <b><span class="total">{{=it.examCount}}</span></b>{{?it.type=='exam'}} 题{{??it.type=='task'}} 个作业{{?}}，满分 <b>{{=it.fullScore}}</b> 分，建议{{?it.type=='exam'}}答题{{??it.type=='task'}}完成{{?}}时间为 <b>{{=it.examPaperTime}}</b> 分钟。</h2>
+                        {{??it.examPaperStatus == 'unfinish'}}">待答{{?}}</span> {{?it.type=='exam'}}试卷{{??it.type=='task'}}作业包{{?}}{{=it.num}} <span class="examName">{{=it.name}}</span> 共计 <b><span class="total">{{=it.examCount}}</span></b>{{?it.type=='exam'}} 题{{??it.type=='task'}} 个作业{{?}}，满分 <b>{{=it.fullScore}}</b> 分，
+		<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;建议{{?it.type=='exam'}}答题{{??it.type=='task'}}完成{{?}}时间为 <b>{{=it.examPaperTime}}</b>{{?it.type=='exam'}} 分钟{{??it.type=='task'}}天{{?}}。</h2>
         <p class="muted">{{=it.examPaperIntro||''}}</p>
         <a class="btn btn-link" data-fdType="{{=it.type}}" data-toggle="collapse" data-parent="#listExamPaper" href="#examPaper{{=it.num}}">收起{{?it.type == 'exam'}}试题{{??it.type == 'task'}}作业包{{?}}<b class="caret"></b></a>
         </div>
@@ -849,12 +851,12 @@ function downloadMater(attId,fileNetId){
         var examPaperStatusBarFn = doT.template(document.getElementById("examPaperStatusBarTemplate").text);
 
         /*视频、文档等媒体信息 模板函数*/
-        var mediaInfoFn = doT.template(document.getElementById("mediaInfoTemplate").text);
         var rightMaterialContentFn = doT.template(document.getElementById("pageRightTemplate").text,undefined,{
-            pageHeader: document.getElementById("pageRightHeaderTemplate").text,
+           pageHeader: document.getElementById("pageRightHeaderTemplate").text,
             pageIntro: document.getElementById("pageRightIntroTemplate").text,
             examContent: document.getElementById("mediaInfoTemplate").text
         });
+        var mediaInfoFn = doT.template(document.getElementById("mediaInfoTemplate").text);
         /*视频、文档等媒体评论 模板函数*/
         var mediaCommentFn = doT.template(document.getElementById("mediaCommentTemplate").text);
         /*视频、文档等媒体评论列表 模板函数*/
@@ -1012,7 +1014,11 @@ function downloadMater(attId,fileNetId){
 		  			  },
 		  			  dataType:'json',
 		  			  success: function(result){
+		  				  
+		  				  
+		  				  
 		  				if(result.type == "exam" || result.type == "task"){
+		  					//$("#test")[0].innerHTML=JSON.stringify(result);
 		  					$("#mainContent").html(rightContentFn(result));
 		  					afterLoadExamOrTaskPage(result);
 		  	            }else if(result.type == "txt"){
@@ -1023,22 +1029,25 @@ function downloadMater(attId,fileNetId){
 		  	          		$("#btnDownload").addClass("hide");
 		  	          	    /* initplaceholder(false); */
 		  	            } else if(result.type == "video" || result.type == "doc"||result.type == "ppt"){
-		  	            	mdata=result.defaultMedia;
-		  	            	 
 		  	                // alert($("#iframeVideo"));
 		  	                // $("#iframeVideo").contents().find("body").empty();
+		  	              // $("#test")[0].innerHTML=JSON.stringify(result);
+		  	            
 		  	            	$("#mainContent").html(rightMaterialContentFn(result));
+		  	            	// alert($("#mainContent").html());
 		  	                afterLoadMediaPage(result);
+		  	                mdata=result.defaultMedia;
 		  	                loadvideoOrDoc(mdata);
 			  	            //调用方法时 如果素材为空  则隐藏素材下的 下载赞等信息 、 素材信息、  评分信息 、评分的列表信息 这几个信息分别代表一个div
 			  	  			//这块只针对视频和文档
+			  	  			
                			  	 if(mdata.code==""||mdata.code.type=="none"){
 		  	  					$("#btnDownload").attr("title","当前没有可下载素材");
 		  	  					$("#mediaComment").addClass("hide");
 		  	  				    $("#mediaToolbar").addClass("hide");
-		  	  				}
+		  	  				} 
 			  	                //素材转换中
-		  	                if(mdata.code!=""&&mdata.code.type!='none'){
+		  	                 if(mdata.code!=""&&mdata.code.type!='none'){
 		  	                	//不能点赞  可以下载 不能学习通过 没有评论; 
 		  	                	 if(mdata.code.type=="video"&&mdata.code.playCode==null){
 				  	              		$("#btnPraise").attr("converStatus","");
@@ -1057,7 +1066,7 @@ function downloadMater(attId,fileNetId){
 		  	                	$("#btnPraise").attr("converStatus","");
 		  	              		$("#btnPraise").attr("data-original-title","当前状态不允许赞");
 		  	              		$("#mediaComment").addClass("hide");
-		  	                }
+		  	                } 
 			  	                //学习通过控制
 			  	 /*              if(mdata.code==""||mdata.code.type=="none"){
 				  	            	$("#btnDoPass").attr("converStatus","");
@@ -1087,7 +1096,7 @@ function downloadMater(attId,fileNetId){
       		  			  async:false,
       		  			  data:{
       		  				  catalogId:catalogId,
-      		  				  bamId:bamId,
+      		  				  bamId:bamId
       		  			  },
       		  			  dataType:'json',
       		  			  success: function(result){
@@ -1197,7 +1206,7 @@ function downloadMater(attId,fileNetId){
   		  			  async:false,
   		  			  data:{
   		  					fdModelId :$("#formMakeComments").attr("data-fdid"),
-  		  					fdScore : index + 1,
+  		  					fdScore : index + 1
   		  			  },
   		  			  dataType:'json',
   		  			  success: function(result){
@@ -1220,7 +1229,7 @@ function downloadMater(attId,fileNetId){
 	                          		  async:false,
 	                          		  data:{
 	                          			messageId :itemId,
-	                          			fdType :"01",
+	                          			fdType :"01"
 	                          		  },
 	                          		  success: function(result){
 	                          			  if(result=='"cannot"'){
@@ -1243,7 +1252,7 @@ function downloadMater(attId,fileNetId){
 	                          		  async:false,
 	                          		  data:{
 	                          			messageId :itemId,
-	                          			fdType :"02",
+	                          			fdType :"02"
 	                          		  },
 	                          		  success: function(result){
 	                          			  if(result=='"cannot"'){
@@ -1283,7 +1292,7 @@ function downloadMater(attId,fileNetId){
           	                          		  data:{
           	                          			materialId :$("#formMakeComments").attr("data-fdid"),
           	                          			fdContent : ($("#replyCommHide").val()+$("#replyComm").val()),
-          	                          			messageId :itemId,
+          	                          			messageId :itemId
           	                          		  },
           	                          		  success: function(result){
           	                          			resetComment(1,10);
@@ -1314,7 +1323,7 @@ function downloadMater(attId,fileNetId){
                         	    		  url: "${ctx}/ajax/message/removeMessage",
                         	    		  async:false,
                         	    		  data:{
-                        	    			  messageId :itemId,
+                        	    			  messageId :itemId
                         	    		  },
                         	    		  success: function(result){
                         	    			  resetComment(1,10);
@@ -1339,7 +1348,7 @@ function downloadMater(attId,fileNetId){
           		  async:false,
           		  dataType:'json',
           		  data:{
-          			  fdModelId:$("#formMakeComments").attr("data-fdid"),
+          			  fdModelId:$("#formMakeComments").attr("data-fdid")
           		  },
           		  success: function(result){
           			  var score = (result==-1)?0:result;
@@ -1360,7 +1369,7 @@ function downloadMater(attId,fileNetId){
             		  dataType:'json',
             		  data:{
             			  fdModelId:$("#formMakeComments").attr("data-fdid"),
-            			  fdModelName:"<%=MaterialInfo.class.getName()%>",
+            			  fdModelName:"<%=MaterialInfo.class.getName()%>"
             		  },
             		  success: function(result){
             			  var ave;
@@ -1410,7 +1419,7 @@ function downloadMater(attId,fileNetId){
             			  modelName:"<%=MaterialInfo.class.getName()%>",
             			  modelId:$("#formMakeComments").attr("data-fdid"),
             			  pageNo:pageNo,
-            			  pageSize:pageSize,
+            			  pageSize:pageSize
                 	  },
             		  success: function(result){
             			  $("#listComment").html(listCommentFn(result.listComments));
@@ -1430,7 +1439,7 @@ function downloadMater(attId,fileNetId){
           			  modelName:"<%=MaterialInfo.class.getName()%>",
           			  modelId:$("#formMakeComments").attr("data-fdid"),
           			  pageNo:pageNo,
-          			  pageSize:pageSize,
+          			  pageSize:pageSize
               	  },
           		  success: function(result){
          			 $("#pageLine1").html(" "+result.startLine+" - "+result.endLine+" ");
@@ -1505,7 +1514,7 @@ function downloadMater(attId,fileNetId){
           		  	data:{
           				materialId:$("#formMakeComments").attr("data-fdid"),
                     	isAnonymity: $("#isAnonymity").is(":checked"),
-                    	fdContent: $("#textComment").val(),
+                    	fdContent: $("#textComment").val()
               	  	}
           		});
                $("#textComment").val("");
@@ -1682,7 +1691,7 @@ function downloadMater(attId,fileNetId){
 
 			  	              /*评分表单*/
 			  	              $("#formMakeComments").validate({
-			  	                  submitHandler: submitFormComment,
+			  	                  submitHandler: submitFormComment
 			  	              });
 			  	              resetComment(1,10);
 			  	  			  resetScoreInfo();	
@@ -1719,7 +1728,7 @@ function downloadMater(attId,fileNetId){
 		         			type: "post",
 		         			url: "${ctx}/ajax/material/saveLaud",
 		         			data : {
-		         				"materialId":$mediaToolbar.attr("data-fdid"),
+		         				"materialId":$mediaToolbar.attr("data-fdid")
 		         			},
 		         			success:function(data){
 		         				 $this.addClass("active").attr("data-original-title","赞").children(".num").text(data); 
@@ -1745,7 +1754,7 @@ function downloadMater(attId,fileNetId){
                   			type: "post",
                   			url: "${ctx}/ajax/material/updateDownloadNum",
                   			data : {
-                  				"materialId":$mediaToolbar.attr("data-fdid"),
+                  				"materialId":$mediaToolbar.attr("data-fdid")
                   			},
                   			success:function(data){
                   				 window.location.href="${ctx}/common/file/download/"+$this.attr("data-fdid");
@@ -1797,7 +1806,7 @@ function downloadMater(attId,fileNetId){
           				"catalogId":catalogId,
           				"fdMtype":fdMtype,
           				"fdid":$mediaToolbar.attr("data-fdid"),
-          				"materialId":$mediaToolbar.attr("data-fdid"),
+          				"materialId":$mediaToolbar.attr("data-fdid")
           			},
           			success:function(data){
           				loadRightCont(catalogId,fdMtype);
@@ -1871,7 +1880,7 @@ function downloadMater(attId,fileNetId){
          		  				materialId: $this.attr("data-fdid"),
          		  				catalogId:catalogId,
          		  				bamId:bamId,
-         		  				sourceType:fdMtype,
+         		  				sourceType:fdMtype
          		  			  },
          		  			  dataType:'json',
          		  			  success: function(result){
@@ -2088,7 +2097,8 @@ function downloadMater(attId,fileNetId){
         function loadvideoOrDoc(data){
         	if(data.code!=""&&data.code.type!='none'){
 	           	   if(data.code.type=='doc'&&data.code.fileNetId!=null){//文档
-	           		 $("#iframeVideo").removeClass("hide").attr("src",'http://me.xdf.cn/iportal/sys/attachment/sys_att_swf/viewer.do;jsessionid=ubFBr_W9GMSBzUvrtu3cqdX?method=viewerOtp&fdId='+data.code.fileNetId+'&seq=0&type=otp&fileName='+ data.code.fName).next().remove();;
+	           		$("#iframeVideo").removeClass("hide").attr("src",'${ctx}/viewer/index.jsp?fileName=' +  data.code.fName).next().remove();
+	           		// $("#iframeVideo").removeClass("hide").attr("src",'http://me.xdf.cn/iportal/sys/attachment/sys_att_swf/viewer.do;jsessionid=ubFBr_W9GMSBzUvrtu3cqdX?method=viewerOtp&fdId='+data.code.fileNetId+'&seq=0&type=otp&fileName='+ data.code.fName).next().remove();;
 	           	   }else if(data.code.type=='video'&&data.code.playCode!=null){//视频
 	           		   $("#iframeVideo").removeClass("hide").attr("src",'${ctx}/video.jsp?code=' + data.code.playCode).next().remove();
 	           	   }else{
@@ -2120,5 +2130,6 @@ function downloadMater(attId,fileNetId){
 
 
 </script>
+
 </body>
 </html>

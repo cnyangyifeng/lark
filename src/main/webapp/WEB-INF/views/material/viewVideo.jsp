@@ -192,7 +192,7 @@ function downloadMater(){
 			type: "post",
 			url: "${ctx}/ajax/material/updateDownloadNum",
 			data : {
-				"materialId":$("#fdId").val(),
+				"materialId":$("#fdId").val()
 			},
 			success:function(){
 				

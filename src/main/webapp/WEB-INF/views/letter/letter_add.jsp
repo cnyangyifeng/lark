@@ -81,7 +81,7 @@ $(function(){
        		  async:false,
        		  data:{
        			fdId:$("#fdId").val(), 
-       			body:$("#body").val(),
+       			body:$("#body").val()
        		  },
        		  dataType:'json',
        		  success: function(rsult){

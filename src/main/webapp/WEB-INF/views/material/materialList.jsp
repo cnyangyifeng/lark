@@ -135,7 +135,7 @@ function pageNavClick(fdType,pageNo,order){
 			"fdName" : fdName,
 			"fdType" : fdType,
 			"pageNo" : pageNo,
-			"order" : order,
+			"order" : order
 		},
 		cache: false, 
 		dataType: "html",
@@ -211,7 +211,7 @@ function ajaxDelete(){
 		async: false,
 		url: "${ctx}/ajax/material/batchDelete",
 		data : {
-			"materialIds":delekeyAuth,
+			"materialIds":delekeyAuth
 		},
 		success:function(data){
 			window.location.href="${ctx}/material/findList?order=FDCREATETIME&fdType="+$("#fdType").val();
@@ -224,7 +224,7 @@ function prepareDelete(delekey){
 		async: false,
 		url: "${ctx}/ajax/material/prepareDelete",
 		data : {
-			"materialIds":delekey,
+			"materialIds":delekey
 		},
 		success:function(data){
 			var res = eval(data);
@@ -258,7 +258,7 @@ function deleteAllMaterial(){
 		url: "${ctx}/ajax/material/deleteAllMaterial",
 		data : {
 			"fdName":fdName,
-			"fdType":$("#fdType").val(),
+			"fdType":$("#fdType").val()
 		},
 		success:function(data){
 			window.location.href="${ctx}/material/findList?order=FDCREATETIME&fdType="+$("#fdType").val();
