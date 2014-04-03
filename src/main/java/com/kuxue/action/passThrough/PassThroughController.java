@@ -41,6 +41,7 @@ import com.kuxue.service.course.CourseParticipateAuthService;
 import com.kuxue.service.course.CourseService;
 import com.kuxue.service.course.VisitorService;
 import com.kuxue.service.score.ScoreStatisticsService;
+import com.kuxue.service.system.CourseSkinService;
 import com.kuxue.utils.DateUtil;
 import com.kuxue.utils.ShiroUtils;
 
@@ -86,6 +87,8 @@ public class PassThroughController {
 	@Autowired
 	private VisitorService visitorService;
 	
+	@Autowired
+	private CourseSkinService courseSkinService;
 	
 	/**
 	 * 课程学习首页
@@ -140,9 +143,14 @@ public class PassThroughController {
 				//获取该课程的评分统计值
 				//课程信息
 				request.setAttribute("course", course);
+				//皮肤信息
+				if(course.getFdSkin()!=null){
+					request.setAttribute("skinPath", course.getFdSkin().getFdSkinPath());
+				}else{
+					request.setAttribute("skinPath", courseSkinService.getDefaultSkin(Constant.SKIN_TYPE_COURSE));
+				}
 				//课程图片
-				AttMain attMain = attMainService.getByModelIdAndModelName(courseId, CourseInfo.class.getName());
-				request.setAttribute("courseAtt", attMain!=null?attMain.getFdId():"");
+				request.setAttribute("courseAtt", courseService.getCoursePicture(courseId));
 				//课程评分统计
 				ScoreStatistics scoreStatistics =  scoreStatisticsService.findUniqueByProperty(ScoreStatistics.class,Value.eq("fdModelName", CourseInfo.class.getName()),Value.eq("fdModelId", course.getFdId()));
 				request.setAttribute("courseScore", scoreStatistics==null?0.0:scoreStatistics.getFdAverage());
@@ -241,6 +249,11 @@ public class PassThroughController {
 		request.setAttribute("courseId", course.getFdId());
 		request.setAttribute("bamId", bamCourse.getFdId());
 		bamCourseService.updateCourseStartTime(bamCourse.getFdId());
+		if(course.getFdSkin()!=null){
+			request.setAttribute("skinPath", course.getFdSkin().getFdSkinPath());
+		}else{
+			request.setAttribute("skinPath", courseSkinService.getDefaultSkin(Constant.SKIN_TYPE_COURSE));
+		}
 		//页面跳转，跳转到课程学习页面
 		return "/passThrough/course_content_study";
 	}

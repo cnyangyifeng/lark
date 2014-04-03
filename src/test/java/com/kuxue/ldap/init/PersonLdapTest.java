@@ -6,6 +6,11 @@ import com.kuxue.ldap.model.PeronLdap;
 import com.kuxue.ldap.service.PersonLdapInService;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.ldap.control.PagedResult;
+import org.springframework.ldap.control.PagedResultsCookie;
+import org.springframework.ldap.control.PagedResultsRequestControl;
+
+import java.util.List;
 
 /**
  * Created with IntelliJ IDEA.
@@ -20,7 +25,7 @@ public class PersonLdapTest extends BaseTest {
     private PersonLdapInService personLdapInService;
 
     @Test
-    public void testInitData(){
-        personLdapInService.executeUpdateData(5);
+    public void testInitData() {
+        personLdapInService.executeUpdateData("20140301","20140331");
     }
 }

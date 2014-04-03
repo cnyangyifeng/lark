@@ -12,6 +12,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import jodd.util.StringUtil;
 
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Controller;
@@ -37,6 +38,9 @@ import com.kuxue.model.course.TagInfo;
 import com.kuxue.model.organization.SysOrgGroup;
 import com.kuxue.model.organization.SysOrgPerson;
 import com.kuxue.model.score.ScoreStatistics;
+import com.kuxue.model.system.CoursePicture;
+import com.kuxue.model.system.CourseSkin;
+import com.kuxue.model.system.PictureLibrary;
 import com.kuxue.service.AccountService;
 import com.kuxue.service.SysOrgGroupService;
 import com.kuxue.service.SysOrgPersonService;
@@ -55,6 +59,9 @@ import com.kuxue.service.course.SeriesCoursesService;
 import com.kuxue.service.course.TagInfoService;
 import com.kuxue.service.score.ScoreStatisticsService;
 import com.kuxue.service.studyTack.StudyTrackService;
+import com.kuxue.service.system.CoursePictureService;
+import com.kuxue.service.system.CourseSkinService;
+import com.kuxue.service.system.PictureLibraryService;
 import com.kuxue.utils.ShiroUtils;
 import com.kuxue.model.organization.RoleEnum;
 /**
@@ -125,6 +132,16 @@ public class CourseAjaxController {
 	
 	@Autowired
 	private StudyTrackService studyTrackService;
+	
+	@Autowired
+	private CourseSkinService courseSkinService;
+	
+	@Autowired
+	private PictureLibraryService pictureLibraryService;
+	
+	@Autowired
+	private CoursePictureService coursePictureService;
+	
 	/**
 	 * 获取当前课程的基本信息
 	 * 
@@ -685,9 +702,36 @@ public class CourseAjaxController {
 	@ResponseBody
 	public void courseCover(HttpServletRequest request) {
 		String courseId = request.getParameter("courseId");
+		//修改课程引用的皮肤
+		String skinId = request.getParameter("courseSkin");
+		if(StringUtils.isNotBlank(skinId)){
+			CourseSkin skin = courseSkinService.get(skinId);
+			if(skin!=null){
+				CourseInfo course = courseService.get(courseId);
+				course.setFdSkin(skin);
+				courseSkinService.save(course);
+			}
+			
+		}
+		
+		//保存课程与图片库的关系
+		String pictureId = request.getParameter("coursePicture");
+		if(StringUtil.isNotBlank(pictureId)){
+			//需要清理课程下的原始附件
+			attMainService.deleteAttMainByModelId(courseId);
+			//再清理课程与图片库的关系
+			coursePictureService.deleteByCourseId(courseId);
+			CoursePicture coursePicture = new CoursePicture();
+			coursePicture.setFdCourseId(courseId);
+			coursePicture.setFdPictureId(pictureId);
+			coursePictureService.save(coursePicture);
+		}
+		
 		String attMainId = request.getParameter("attId");
 		if(StringUtil.isNotBlank(attMainId)){
-			// 先清理附件库(清理该课程下的原始附件)
+			//需要清理课程与图片库的关系
+			coursePictureService.deleteByCourseId(courseId);
+			// 再清理附件库(清理该课程下的原始附件)
 			ArrayList<String> atts = new ArrayList<String>();
 			atts.add(attMainId);
 			attMainService.deleteAttMainByModelIdExpAttId(courseId,atts);
@@ -699,6 +743,26 @@ public class CourseAjaxController {
 			attMainService.save(attMain);
 		}
 	}
+	
+	/*
+	 * 加载图片库列表
+	 */
+	@RequestMapping(value = "getPictures")
+	@ResponseBody
+	public String getPictures(HttpServletRequest
+
+	request) {
+		String courseId = request.getParameter("courseId");
+		String pageNo = request.getParameter("pageNo");
+		Map map = new HashMap();
+		//添加图片库列表
+		map.put("coursePictures", getPictures(Integer.parseInt(pageNo),8));
+		
+		//添加课程选择的图片库图片ID
+		map.put("coursePictureId", coursePictureService.getPicuterIdByCourseId(courseId));
+		
+		return JsonUtils.writeObjectToJson(map);
+	}
 
 	/*
 	 * 加载课程页面
@@ -709,19 +773,88 @@ public class CourseAjaxController {
 
 	request) {
 		String courseId = request.getParameter("courseId");
-		AttMain attMain = attMainService.getByModelId(courseId);
+		CourseInfo course = courseService.get(courseId);
+		
 		Map map = new HashMap();
-		if(attMain!=null){
-		map.put("coverUrl", attMain.getFdId()+"?n="+new Random().nextInt(100));
-		}else{
-			map.put("coverUrl", "");	
-		}
+		map.put("courseSkinId", course.getFdSkin()!=null?course.getFdSkin().getFdId():"");
+		//添加课程选择的图片库图片ID
+		map.put("coursePictureId", coursePictureService.getPicuterIdByCourseId(courseId));
+		String coverurl =  courseService.getCoursePicture(courseId);
+		map.put("coverUrl", StringUtil.isBlank(coverurl)?coverurl:coverurl+"?n="+new Random().nextInt(100));	
+		
+		//添加皮肤列表
+		map.put("courseSkinList", getSkins(map));
+		
+		//添加图片库列表
+		map.put("coursePictures", getPictures(1,8));
+		
+		
+		
 		return JsonUtils.writeObjectToJson(map);
 	}
+	
+
+	/**
+	 * 给课程添加图片库列表
+	 * @param map
+	 * @return List 图片库列表
+	 */
+	private Map getPictures(int pageNo,int pageSize) {
+		Map picturesMap = new HashMap();
+		Pagination page = pictureLibraryService.getPictureList(pageNo,pageSize);
+		List pictureList = page.getList();
+		List pictures = new ArrayList();
+		for(int i=0;i<pictureList.size();i++){
+			PictureLibrary pLibrary = (PictureLibrary)pictureList.get(i);
+			Map picmap = new HashMap();
+			picmap.put("fdId", pLibrary.getFdId());
+			picmap.put("title", pLibrary.getFdName());
+			AttMain skinatt = attMainService.getByModelId(pLibrary.getFdId());
+			if(skinatt!=null){
+				picmap.put("imgUrl", skinatt.getFdId()+"?n="+new Random().nextInt(100));
+			}else{
+				picmap.put("imgUrl", "");	
+			}
+			pictures.add(picmap);
+			
+		}
+		picturesMap.put("pageNo", pageNo);
+		picturesMap.put("pageSize", pageSize);
+		picturesMap.put("pageCount", page.getTotalPage());
+		picturesMap.put("totalCount", page.getTotalCount());
+		picturesMap.put("pictureList", pictures);
+		return picturesMap;
+	}
+	
+	/**
+	 * 给课程添加皮肤列表
+	 * @param map
+	 * @return List 课程皮肤列表
+	 */
+	private List getSkins(Map map) {
+		List<CourseSkin> skinList = courseSkinService.getCourseList(Constant.SKIN_TYPE_COURSE);
+		List skins = new ArrayList();
+		for(CourseSkin skin:skinList){
+			Map skinmap = new HashMap();
+			skinmap.put("fdId", skin.getFdId());
+			skinmap.put("title", skin.getFdName());
+			AttMain skinatt = attMainService.getByModelId(skin.getFdId());
+			if(skinatt!=null){
+				skinmap.put("imgUrl", skinatt.getFdId()+"?n="+new Random().nextInt(100));
+			}else{
+				skinmap.put("imgUrl", "");	
+			}
+			skins.add(skinmap);
+			if(skin.getFdDefaultSkin()&&StringUtils.isBlank((String)map.get("courseSkinId"))){
+				map.put("courseSkinId",skin.getFdId());
+			}
+		}
+		return skins;
+	}
+	
 	/*
 	 * 删除数据过滤:
 	 */
-	
 	@RequestMapping(value = "deleFiter")
 	@ResponseBody
 	public String deleteFiter(HttpServletRequest request){
@@ -978,7 +1111,7 @@ public class CourseAjaxController {
 		
 		Finder finder = Finder.create("");
 		finder.append("select course.fdId id ");
-		finder.append("  from IXDF_NTP_COURSE course ");
+		finder.append("  from ixdf_ntp_course course ");
 		finder.append("  left join IXDF_NTP_COURSE_PARTICI_AUTH cpa ");
 		finder.append("    on (course.fdId = cpa.fdcourseid and cpa.fduserid ='"+userId+"') ");
 		
@@ -990,7 +1123,7 @@ public class CourseAjaxController {
 		finder.append("         ((course.fdId in  ");
 		finder.append("                      (select ga.fdCourseId from IXDF_NTP_COURSE_GROUP_AUTH ga  ");
 		finder.append("                      where ga.fdgroupid in  ");
-		finder.append("                           (select ga.fdgroupid from SYS_ORG_GROUP_ELEMENT soge ,SYS_ORG_ELEMENT soe1org,SYS_ORG_ELEMENT soe2dep,SYS_ORG_ELEMENT soe3per ");
+		finder.append("                           (select ga.fdgroupid from sys_org_group_element soge ,sys_org_element soe1org,sys_org_element soe2dep,sys_org_element soe3per ");
 		finder.append("                            where ga.fdgroupid = soge.fd_groupid and (soe1org.fdid = soe2dep.fd_parentid and soe2dep.fdid = soe3per.fd_parentid and soe3per.fdid='"+userId+"' ) and ( soge.fd_elementid = soe1org.fdid or  soge.fd_elementid = soe3per.fdid or  soge.fd_elementid = soe2dep.fdid ) ");
 		finder.append("                            ) ");
 		finder.append("                       ) ");
@@ -1045,8 +1178,8 @@ public class CourseAjaxController {
 			for (Map courseInfoMap : courseInfos) {
 				CourseInfo courseInfo = courseService.get((String)courseInfoMap.get("ID")); 
 				Map map = new HashMap();
-				List<AttMain> attMains = attMainService.getAttMainsByModelIdAndModelName(courseInfo.getFdId(), CourseInfo.class.getName());
-				map.put("imgUrl", attMains.size()==0?"":(attMains.get(0).getFdId()+"?n="+new Random().nextInt(100)));
+				String imgurl = courseService.getCoursePicture(courseInfo.getFdId());
+				map.put("imgUrl", StringUtil.isBlank(imgurl)?imgurl:imgurl+"?n="+new Random().nextInt(100));
 				map.put("learnerNum", getLearningTotalNo(courseInfo.getFdId()));
 				map.put("name", courseInfo.getFdTitle());
 				map.put("id", courseInfo.getFdId());
@@ -1137,7 +1270,7 @@ public class CourseAjaxController {
 		returnMap.put("finishSum", finishSum);
 		Finder finder = Finder.create("");
 		finder.append("select count(*) sum ");
-		finder.append("  from IXDF_NTP_COURSE course ");
+		finder.append("  from ixdf_ntp_course course ");
 		finder.append("  left join IXDF_NTP_COURSE_PARTICI_AUTH cpa ");
 		finder.append("    on (course.fdId = cpa.fdcourseid and cpa.fduserid ='"+userId+"') ");
 		finder.append("  left join IXDF_NTP_BAM_SCORE bam ");
@@ -1147,7 +1280,7 @@ public class CourseAjaxController {
 		finder.append("         ((course.fdId in  ");
 		finder.append("                      (select ga.fdCourseId from IXDF_NTP_COURSE_GROUP_AUTH ga  ");
 		finder.append("                      where ga.fdgroupid in  ");
-		finder.append("                           (select ga.fdgroupid from SYS_ORG_GROUP_ELEMENT soge ,SYS_ORG_ELEMENT soe1org,SYS_ORG_ELEMENT soe2dep,SYS_ORG_ELEMENT soe3per ");
+		finder.append("                           (select ga.fdgroupid from sys_org_group_element soge ,sys_org_element soe1org,sys_org_element soe2dep,sys_org_element soe3per ");
 		finder.append("                            where ga.fdgroupid = soge.fd_groupid and (soe1org.fdid = soe2dep.fd_parentid and soe2dep.fdid = soe3per.fd_parentid and soe3per.fdid='"+userId+"' ) and ( soge.fd_elementid = soe1org.fdid or  soge.fd_elementid = soe3per.fdid or  soge.fd_elementid = soe2dep.fdid ) ");
 		finder.append("                            ) ");
 		finder.append("                       ) ");
@@ -1205,8 +1338,8 @@ public class CourseAjaxController {
 			for (Map map1 : courseInfos) {
 				CourseInfo courseInfo = courseService.get((String)map1.get("ID"));
 				Map map = new HashMap();
-				List<AttMain> attMains = attMainService.getAttMainsByModelIdAndModelName(courseInfo.getFdId(), CourseInfo.class.getName());
-				map.put("imgUrl", attMains.size()==0?"":(attMains.get(0).getFdId()+"?n="+new Random().nextInt(100)));
+				String imgurl = courseService.getCoursePicture(courseInfo.getFdId());
+				map.put("imgUrl", StringUtil.isBlank(imgurl)?imgurl:imgurl+"?n="+new Random().nextInt(100));
 				map.put("learnerNum", getLearningTotalNo(courseInfo.getFdId()));
 				map.put("name", courseInfo.getFdTitle());
 				map.put("issuer", courseInfo.getFdAuthor()); 

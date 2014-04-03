@@ -2,8 +2,13 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib prefix="tags" tagdir="/WEB-INF/tags"%>
     	<ul class="nav nav-list sidenav" id="sideNav">
-    	
-                <li class="nav-header first"><a href="${ctx}/studyTrack/getStudyTrackDirector">学习跟踪<b class="caret"></b></a></li>
+    			<c:if test="${param.fdType=='18'}">
+                <li class="nav-header first active">
+                </c:if>
+                <c:if test="${param.fdType!='18'}">
+	            <li class="nav-header first">
+	            </c:if>
+                <a href="${ctx}/studyTrack/getStudyTrackDirector?fdType=18">学习跟踪<b class="caret"></b></a></li>
                 
                 
 	            <c:if test="${param.fdType=='13'}">

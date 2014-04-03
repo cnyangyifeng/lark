@@ -7,9 +7,10 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-<title>企业在线教师学习平台</title>
+<title>新东方在线教师备课平台</title>
 <link href="${ctx}/resources/css/global.min.css" rel="stylesheet" type="text/css">
 <link href="${ctx}/resources/css/iAmMentor.css" rel="stylesheet" type="text/css">
+<link href="${ctx}/resources/css/DTotal.css" rel="stylesheet" type="text/css">
 <!--[if lt IE 9]>
 <script src="js/html5.js"></script>
 <![endif]-->
@@ -19,7 +20,10 @@
 <body>
 <section class="container">	
 		<div class="clearfix mt20">
-	        <div class="pull-right w760">
+			<div class="col-left pull-left">
+				<%@ include file="/WEB-INF/views/group/menu.jsp" %>
+			</div>
+	        <div class="pull-right w790">
                 <div class="page-header" data-spy="affix" data-offset-top="20">
                     <span class="muted">我正在看：</span>学习跟踪 - <span id="selectMessage">我授权的课程学习情况</span>
                     <div class="pos-r">
@@ -39,17 +43,7 @@
 			</c:import>
 
 			</div>
-			<div class="pull-left w225">
-
-			<%-- <!-- 用户页面 -->
-			<c:import url="/WEB-INF/views/studyTrack/divuserimg.jsp">
-			</c:import> --%>
 			
-			<!-- 图片列表页面 -->
-			<c:import url="/WEB-INF/views/studyTrack/divimglist.jsp">
-				<c:param name="type" value="director"></c:param>
-			</c:import>
-	        </div>
         </div>
 </section>
 <script type="text/javascript">

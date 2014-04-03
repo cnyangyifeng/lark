@@ -102,6 +102,7 @@ public class MaterialAttMainService extends SimpleService implements ISourceServ
                 listm.put("isPass", minfo.getThrough());//素材描述
                 listm.put("txt", minfo.getRichContent());//富文本内容
                 String fdLink = minfo.getFdLink();
+                String fdType=minfo.getFdType();
             	if (attMain != null) {
                     listm.put("url", attMain.getFdId());//附件id
                 }
@@ -114,9 +115,22 @@ public class MaterialAttMainService extends SimpleService implements ISourceServ
                     //////////////富文本 素材的 富文本
                     defaultMedia.put("txt", minfo.getRichContent());//富文本内容
                     if(StringUtil.isNotBlank(fdLink)){
-                    	String fd[] = fdLink.split("\\?vid=");
-                        String link = fd[1].split("&")[0];
-                        defaultMedia.put("code", getFdLinkMap(link));//播放地址
+                     	if("01".equals(fdType)||"02".equals(fdType)){
+                    		//播放
+	                    	String fd[] = fdLink.split("\\?vid=");
+	                        String link = fd[1].split("&")[0];
+	                        defaultMedia.put("code", getFdLinkMap(link));//视频播放地址
+                        }
+                    	if("04".equals(fdType)||"05".equals(fdType)){
+                    		//播放
+	                    	String fileNetId = minfo.getMfileNetId();
+	                        String fileNetName =minfo.getMfileNetName();
+	                        Map<String, String> map1 = new HashMap<String, String>();
+	                        map1.put("type", "doc");
+	                        map1.put("fileNetId", fileNetId);
+	                        map1.put("fName", fileNetName);
+	                        defaultMedia.put("code",map1);//文档播放地址
+                    	}
                     }else {
                     	if (attMain != null) {
                             defaultMedia.put("code",  attMain.getCode());
@@ -124,13 +138,30 @@ public class MaterialAttMainService extends SimpleService implements ISourceServ
                         	defaultMedia.put("code",  "");
                         }
                     }
-                    if (attMain != null) {
-                    	defaultMedia.put("url", attMain.getFdId());//附件id
-                    	defaultMedia.put("fileNetId", attMain.getFileNetId());//FileNetId
-                    }else{
-                    	defaultMedia.put("fileNetId", "");//FileNetId
+                                        //下载,如果从fdlink中获得下载所需数据,与附件对比,若相同,取其一,若不同,优先取fdlink的
+                    if(minfo.getMfileNetId()!=null){
+                        defaultMedia.put("fileNetId", minfo.getMfileNetId());
+	                    defaultMedia.put("fileNetName", minfo.getMfileNetName());
                     	defaultMedia.put("url", "");//附件id
+                    }else{
+                    	  if (attMain != null) {
+                          	defaultMedia.put("url", attMain.getFdId());//附件id 可通过附件id查找filenetname 故不赋值
+                          	defaultMedia.put("fileNetId", attMain.getFileNetId());//FileNetId
+                          	defaultMedia.put("fileNetName", "");
+                          }else{
+                        	defaultMedia.put("fileNetId", "");//FileNetId
+                          	defaultMedia.put("fileNetName", "");
+                          	defaultMedia.put("url", "");//附件id
+                          }
+                    	
                     }
+//                    if (attMain != null) {
+//                    	defaultMedia.put("url", attMain.getFdId());//附件id
+//                    	defaultMedia.put("fileNetId", attMain.getFileNetId());//FileNetId
+//                    }else{
+//                    	defaultMedia.put("fileNetId", "");//FileNetId
+//                    	defaultMedia.put("url", "");//附件id
+//                    }
                     defaultMedia.put("isPass", minfo.getThrough());
                     ///////////////////////////////////
                     Map scorem = new HashMap();
@@ -154,9 +185,20 @@ public class MaterialAttMainService extends SimpleService implements ISourceServ
                     defaultMedia.put("intro", minfo.getFdDescription());//素材描述
                     defaultMedia.put("txt", minfo.getRichContent());//富文本内容
                     if(StringUtil.isNotBlank(fdLink)){
-                    	String fd[] = fdLink.split("\\?vid=");
-                        String link = fd[1].split("&")[0];
-                        defaultMedia.put("code", getFdLinkMap(link));//播放地址
+                    	if("01".equals(fdType)||"02".equals(fdType)){
+	                    	String fd[] = fdLink.split("\\?vid=");
+	                        String link = fd[1].split("&")[0];
+	                        defaultMedia.put("code", getFdLinkMap(link));//播放地址
+                    	}
+                    	if("04".equals(fdType)||"05".equals(fdType)){
+	                    	String fileNetId = minfo.getMfileNetId();
+	                        String fileNetName =minfo.getMfileNetName();
+	                        Map<String, String> map1 = new HashMap<String, String>();
+	                        map1.put("type", "doc");
+	                        map1.put("fileNetId", fileNetId);
+	                        map1.put("fName", fileNetName);
+	                        defaultMedia.put("code",map1);//文档播放地址
+                    	}
                     }else {
                        if (attMain != null) {
                            defaultMedia.put("code",  attMain.getCode());
@@ -164,12 +206,22 @@ public class MaterialAttMainService extends SimpleService implements ISourceServ
                        	defaultMedia.put("code",  "");
                        }
                     }
-                    if (attMain != null) {
-                    	defaultMedia.put("url", attMain.getFdId());//附件id
-                    	defaultMedia.put("fileNetId", attMain.getFileNetId());//FileNetId
-                    }else{
-                    	defaultMedia.put("fileNetId", "");//FileNetId
+                  //下载,如果从fdlink中获得下载所需数据,与附件对比,若相同,取其一,若不同,优先取fdlink的
+                    if(minfo.getMfileNetId()!=null){
+                        defaultMedia.put("fileNetId", minfo.getMfileNetId());
+	                    defaultMedia.put("fileNetName", minfo.getMfileNetName());
                     	defaultMedia.put("url", "");//附件id
+                    }else{
+                    	  if (attMain != null) {
+                          	defaultMedia.put("url", attMain.getFdId());//附件id 可通过附件id查找filenetname 故不赋值
+                          	defaultMedia.put("fileNetId", attMain.getFileNetId());//FileNetId
+                          	defaultMedia.put("fileNetName", "");
+                          }else{
+                        	defaultMedia.put("fileNetId", "");//FileNetId
+                          	defaultMedia.put("fileNetName", "");
+                          	defaultMedia.put("url", "");//附件id
+                          }
+                    	
                     }
                     defaultMedia.put("isPass", minfo.getThrough());
                     Map memap = new HashMap();
@@ -184,9 +236,20 @@ public class MaterialAttMainService extends SimpleService implements ISourceServ
                     defaultMedia.put("intro", minfo.getFdDescription());//素材描述
                     defaultMedia.put("txt", minfo.getRichContent());//富文本内容
                     if(StringUtil.isNotBlank(fdLink)){
-                    	String fd[] = fdLink.split("\\?vid=");
-                        String link = fd[1].split("&")[0];
-                        defaultMedia.put("code", getFdLinkMap(link));//播放地址
+                                        	if("01".equals(fdType)||"02".equals(fdType)){
+	                    	String fd[] = fdLink.split("\\?vid=");
+	                        String link = fd[1].split("&")[0];
+	                        defaultMedia.put("code", getFdLinkMap(link));//播放地址
+                    	}
+                    	if("04".equals(fdType)||"05".equals(fdType)){
+	                    	String fileNetId = minfo.getMfileNetId();
+	                        String fileNetName =minfo.getMfileNetName();
+	                        Map<String, String> map1 = new HashMap<String, String>();
+	                        map1.put("type", "doc");
+	                        map1.put("fileNetId", fileNetId);
+	                        map1.put("fName", fileNetName);
+	                        defaultMedia.put("code",map1);//文档播放地址
+                    	}
                     }else {
                        if (attMain != null) {
                     	   defaultMedia.put("code", attMain.getCode());
@@ -194,12 +257,22 @@ public class MaterialAttMainService extends SimpleService implements ISourceServ
                        	defaultMedia.put("code",  "");
                        }
                     }
-                    if (attMain != null) {
-                    	defaultMedia.put("url", attMain.getFdId());//附件id
-                    	defaultMedia.put("fileNetId", attMain.getFileNetId());//FileNetId
-                    }else{
-                    	defaultMedia.put("fileNetId", "");//FileNetId
+                    //下载,如果从fdlink中获得下载所需数据,与附件对比,若相同,取其一,若不同,优先取fdlink的
+                    if(minfo.getMfileNetId()!=null){
+                        defaultMedia.put("fileNetId", minfo.getMfileNetId());
+	                    defaultMedia.put("fileNetName", minfo.getMfileNetName());
                     	defaultMedia.put("url", "");//附件id
+                    }else{
+                    	  if (attMain != null) {
+                          	defaultMedia.put("url", attMain.getFdId());//附件id 可通过附件id查找filenetname 故不赋值
+                          	defaultMedia.put("fileNetId", attMain.getFileNetId());//FileNetId
+                          	defaultMedia.put("fileNetName", "");
+                          }else{
+                        	defaultMedia.put("fileNetId", "");//FileNetId
+                          	defaultMedia.put("fileNetName", "");
+                          	defaultMedia.put("url", "");//附件id
+                          }
+                    	
                     }
                     defaultMedia.put("isPass", minfo.getThrough());
                     Map memap = new HashMap();

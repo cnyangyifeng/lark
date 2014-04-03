@@ -134,9 +134,23 @@
 								</j:then>
 								<j:else>
 									<input value="${main.fileUrl}" placeholder="此处为系统自动生成的视频播放地址，请勿手动填写。"
-                                       id="videoUrl" class="input-block-level" name="fdLink" type="text">
+                                      id="videoUrl" class="span6" name="fdLink" type="text">
 								</j:else>
 							</j:ifelse>
+                            </div>
+                        </div>
+                         <div class="control-group" id="foroutmaterId">
+                            <label class="control-label" for="fileNetId">素材标识</label>
+                            <div class="controls">
+									<input value="${materialInfo.mfileNetId}" placeholder="请填写其他素材库素材标识。"
+                                       id="fileNetId" class="span6" name="fileNetId" type="text">
+                            </div>
+                        </div>
+                        <div class="control-group" id="foroutmaterName">
+                            <label class="control-label" for="fileNetName">素材名称</label>
+                            <div class="controls">
+									<input value="${materialInfo.mfileNetName}" placeholder="请填写其他素材库素材名称。"
+                                       id="fileNetName" class="span6" name="fileNetName" type="text">
                             </div>
                         </div>
                         <div class="control-group">
@@ -362,9 +376,19 @@ function deleteMaterial(){
 function downloadMater(){
   var attId = $("#fdattId").val();
   var main = '${main.fileNetId}';
-  if(attId!=null&&attId!="" && main!=null&&main!=""){
+    if($("#fileNetId").val()==$("#fileNetId").attr("placeholder")){
+		$("#fileNetId").val("");
+	}
+	if($("#fileNetName").val()==$("#fileNetName").attr("placeholder")){
+		$("#fileNetName").val("");
+	}
+  var fileNetId= $("#fileNetId").val();;
+  var fileNetName= $("#fileNetName").val();;
+  if(fileNetId!=null&&fileNetId!="" && fileNetName!=null&&fileNetName!=""){
+	  window.location.href="${ctx}/common/file/download/"+fileNetId+"?fileNetName="+fileNetName;
+  }else if(attId!=null&&attId!="" && main!=null&&main!=""){
 	  window.location.href="${ctx}/common/file/download/"+attId;
-  } else {
+  }else {
 	  jalert("您好！该素材没有对应附件");
   } 
 }
@@ -376,6 +400,8 @@ $(function(){
 	switch($("#fdType").val()){
   	case "01":
   		$("#materialIntro").html("视频简介");
+  		// $("#foroutmaterId").remove();
+  		// $("#foroutmaterName").remove();
   		$("#back").html("返回视频列表");
   		$("#typeTxt").html("视&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;频");
   		data_uploadIntro = "上传视频（支持绝大多数主流视频格式，建议小于10G）：成功上传的视频将会显示在下面视频列表中。";
@@ -384,6 +410,8 @@ $(function(){
   		break;
     case "02":
     	$("#materialIntro").html("音频简介");
+    	//$("#foroutmaterId").remove();
+  		//$("#foroutmaterName").remove();
     	$("#back").html("返回音频列表");
     	$("#typeTxt").html("音&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;频");
     	data_uploadIntro = "上传音频（支持MP3、MV格式的音频，建议小于10G）：成功上传的音频将会显示在下面的音频列表中。";
@@ -685,6 +713,60 @@ function saveMaterial(){
 	if($("#videoUrl").val()!=$("#videoUrl").attr("placeholder")){
 		vUrl = $("#videoUrl").val();
 	}
+		/*start 如果filenetid或name为空,或者值为placeholder的值则置为空*/
+	if($("#fileNetId").val()==$("#fileNetId").attr("placeholder")){
+		$("#fileNetId").val("");
+	}
+	if($("#fileNetName").val()==$("#fileNetName").attr("placeholder")){
+		$("#fileNetName").val("");
+	}
+	/* end */
+	if($("#fileNetName").val()!=""&&$("#fileNetName").val()!=$("#fileNetName").attr("placeholder")){
+		if($("#fileNetName").val().indexOf(".")<0){
+			jalert("请给素材名称添加文件扩展名,如:文件名.doc,文件名.pdf,文件名.rmvb...");
+			return ;
+		}
+		if($("#fdType").val()=="04"||$("#fdType").val()=="05"){
+			var doctype="doc.docx.xls.xlsx.pdf.ppt.pptx.pps.ppsx";
+			var currtype=$("#fileNetName").val().split(".")[1];
+			if(doctype.indexOf(currtype.toLowerCase())<0){
+				jalert("当前文件类型不是文档类型");
+				return;
+			}
+		}
+		if($("#fdType").val()=="01"||$("#fdType").val()=="02"){
+			var pptype="*.wmv;*.wm;*.asf;*.asx;*.rm;*.rmvb;*.ra;*.ram;*.mpg;*.mpeg;*.mpe;*.vob;*.dat;*.mov;*.3gp;*.mp4;*.mp4v;*.m4v;*.mkv;*.avi;*.flv;*.f4v;*.mts;*.mp3;*.mv";
+			var currtype=$("#fileNetName").val().split(".")[1];
+			if(pptype.indexOf(currtype.toLowerCase())<0){
+				jalert("当前文件类型不是视频音频文件");
+				return;
+			}
+		}
+		
+	}
+	/* start  如果filenetid不为空,filenetname不为空 */
+		if($("#fileNetId").val()!=""||$("#fileNetName").val()!=""){
+			//文档,根据filenetid和文档名称生成播放路径
+			if($("#fdType").val()=="05"||$("#fdType").val()=="04"){
+				vUrl="http://me.xdf.cn/iportal/sys/attachment/sys_att_swf/viewer.do;jsessionid=ubFBr_W9GMSBzUvrtu3cqdX?method=viewerOtp&fdId=" + $("#fileNetId").val() + "&seq=0&type=otp&fileName=" +  $("#fileNetName").val() + "";
+			}
+			//视频,根据filenetid和filenetname不为空,则该视频为其他平台素材,vUrl必须输入播放路径
+			if($("#fdType").val()=="01"||$("#fdType").val()=="02"){
+				if(vUrl==""){
+					jalert("请输入与素材对应的播放路径!");
+					return;
+				}
+			}
+		}else{
+			/*如果filenetid和filenetname为空, 说明该素材来自ntp自身系统*/
+			/*文档,需清除fdlink数据*/
+			 vUrl="";
+			/*视频,以上条件为空有两种情况,
+			1是添加时就为空,2是手动删除,
+			这两种条件下第一种条件在二次编辑时会带入附件中的播放地址,
+			第二种条件下二次编辑时播放路径为第一次手动输入值*/
+		}
+	/* end */
 	
     var data = {
         videoName: $("#videoName").val(),
@@ -697,6 +779,8 @@ function saveMaterial(){
         fdType:$("#fdType").val(),
         attId:$("#attId").val(),
         isDownload:$("#isDownload").val(),
+        fileNetId:$("#fileNetId").val(),
+        fileNetName:$("#fileNetName").val(),
         kingUser: null
     };
     if(data.permission === "encrypt"){

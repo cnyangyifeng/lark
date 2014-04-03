@@ -218,6 +218,33 @@ public class Constant {
 	public static final String DB_INSERT = "03";
 	
 	
+	/**
+	 * 布尔类型变量取值：
+	 * Y表示YES
+	 */
+	public static final String BOOLEAN_YES = "true";
 	
+	/**
+	 * 布尔类型变量取值：
+	 * N表示NO
+	 */
+	public static final String BOOLEAN_NO = "false";
+	/**
+	 * 皮肤类型：
+	 * 01课程皮肤
+	 */
+	public static final String SKIN_TYPE_COURSE = "01";
+	
+	/**
+	 * 皮肤类型：
+	 * 02系列课程皮肤
+	 */
+	public static final String SKIN_TYPE_SERIES = "02";
+	
+	/**
+	 * 皮肤类型：
+	 * 03个人主页皮肤
+	 */
+	public static final String SKIN_TYPE_PROFILE = "03";
 	
 }

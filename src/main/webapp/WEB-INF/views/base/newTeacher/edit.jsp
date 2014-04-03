@@ -18,29 +18,33 @@ $(document).ready(function(){
 	$.Placeholder.init();
 	var id = $("#sysParOrgId").val();
 	var depId = $("#deptId").val();
-	$.ajax({
-		type : "post",
-		url : "${ctx}/ajax/register/getDeparts",
-		data : {
-			"id" : id
-		},
-		success : function(msg) {
-			msg = msg.substr(1, msg.length - 2);
-			document.getElementById("department").innerHTML = "";
-			var ss = msg.split("=");
-			var html = "";
-			for ( var i = 0; i < (ss.length - 1); i++) {
-				var s1 = ss[i].split(":");
-				if(s1[0]==depId){
-					html += "<option value="+s1[0]+" selected "+" >" + s1[1] + "</option>";
-				}else{
-					html += "<option value="+s1[0]+">" + s1[1] + "</option>";
+	if("${person.fdIsEmp}"=="0"){
+		
+		$.ajax({
+			type : "post",
+			url : "${ctx}/ajax/register/getDeparts",
+			data : {
+				"id" : id
+			},
+			success : function(msg) {
+				msg = msg.substr(1, msg.length - 2);
+				document.getElementById("department").innerHTML = "";
+				var ss = msg.split("=");
+				var html = "";
+				for ( var i = 0; i < (ss.length - 1); i++) {
+					var s1 = ss[i].split(":");
+					if(s1[0]==depId){
+						html += "<option value="+s1[0]+" selected "+" >" + s1[1] + "</option>";
+					}else{
+						html += "<option value="+s1[0]+">" + s1[1] + "</option>";
+					}
+					
 				}
-				
+				$("#department").append(html);
 			}
-			$("#department").append(html);
-		}
-	});
+		});
+	
+	}
 });
 
 //清楚警告显示

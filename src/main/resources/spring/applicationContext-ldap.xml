@@ -9,6 +9,22 @@
         <property name="base" value="dc=xdf,dc=cn"/>
         <property name="userDn" value="cn=root"/>
         <property name="password" value="filenet"/>
+         <property name="referral" value="follow"/>
+        <property name="baseEnvironmentProperties">
+            <map>
+                <!-- Three seconds is an eternity to users. -->
+                <entry key="com.sun.jndi.ldap.connect.timeout" value="3000" />
+                <entry key="com.sun.jndi.ldap.read.timeout" value="3000" />
+                <entry key="com.sun.jndi.ldap.connect.pool" value="true"/>
+
+                <entry key="com.sun.jndi.ldap.connect.pool" value="true"/>
+                <entry key="com.sun.jndi.ldap.connect.pool.initsize" value="1"/>
+                <entry key="com.sun.jndi.ldap.connect.pool.maxsize" value="20"/>
+
+                <!-- Explained at http://docs.oracle.com/javase/jndi/tutorial/ldap/security/auth.html -->
+                <entry key="java.naming.security.authentication" value="simple" />
+            </map>
+        </property>
     </bean>
 
     <bean id="ldapTemplate" class="org.springframework.ldap.core.LdapTemplate">

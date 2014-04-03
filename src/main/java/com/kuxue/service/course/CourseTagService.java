@@ -6,6 +6,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.kuxue.common.hibernate4.Finder;
+import com.kuxue.common.page.Pagination;
+import com.kuxue.common.page.SimplePage;
 import com.kuxue.model.course.CourseTag;
 import com.kuxue.model.course.TagInfo;
 import com.kuxue.service.BaseService;
@@ -71,5 +73,34 @@ public class CourseTagService extends BaseService{
 				super.deleteEntity(tag);
 			}
 		}
+	}
+	
+	/**
+	 * 根据标签id删除课程与标签的关系
+	 * @param courseId 课程ID
+	 */
+	@Transactional(readOnly = false)
+	public void deleteByTagId(String TagId) {
+		Finder finder = Finder
+				.create(" from CourseTag courseTag where  courseTag.tag.fdId=:tagId");	
+		finder.setParam("tagId", TagId);
+		List<CourseTag> list = super.find(finder);
+		if(list!=null && list.size()>0){
+			for(CourseTag tag:list){
+				super.deleteEntity(tag);
+			}
+		}
+	}
+	
+	/**
+	 * 根据标签查询课程
+	 */
+	public Pagination findCourseByTag(String tagId, String key, int pageNo) {
+		Finder finder = Finder.create("from CourseTag courseTag ");
+		finder.append("where courseTag.tag.fdId =:fdId and courseTag.courses.fdTitle like:key");
+		finder.setParam("fdId", tagId);
+		finder.setParam("key", '%' + key + '%');
+		Pagination pagination = getPage(finder, pageNo, SimplePage.DEF_COUNT);
+		return pagination;
 	}
 }

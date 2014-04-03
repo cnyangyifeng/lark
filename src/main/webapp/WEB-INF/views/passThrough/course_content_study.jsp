@@ -11,9 +11,9 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <title>企业在线教师学习平台</title>
-<link href="${ctx}/resources/theme/default/css/global.min.css" rel="stylesheet" type="text/css">
-<link href="${ctx}/resources/theme/default/css/layout.css" rel="stylesheet" type="text/css">
-<link href="${ctx}/resources/theme/default/css/webimOfSide.min.css" rel="stylesheet" type="text/css">
+<link href="${ctx}/resources${skinPath}/css/global.min.css" rel="stylesheet" type="text/css">
+<link href="${ctx}/resources${skinPath}/css/layout.css" rel="stylesheet" type="text/css">
+<link href="${ctx}/resources${skinPath}/css/webimOfSide.min.css" rel="stylesheet" type="text/css">
 <!--[if lt IE 9]>
 <script src="js/html5.js"></script>
 <![endif]-->
@@ -492,7 +492,7 @@
                     <div class="mediaToolbar" id="mediaToolbar" data-fdid="{{=param.id}}">
                         <div class="btn-group">
                             <a id="btnPraise"  converStatus="" title="赞"  class="btn btn-link{{?!param.mePraised}} active {{?}}"  href="javascript:void(0)"  praisedstatus="{{=param.mePraised}}" ><i class="icon-heart-blue"></i><span class="num">{{=param.praiseCount || 0 }}</span></a>
-                           <a id="btnDownload" data-fileNetId="{{=param.fileNetId}}" title="{{?param.canDownload}}点击{{??}}无权{{?}}下载" canDownload="{{=param.canDownload}}"  class="btn btn-link {{?param.canDownload}}active{{?}}" {{?param.canDownload}}href="javascript:void(0)" data-fdid="{{=param.url}}" {{??}} disabled{{?}}><i class="icon-download-blue"></i><span class="num" id="sdowncount">{{=param.downloadCount || 0 }}</span></a>
+                           <a id="btnDownload" data-fileNetId="{{=param.fileNetId}}" data-fileNetName="{{=param.fileNetName}}" title="{{?param.canDownload}}点击{{??}}无权{{?}}下载" canDownload="{{=param.canDownload}}"  class="btn btn-link {{?param.canDownload}}active{{?}}" {{?param.canDownload}}href="javascript:void(0)" data-fdid="{{=param.url}}" {{??}} disabled{{?}}><i class="icon-download-blue"></i><span class="num" id="sdowncount">{{=param.downloadCount || 0 }}</span></a>
                         </div>
                         <span class="playCount">{{?it.type == 'video'}}播放{{??}}阅读{{?}}  <strong class="num">{{=param.readCount || 0 }}</strong>  次</span>
                       <button id="btnDoPass" class="btn btn-success"{{?param.isPass}} disabled{{?}} converStatus=""><i class="icon-right"></i>我学会了</button>
@@ -1642,6 +1642,8 @@ function downloadMater(attId,fileNetId){
 			  	              $mediaToolbar.find(".playCount>.num").text(mdata.readCount);
 			  	              $("#mediaToolbar").attr("data-fdid",mdata.id);
 			  	              $("#btnDownload").attr("data-fdid",mdata.url);
+			  	              $("#btnDownload").attr("data-fileNetName",mdata.fileNetName);
+			  	           	  $("#btnDownload").attr("data-fileNetId",mdata.fileNetId);
 			  	              $("#btnDownload").attr("canDownload",mdata.canDownload);
 			  	              $("#btnPraise").attr("praisedstatus",mdata.mePraised);
 			  	              $("#mediaName").text($this.attr("title"));
@@ -1748,21 +1750,23 @@ function downloadMater(attId,fileNetId){
                     return;
                 } else {
                     //$.post("url",{id: $mediaToolbar.attr("data-fdid")});
-                	 if($(this).attr("data-fileNetId")!='null'&&$(this).attr("data-fileNetId")!=null&&$(this).attr("data-fileNetId")!=''
-                			 &&$this.attr("data-fdid")!=null&&$this.attr("data-fdid")!=""){
-                		 $.ajax({
-                  			type: "post",
-                  			url: "${ctx}/ajax/material/updateDownloadNum",
-                  			data : {
-                  				"materialId":$mediaToolbar.attr("data-fdid")
-                  			},
-                  			success:function(data){
-                  				 window.location.href="${ctx}/common/file/download/"+$this.attr("data-fdid");
-                  				 $("#btnDownload").find("span").html(data);
-                  			}
-                  		}); 
-                     	 
-                       } else {
+                	 if($(this).attr("data-fileNetId")!='null'&&$(this).attr("data-fileNetId")!=null&&$(this).attr("data-fileNetId")!=null&&$(this).attr("data-fileNetName")!=''){
+                		//如果是从filenet下载,则不累计入下载次数
+                			window.location.href="${ctx}/common/file/download/"+$(this).attr("data-fileNetId")+"?fileNetName="+$(this).attr("data-fileNetName");
+                       } else if($this.attr("data-fdid")!=null&&$this.attr("data-fdid")!=""){
+                    	   $.ajax({
+                     			type: "post",
+                     			url: "${ctx}/ajax/material/updateDownloadNum",
+                     			data : {
+                     				"materialId":$mediaToolbar.attr("data-fdid")
+                     			},
+                     			success:function(data){
+                     				
+                     				 window.location.href="${ctx}/common/file/download/"+$this.attr("data-fdid");
+                     				 $("#btnDownload").find("span").html(data);
+                     			}
+                     		}); 
+                       }else{
                      	  jalert("您好！该视频没有对应附件");
                        } 
                 }

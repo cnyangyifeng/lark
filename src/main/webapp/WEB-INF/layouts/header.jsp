@@ -29,10 +29,10 @@ request.setAttribute("path", path[path.length-1]);
 	          </shiro:hasRole>
 	          
 	          <shiro:hasRole name="guidance">
-	          	<tags:navigation paths="<%=paths%>" id="unCheckFlag" checkString="/studyTrack/getStudyTrackTutor:/adviser" showString="我是导师" url="${ctx}/adviser/checkTask?order=fdcreatetime"></tags:navigation>
+	          	<tags:navigation paths="<%=paths%>" id="unCheckFlag" checkString="/studyTrack/getStudyTrackTutor:/adviser" showString="我是导师" url="${ctx}/adviser/checkTask?fdType=01&order=fdcreatetime"></tags:navigation>
 	          </shiro:hasRole>
 	          <shiro:hasRole name="group">
-	         	<tags:navigation paths="<%=paths%>" checkString="/studyTrack/getStudyTrackDirector:/material/find:/material/materialFoward:/course/find:/course/add:/series/find:/series/add:/course/get" showString="我是主管" url="${ctx}/studyTrack/getStudyTrackDirector"></tags:navigation>
+	         	<tags:navigation paths="<%=paths%>" checkString="/studyTrack/getStudyTrackDirector:/material/find:/material/materialFoward:/course/find:/course/add:/series/find:/series/add:/course/get" showString="我是主管" url="${ctx}/studyTrack/getStudyTrackDirector?fdType=18"></tags:navigation>
 	          </shiro:hasRole>
 	          <% if(user!=null){ %>
 	         	 <tags:navigation paths="<%=paths%>" checkString="/course/courseIndex:/passThrough:/successPage:series/studayfoward" showString="个人主页" url="${ctx}/course/courseIndex"></tags:navigation>

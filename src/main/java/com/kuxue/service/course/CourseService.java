@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 
 import jodd.util.StringUtil;
 
@@ -17,12 +18,17 @@ import org.springframework.transaction.annotation.Transactional;
 import com.kuxue.common.hibernate4.Finder;
 import com.kuxue.common.page.Pagination;
 import com.kuxue.common.page.SimplePage;
+import com.kuxue.model.base.AttMain;
 import com.kuxue.model.base.Constant;
 import com.kuxue.model.course.CourseAuth;
 import com.kuxue.model.course.CourseInfo;
 import com.kuxue.model.course.CourseParticipateAuth;
 import com.kuxue.model.organization.SysOrgPerson;
 import com.kuxue.model.organization.User;
+import com.kuxue.model.system.PictureLibrary;
+import com.kuxue.service.BaseService;
+import com.kuxue.service.base.AttMainService;
+import com.kuxue.service.system.CoursePictureService;
 import com.kuxue.service.BaseService;
 import com.kuxue.utils.ShiroUtils;
 import com.kuxue.view.model.VCourseAuth;
@@ -45,6 +51,12 @@ public class CourseService  extends BaseService{
 	@Autowired
 	private CourseAuthService courseAuthService;
 	
+	@Autowired
+	private CoursePictureService coursePictureService;
+	
+	@Autowired
+	private AttMainService attMainService;
+		
 	@SuppressWarnings("unchecked")
 	@Override
 	public  Class<CourseInfo> getEntityClass() {
@@ -279,5 +291,26 @@ public class CourseService  extends BaseService{
 		finder.append(" order by c.fdCreateTime ");
 		return (List<CourseInfo>)getPage(finder, 1,10).getList();
 	}
+	/**
+	 * 根据课程ID，查找课程的封面
+	 * @param courseId 课程ID
+	 * @return String 封面图片的附件ID
+	 */
+	public String getCoursePicture(String courseId){
+		String coursePictureId = coursePictureService.getPicuterIdByCourseId(courseId);
+		if(StringUtil.isNotBlank(coursePictureId)){
+			AttMain attMain = attMainService.getByModelIdAndModelName(coursePictureId,PictureLibrary.class.getName());
+			if(attMain!=null){
+				return attMain.getFdId();
+			}
+		}else{
+			AttMain attMain = attMainService.getByModelIdAndModelName(courseId, CourseInfo.class.getName());
+			if(attMain!=null){
+				return attMain.getFdId();
+			}
+		}
+		return "";
+	}
+	
 	
 }

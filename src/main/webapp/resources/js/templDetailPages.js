@@ -748,15 +748,42 @@
 					  }else{
 						  data.coverUrl =  $('#ctx').val()+"/common/file/image/"+rsult.coverUrl;
 					  }
-					  data.courseSkinList = [
-					                {title: "默认皮肤", imgUrl:  $('#ctx').val()+"/resources/images/courseSkin-default.png"},
-					     			{title: "国外考试", imgUrl:  $('#ctx').val()+"/resources/images/courseSkin-01.png"},
-					    			{title: "国内考试", imgUrl:  $('#ctx').val()+"/resources/images/courseSkin-02.png"},
-					    			{title: "英语学习", imgUrl:  $('#ctx').val()+"/resources/images/courseSkin-03.png"},
-					    			{title: "优能中学", imgUrl:  $('#ctx').val()+"/resources/images/courseSkin-05.png"},
-					    			{title: "泡泡少儿", imgUrl:  $('#ctx').val()+"/resources/images/courseSkin-04.png"}
-					    			];
-					  data.courseSkin= {title: "默认皮肤"};
+					  if(rsult.courseSkinList==""){
+						  data.courseSkinList = [
+									                {fdId:"1",title: "默认皮肤", imgUrl:  $('#ctx').val()+"/resources/images/courseSkin-default.png"},
+									     			{fdId:"2",title: "国外考试", imgUrl:  $('#ctx').val()+"/resources/images/courseSkin-01.png"},
+									    			{fdId:"3",title: "国内考试", imgUrl:  $('#ctx').val()+"/resources/images/courseSkin-02.png"},
+									    			{fdId:"4",title: "英语学习", imgUrl:  $('#ctx').val()+"/resources/images/courseSkin-03.png"},
+									    			{fdId:"5",title: "优能中学", imgUrl:  $('#ctx').val()+"/resources/images/courseSkin-05.png"},
+									    			{fdId:"6",title: "泡泡少儿", imgUrl:  $('#ctx').val()+"/resources/images/courseSkin-04.png"}
+									    			];
+						  data.courseSkinId= "1";
+					  }else{
+						  data.courseSkinList = [];
+						  for(var i=0;i<rsult.courseSkinList.length;i++){
+							  if((rsult.courseSkinList)[i].imgUrl!=''){
+								  data.courseSkinList.push({
+									  fdId: (rsult.courseSkinList)[i].fdId,
+									  title: (rsult.courseSkinList)[i].title,
+									  imgUrl: $('#ctx').val()+"/common/file/image/"+(rsult.courseSkinList)[i].imgUrl
+			                        });
+							  }else{
+								  data.courseSkinList.push({
+									  fdId: (rsult.courseSkinList)[i].fdId,
+									  title: (rsult.courseSkinList)[i].title,
+									  imgUrl:  $('#ctx').val()+"/resources/images/courseSkin-default.png"
+			                        });
+							  }
+							  
+							  
+						  }
+						  
+						  data.courseSkinId = rsult.courseSkinId;
+					  }
+					  
+					  data.coursePictureList = rsult.coursePictures;
+					  data.coursePictureId= rsult.coursePictureId;
+					  
 					  data.pageTitle = title;	// ajax 成功后删除
 					  $("#rightCont").html(promotionFn(data));// ajax 成功后删除
 				  },
@@ -778,14 +805,23 @@
 			// {title: "优能中学", imgUrl: "images/courseSkin-04.png"},
 			// {title: "优能小学", imgUrl: "images/courseSkin-05.png"}]
 			// }
-			data.pageTitle = title;	// ajax 成功后删除
-			$("#rightCont").html(promotionFn(data));// ajax 成功后删除
-					
-			// 选择课程皮肤事件
-			$("#formPromotion .courseSkinList>li>a").bind("click",function(e){
+			//data.pageTitle = title;	// ajax 成功后删除
+			//$("#rightCont").html(promotionFn(data));// ajax 成功后删除
+			
+			// 选择图片库事件
+			$("#formPromotion .coursePicture>li>a").bind("click",function(e){
 				e.preventDefault();
 				$(this).parent().addClass("active").siblings().removeClass("active");
-				$("#courseSkin").val($(this).next("h5").text());
+				$("#coursePicture").val($(this).attr("data-fdid"));
+				$("#attIdID").val("");
+				successSelectArea($(this).attr("data-img"));
+			});	
+			
+			// 选择课程皮肤事件
+			$("#formPromotion .courseSkin>li>a").bind("click",function(e){
+				e.preventDefault();
+				$(this).parent().addClass("active").siblings().removeClass("active");
+				$("#courseSkin").val($(this).attr("data-fdid"));
 			});		
 			/* 课程推广 封页图片上传 */
 			var $txt = $("#upMovie").prev(".txt"), 
@@ -818,6 +854,8 @@
 	                        	$pct.text("0%");
 	                            var objvalue = eval("(" + data + ")");
 	                            jQuery("#attIdID").val(objvalue.attId);
+	                            $("#coursePicture").val("");
+	                            $("#formPromotion .coursePicture>li").siblings().removeClass("active");
                                 $("#imgshow").hide();
                                 $(".cutimg-box").removeClass("hide");
                                 var preImg = $('#ctx').val()+'/common/file/image/' + objvalue.attId;

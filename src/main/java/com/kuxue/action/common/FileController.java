@@ -37,6 +37,7 @@ import com.kuxue.common.page.Pagination;
 import com.kuxue.common.page.SimplePage;
 import com.kuxue.common.upload.FileModel;
 import com.kuxue.common.upload.FileRepository;
+import com.kuxue.common.upload.UploadUtils;
 import com.kuxue.model.bam.BamCourse;
 import com.kuxue.model.base.AttMain;
 import com.kuxue.model.course.CourseInfo;
@@ -143,6 +144,11 @@ public class FileController {
 			ByteArrayOutputStream bos = AttMainPlugin.getDocByAttId(attMain);
 			dh.setInputStream(bos);
 			dh.setFileName(attMain.getFdFileName());
+		}else{
+			String fileNetName=request.getParameter("fileNetName");
+			ByteArrayOutputStream bos = AttMainPlugin.getDocByIdAndName(id, fileNetName);
+			dh.setInputStream(bos);
+			dh.setFileName(fileNetName);
 		}
 		return dh;
 	}

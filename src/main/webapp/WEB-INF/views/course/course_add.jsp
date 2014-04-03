@@ -342,17 +342,41 @@ value="{{=it.coverUrl || 'images/default-cover.png'}}" />
 
 							<input type="hidden"  name="attId" id="attIdID">
 					</div>		
-	       </div>		  
+	       </div>
+			<input type="hidden" id="coursePicture" name="coursePicture" value="{{=it.coursePictureId || ''}}" />
+			<div id="coursePicturediv">
+	   		{{?it.coursePictureList.totalCount>0}}
+			<div class="courseSkins">
+		   		 <label >封面图片库</label>
+				<div class="btn-group">
+				<button class="btn btn-primary btn-ctrl" type="button" {{?it.coursePictureList.pageNo<= 1}}disabled{{??}}onclick="pageNavClick({{=it.coursePictureList.pageNo - 1}})"{{?}}>
+					<i class="icon-chevron-left icon-white"></i>
+				</button>
+				<button class="btn btn-primary btn-ctrl" type="button" {{?it.coursePictureList.pageNo>= it.coursePictureList.pageCount}}disabled{{??}}onclick="pageNavClick({{=it.coursePictureList.pageNo + 1}})"{{?}}>
+					<i class="icon-chevron-right icon-white"></i>
+				</button>
+				</div>
+				
+				<ul class="nav courseSkinList clearfix coursePicture">
+					{{~ it.coursePictureList.pictureList :picture:index}}
+						 <li{{?picture.fdId == it.coursePictureId}} class="active"{{?}}><a 
+
+href="#" data-fdid="{{=picture.fdId}}" data-img="${ctx}/common/file/image/{{=picture.imgUrl}}"><img src="${ctx}/common/file/image/{{=picture.imgUrl}}" alt="{{=picture.title}}" /><i class="icon-right"></i></a><h5>{{=picture.title}}</h5></li>
+					{{~}}                    	                  
+				</ul>
+			</div>	
+			{{?}}
+		   </div>		  
 		   <div class="courseSkins">
 		   		 <label >课程皮肤</label>
-				<input type="hidden" id="courseSkin" name="courseSkin" value="{{=it.courseSkin.title || 
+				<input type="hidden" id="courseSkin" name="courseSkin" value="{{=it.courseSkinId ||  
 
 ''}}" />
-				<ul class="nav courseSkinList clearfix">
+			<ul class="nav courseSkinList clearfix courseSkin">
 					{{~ it.courseSkinList :skin:index}}
-						 <li{{?skin.title == it.courseSkin.title}} class="active"{{?}}><a 
+						 <li{{?skin.fdId == it.courseSkinId}} class="active"{{?}}><a 
 
-href="#"><img src="{{=skin.imgUrl}}" alt="{{=skin.title}}" /><i class="icon-right"></i></a><h5>{{=skin.title}}</h5></li>
+href="#" data-fdid="{{=skin.fdId}}"><img src="{{=skin.imgUrl}}" alt="{{=skin.title}}" /><i class="icon-right"></i></a><h5>{{=skin.title}}</h5></li>
 					{{~}}                    	                  
 				</ul>
 			</div>
@@ -1033,7 +1057,9 @@ function successSelectArea(imgSrc){
     function saveCoursePic(){
     	$.post('${ctx}/ajax/course/cover',{
 			courseId : $("#courseId").val(),
-			attId: $("#attIdID").val()
+			attId: $("#attIdID").val(),
+			courseSkin:$("#courseSkin").val(),
+			coursePicture:$("#coursePicture").val()
 			})
 		.success(function(){
        	   // urlRouter("accessRight");
@@ -1046,6 +1072,62 @@ function successSelectArea(imgSrc){
         var decimal = /^-?\d+(\.\d{1,2})?$/;  
         return this.optional(element) || (decimal.test(value));  
     }, $.validator.format("小数位数不能超过两位!"));
+
+    function pageNavClick(pageNo){
+		$.ajax({
+			  url: $('#ctx').val()+"/ajax/course/getPictures?courseId="+$('#courseId').val()+"&pageNo="+pageNo,
+			  async:false,
+			  dataType:'json',
+			  success: function(rsult){
+				  var strhtm = "";
+				  if(rsult.coursePictures.totalCount>0){
+					  
+					  strhtm += "<div class='courseSkins'>";
+					  strhtm += "<label >封面图片库</label>";
+					  strhtm += "<div class='btn-group'>";
+					  strhtm += "<button class='btn btn-primary btn-ctrl' type='button' ";
+					  if(parseInt(rsult.coursePictures.pageNo)<= 1){
+						  strhtm += "disabled";
+					  }else{
+						  strhtm += "onclick='pageNavClick("+(parseInt(rsult.coursePictures.pageNo) - 1)+")'";
+					  }
+					  strhtm += "> ";
+					  strhtm += " <i class='icon-chevron-left icon-white'></i> ";
+					  strhtm += "</button> ";
+					  strhtm += "<button class='btn btn-primary btn-ctrl' type='button' ";
+					  if(parseInt(rsult.coursePictures.pageNo)>= parseInt(rsult.coursePictures.pageCount)){
+						  strhtm += "disabled";
+					  }else{
+						  strhtm += "onclick='pageNavClick("+(parseInt(rsult.coursePictures.pageNo) + 1)+")'";
+					  }
+					  strhtm += "> ";
+					  strhtm += " <i class='icon-chevron-right icon-white'></i> ";
+					  strhtm += "</button> ";
+					  strhtm += "</div> ";
+					  strhtm += "<ul class='nav courseSkinList clearfix coursePicture'> ";
+					  for(var i=0;i<rsult.coursePictures.pictureList.length;i++){
+						  strhtm += "<li ";
+						  if((rsult.coursePictures.pictureList[i]).fdId==$("#coursePicture").val()){
+							  strhtm += " class='active' ";
+						  }
+						  strhtm += "> ";
+						  strhtm += "<a href='#' data-fdid='"+(rsult.coursePictures.pictureList[i]).fdId+"' data-img='${ctx}/common/file/image/"+(rsult.coursePictures.pictureList[i]).imgUrl+"'><img src='${ctx}/common/file/image/"+(rsult.coursePictures.pictureList[i]).imgUrl+"' alt='"+(rsult.coursePictures.pictureList[i]).title+"' /><i class='icon-right'></i></a><h5>"+(rsult.coursePictures.pictureList[i]).title+"</h5></li>";
+					  }
+					  strhtm += "</ul> ";
+					  strhtm += "</div>	 ";
+				  }
+				  $("#coursePicturediv").html(strhtm);
+				// 选择图片库事件
+					$("#formPromotion .coursePicture>li>a").bind("click",function(e){
+						e.preventDefault();
+						$(this).parent().addClass("active").siblings().removeClass("active");
+						$("#coursePicture").val($(this).attr("data-fdid"));
+						$("#attIdID").val("");
+						successSelectArea($(this).attr("data-img"));
+					});
+			  },
+		});
+	}
 </script>
 </body>
 </html>

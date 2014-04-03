@@ -323,6 +323,10 @@ public class MaterialAjaxController {
 		info.setFdName(request.getParameter("videoName"));
 		info.setFdDescription(request.getParameter("videoIntro"));
 		info.setRichContent(richText);
+		String fileNetId=request.getParameter("fileNetId");
+		String fileNetName=request.getParameter("fileNetName");
+		info.setMfileNetId(fileNetId);
+		info.setMfileNetName(fileNetName);
 		materialService.save(info);
 		if (!permission.equals("open")) {
 			materialService.saveMaterAuth(kingUser, info.getFdId(),info.getCreator().getFdId());

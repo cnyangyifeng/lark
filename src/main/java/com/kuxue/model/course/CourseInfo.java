@@ -29,6 +29,7 @@ import com.kuxue.model.base.IAttMain;
 import com.kuxue.model.base.IdEntity;
 import com.kuxue.model.material.MaterialAuth;
 import com.kuxue.model.organization.SysOrgPerson;
+import com.kuxue.model.system.CourseSkin;
 
 /**
  * 
@@ -91,7 +92,7 @@ public class CourseInfo extends IdEntity implements IAttMain{
 	/**
 	 * 课程皮肤
 	 */
-	private String fdSkin;
+	private CourseSkin fdSkin;
 	
 	/**
 	 * 是否公开
@@ -233,15 +234,16 @@ public class CourseInfo extends IdEntity implements IAttMain{
 		this.attMains = attMains;
 	}
 
-	public String getFdSkin() {
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "fdSkinId")
+	public CourseSkin getFdSkin() {
 		return fdSkin;
 	}
 
-	
-
-	public void setFdSkin(String fdSkin) {
+	public void setFdSkin(CourseSkin fdSkin) {
 		this.fdSkin = fdSkin;
 	}
+	
 	@org.hibernate.annotations.Type(type="yes_no")
 	public Boolean getIsPublish() {
 		return isPublish;

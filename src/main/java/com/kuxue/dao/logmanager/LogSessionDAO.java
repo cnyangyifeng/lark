@@ -69,7 +69,7 @@ public class LogSessionDAO extends HibernateSimpleDao implements SessionDAO  {
 	            throw new NullPointerException("id argument cannot be null.");
 	        }
 	        if(!online_sessions.contains(session)){
-	        	if(SecurityUtils.getSubject().isAuthenticated() && SecurityUtils.getSubject().getPrincipal()!=null){
+	        	if(ShiroUtils.getSubject()!=null && SecurityUtils.getSubject().isAuthenticated() && SecurityUtils.getSubject().getPrincipal()!=null){
 		        	online_sessions.add(session);
 		        	LogLogin logLogin = new LogLogin();
 		        	logLogin.setIp(session.getHost());

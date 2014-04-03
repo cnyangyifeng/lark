@@ -210,18 +210,18 @@
 #formAddTeacher{padding: 20px;margin: 0;}
 #formAddTeacher .input-block{margin-bottom: 0;padding: 19px 10px;width: 728px;display: block;}
 #formAddTeacher button.btn-primary {margin-top: 20px;}
-.listTeacher li{border-bottom: solid #e0e0e0 2px;margin-bottom:8px;background-color: #f9f9f9;padding: 0 20px;}
-.listTeacher li .hd{text-align: right;padding: 13px 0;border-bottom: dashed #e2e2e2 1px;}
-.listTeacher li .hd .remove{display: inline-block;width: 20px;height: 20px;font-size:18px;text-align: center;background-color: #95c3db;color: #ffffff}
-.listTeacher li .bd label.pull-left{margin-top: 47px;}
-.listTeacher li .bd .box{margin-top: -12px;}
-.listTeacher li .bd .box .span3{width: 250px;}
-.listTeacher li .bd .box .span2{width: 160px;}
-.listTeacher li .bd .box .span2 .divider{margin-top: 8px;}
-.listTeacher li .bd .box .type{text-align: center;}
-.listTeacher li .bd .box .type span,.listTeacher li .bd .box .time{background-color: #f9f9f9;}
-.listTeacher li .bd .box .type span{padding: 0 10px;}
-.listTeacher li .bd .box .time{font-size: 12px;color: #bbbbbb;text-align: center;}
-.listTeacher li .bd .box .span3 .person{margin: 20px 0 10px;height: 60px;}
-.listTeacher li .bd .box .span3 .person .pull-left{margin-top: 4px;margin-right: 10px;width: 36px;height: 36px;}
-.listTeacher li .bd .box .span3 .person .pull-left img{height: 36px;}
+#listTeacher .listTeacher li{border-bottom: solid #e0e0e0 2px;margin-bottom:8px;background-color: #f9f9f9;padding: 0 20px;}
+#listTeacher .listTeacher li .hd{text-align: right;padding: 13px 0;border-bottom: dashed #e2e2e2 1px;}
+#listTeacher .listTeacher li .hd .remove{display: inline-block;width: 20px;height: 20px;font-size:18px;text-align: center;background-color: #95c3db;color: #ffffff}
+#listTeacher .listTeacher li .bd label.pull-left{margin-top: 47px;}
+#listTeacher .listTeacher li .bd .box{margin-top: -12px;}
+#listTeacher .listTeacher li .bd .box .span3{width: 250px;}
+#listTeacher .listTeacher li .bd .box .span2{width: 160px;}
+#listTeacher .listTeacher li .bd .box .span2 .divider{margin-top: 8px;}
+#listTeacher .listTeacher li .bd .box .type{text-align: center;}
+#listTeacher .listTeacher li .bd .box .type span,.listTeacher li .bd .box .time{background-color: #f9f9f9;}
+#listTeacher .listTeacher li .bd .box .type span{padding: 0 10px;}
+#listTeacher .listTeacher li .bd .box .time{font-size: 12px;color: #bbbbbb;text-align: center;}
+#listTeacher .listTeacher li .bd .box .span3 .person{margin: 20px 0 10px;height: 60px;}
+#listTeacher .listTeacher li .bd .box .span3 .person .pull-left{margin-top: 4px;margin-right: 10px;width: 36px;height: 36px;}
+#listTeacher .listTeacher li .bd .box .span3 .person .pull-left img{height: 36px;}

@@ -6,6 +6,7 @@ import com.kuxue.common.utils.ByteFileObjectUtils;
 import com.kuxue.common.utils.sso.AES;
 import com.kuxue.common.utils.sso.AESX3;
 import com.kuxue.utils.DateUtil;
+import com.kuxue.utils.MD5Util;
 import jodd.io.FileNameUtil;
 import org.apache.commons.httpclient.NameValuePair;
 import org.apache.commons.httpclient.methods.multipart.ByteArrayPartSource;
@@ -80,12 +81,23 @@ public class DocInterfaceModel {
         this.fdFileName = attMain.getFdFileName();
         this.isConvert = isConvert;
     }
+/*
+     * filenet数据获取模型
+     */
+    public DocInterfaceModel(String fileNetId,String fileNetName, String method,String isConvert){
+    	 this.timeStrap = DateUtil.convertDateToString(new Date());
+         this.method = method;
+         this.attId = fileNetId;
+         this.fdFileName = fileNetName;
+         this.attName = fileNetName;
+         this.isConvert = isConvert;
+    }
 
 
     public Part[] getCCToAddModel() throws Exception {
 
-        String signText = (method + appId + appKey + timeStrap + title + modelName + docId + author + sysCode + isConvert).toLowerCase();
-        this.sign = AESX3.md5(signText); // 签名
+    	 String signText = (method +  sysCode + isConvert).toLowerCase();
+         this.sign = MD5Util.getMD5String(signText); // 签名
         File file = new File(filePath);
         //ByteArrayPartSource byteArrayPartSource = new ByteArrayPartSource(file.getName(), ByteFileObjectUtils.getBytesFromFile(file));
         FilePart2 fp = new FilePart2("file", file);

@@ -9,8 +9,8 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-<link href="${ctx}/resources/theme/default/css/global.min.css" rel="stylesheet" type="text/css">
-<link href="${ctx}/resources/theme/default/css/home_zht.min.css" rel="stylesheet" type="text/css">
+<link href="${ctx}/resources${course.fdSkin.fdSkinPath}/css/global.min.css" rel="stylesheet" type="text/css">
+<link href="${ctx}/resources${course.fdSkin.fdSkinPath}/css/home_zht.min.css" rel="stylesheet" type="text/css">
 <!--[if lt IE 9]>
 <script src="js/html5.js"></script>
 <![endif]-->

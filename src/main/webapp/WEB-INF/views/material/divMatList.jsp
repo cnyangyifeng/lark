@@ -148,7 +148,7 @@
 						 	<c:if test="${bean.fdType=='01'&&bean.playcode==null&&(bean.fdLink==null||bean.fdLink=='')}">
 						 	<i class="icon-unpublished" data-toggle="tooltip" data-original-title="不可用"></i>
 					      	</c:if>
-					      	<c:if test="${(bean.fdType=='04'||bean.fdType=='05')&&bean.filenetid==null}">
+					      	<c:if test="${(bean.fdType=='04'||bean.fdType=='05')&&(bean.FILENETID==null||bean.MFILENETID==NULL)}">
 					      	<i class="icon-unpublished" data-toggle="tooltip" data-original-title="不可用"></i>
 					      	</c:if>
 					</c:if>

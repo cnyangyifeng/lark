@@ -1,32 +1,19 @@
 package com.kuxue.ldap.service;
 
-import com.kuxue.common.page.Pagination;
-import com.kuxue.common.page.SimplePage;
+
 import com.kuxue.common.utils.Identities;
-import com.kuxue.ldap.BaseLdapDao;
 import com.kuxue.ldap.LdapUtils;
-import com.kuxue.ldap.model.PeronLdap;
 import com.kuxue.model.organization.SysOrgConstant;
-import com.kuxue.model.organization.SysOrgElement;
-import com.kuxue.service.SysOrgPersonService;
+
 import com.kuxue.utils.DateUtil;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.time.DateUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.ldap.control.PagedResult;
-import org.springframework.ldap.control.PagedResultsCookie;
-import org.springframework.ldap.control.PagedResultsDirContextProcessor;
-import org.springframework.ldap.control.PagedResultsRequestControl;
 import org.springframework.ldap.core.*;
 import org.springframework.stereotype.Service;
 
-import javax.naming.NamingException;
-import javax.naming.directory.Attributes;
-import javax.naming.directory.SearchControls;
-import java.sql.Connection;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -56,10 +43,10 @@ public class PersonLdapInService extends LdapInService {
 
     @Override
     public void initData() {
-    	List<Map<String, Object>> list = ldapTemplate.search(
+        List<Map<String, Object>> list = ldapTemplate.search(
                 "cn=users", "(&(objectClass=xdf-person))",
                 new PersonContextMapper());
-    	 updateOrg(list);
+        updateOrg(list);
     }
 
     @Override
@@ -73,11 +60,36 @@ public class PersonLdapInService extends LdapInService {
         return msg;
     }
 
+    /**
+     * 按照时间段更新数据
+     *
+     * @param startDay
+     * @param endDay
+     * @return
+     */
+    public String executeUpdateData(String startDay, String endDay) {
+        //TDS 日期必须这种格式
+        //20140131144846.000046
+        startDay = startDay + "000000.000046";
+        endDay = endDay + "235959.000046";
+
+        List<Map<String, Object>> list = ldapTemplate.search(
+                "cn=users", "(&(objectClass=xdf-person)(modifyTimeStamp>=" + startDay + ")(modifyTimeStamp<=" + endDay + "))",
+                new PersonContextMapper());
+        System.out.println(list.size());
+        String msg = updateOrg(list);
+        ldapLogService.saveLog(msg);
+        return msg;
+    }
+
 
     public String updateOrg(List<Map<String, Object>> values) {
         int insertSize = 0;
         int updateSize = 0;
         for (Map<String, Object> map : values) {
+            if(map.get("FD_NO")==null){
+
+            }
             List<Map> lists = findByNamedQuery("person.selectElementByKey", map, Map.class);
             List<Map> departList = findByNamedQuery("selectElementByKey", map, Map.class);
             if (departList.size() > 0) {
@@ -85,11 +97,11 @@ public class PersonLdapInService extends LdapInService {
                 Object v = departMap.get("FDID");
                 if (v != null) {
                     map.put("FD_PARENTID", v);
-                }else{
-                	map.put("FD_PARENTID", "");
+                } else {
+                    map.put("FD_PARENTID", "");
                 }
-            }else{
-            	map.put("FD_PARENTID", "");
+            } else {
+                map.put("FD_PARENTID", "");
             }
             if (CollectionUtils.isEmpty(lists)) {
                 log.info("开始初始化人员表-Insert:" + map.get("FD_NO"));
@@ -98,7 +110,7 @@ public class PersonLdapInService extends LdapInService {
                 updateByNamedQuery("person.saveElement", map);
                 insertSize++;
             } else {
-                log.info("开始初始化人员表-Update" + map.get("FD_NO")+";parentid:"+map.get("PARENTID"));
+                log.info("开始初始化人员表-Update" + map.get("FD_NO") + ";parentid:" + map.get("PARENTID"));
                 map.put("FDID", lists.get(0).get("FDID"));
                 updateByNamedQuery("person.updateElement", map);
                 updateByNamedQuery("updateElement", map);
@@ -109,17 +121,15 @@ public class PersonLdapInService extends LdapInService {
 
         return "人员：本次新增" + insertSize + ",更新:" + updateSize;
     }
-    
-    
-    
-    
+
+
     public String updateOrg2(List<Map<String, Object>> values) {
         int insertSize = 0;
         int updateSize = 0;
         for (Map<String, Object> map : values) {
             List<Map> lists = findByNamedQuery("person.selectElementByKey", map, Map.class);
-            if(updateSize>2){
-            	break;
+            if (updateSize > 2) {
+                break;
             }
             map.put("FD_PARENTID", map.get("PARENTID"));
             if (CollectionUtils.isEmpty(lists)) {
@@ -147,14 +157,13 @@ public class PersonLdapInService extends LdapInService {
             Map<String, Object> map = new ConcurrentHashMap<String, Object>();
             //FD_ID,AVAILABLE,CREATETIME,FD_NAME,FD_NO,FD_ORG_TYPE,LDAPDN,FD_PARENTID
             map.put("FDID", Identities.generateID());
-
             map.put("AVAILABLE", "1".equals(context.getStringAttribute("displayed")));
             map.put("CREATETIME", new Date());
 
-            map.put("LDAPDN",context.getDn().toString());
+            map.put("LDAPDN", context.getDn().toString());
             LdapUtils.setStringAttribute(context, map, "FD_LOGIN_NAME", "cn");
             LdapUtils.setStringAttribute(context, map, "FD_NAME", "name_attribute");
-            LdapUtils.setStringAttribute(context, map, "FD_NO", "employeeNumber");
+           LdapUtils.setStringAttribute(context, map, "FD_NO", "employeeNumber");
             LdapUtils.setStringAttribute(context, map, "PARENTID", "departmentNumber");
             LdapUtils.setStringAttribute(context, map, "FD_EMAIL", "mail");
             LdapUtils.setStringAttribute(context, map, "FDMOBILENO", "mobile");

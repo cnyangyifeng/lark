@@ -49,6 +49,9 @@
             <tags:shirourl url="${ctx}/admin/online/list" active="online" text="在线用户" iconName="icon-user"  para="${active}"></tags:shirourl>
             <tags:shirourl url="${ctx}/admin/page/list" active="page" text="页面配置" iconName="icon-user"  para="${active}"></tags:shirourl>
             <tags:shirourl url="${ctx}/admin/category/list" active="category" text="字典配置" iconName="icon-user"  para="${active}"></tags:shirourl>
+             <tags:shirourl url="${ctx}/admin/course/skin/list" active="courseskin" text="皮肤管理" iconName="icon-user"  para="${active}"></tags:shirourl>
+    		<tags:shirourl url="${ctx}/admin/tag/list" active="tag" text="标签库管理" iconName="icon-user"  para="${active}"></tags:shirourl>
+    		<tags:shirourl url="${ctx}/admin/picture/list" active="picture" text="图片库管理" iconName="icon-user"  para="${active}"></tags:shirourl>
     	</ul>
     </section>
     	 
@@ -63,6 +66,9 @@
                  <j:if test="${active=='online'}">在线用户</j:if>
                  <j:if test="${active=='page'}">页面配置</j:if>
                  <j:if test="${active=='category'}">字典配置</j:if>
+                 <j:if test="${active=='courseskin'}">皮肤管理</j:if>
+                 <j:if test="${active=='tag'}">标签库管理</j:if>
+                 <j:if test="${active=='picture'}">图片库管理</j:if>
                 <div class="backHome">
                     <a href="${ctx}/course/courseIndex"><span class="muted">返回</span>个人主页<span class="muted"></span> <i class="icon-home icon-white"></i> </a>
                 </div>

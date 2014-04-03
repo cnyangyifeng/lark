@@ -269,5 +269,43 @@ public class AttMainPlugin {
             // e.printStackTrace();
         }
     }
+    /*
+     * filenet附件获取方式
+     */
+    public static ByteArrayOutputStream getDocByIdAndName(String fileNetId,String fileNetName) {
+        try {
+            DocInterfaceModel model = new DocInterfaceModel(fileNetId,fileNetName,
+                    DocInterfaceModel.getDocByAttId, "");
+            HttpClient client = new HttpClient();
+            client.getParams().setParameter(
+                    HttpMethodParams.HTTP_CONTENT_CHARSET, "utf-8");
+            PostMethod filePost = new PostMethod(DocInterfaceModel.url);
+            filePost.getParams().setParameter(
+                    HttpMethodParams.HTTP_CONTENT_CHARSET, "utf-8");
 
+            filePost.addParameters(model.getDocByAttIdModel());
+
+            filePost.getParams().setParameter(HttpMethodParams.HTTP_CONTENT_CHARSET, "utf-8");
+            int status = client.executeMethod(filePost);
+            if (status == HttpStatus.SC_OK) {
+                log.info("获取附件成功");
+                InputStream inputStream = filePost.getResponseBodyAsStream();
+                ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                byte[] buffer = new byte[1024];
+                int len;
+                while ((len = inputStream.read(buffer)) > -1) {
+                    baos.write(buffer, 0, len);
+                }
+                baos.flush();
+                return baos;
+            } else {
+                log.error("连接失败");
+                return null;
+            }
+        } catch (Exception e) {
+            log.error("addDoc:" + e.getCause());
+            //throw new RuntimeException("出现异常addDoc:" + e.getCause());
+            return null;
+        }
+    }
 }
