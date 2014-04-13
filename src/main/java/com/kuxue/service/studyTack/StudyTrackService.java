@@ -361,8 +361,7 @@ public class StudyTrackService extends SimpleService  {
 	 * @param bamId
 	 * @return
 	 */
-	public Map getMessageInfoByBamId(String bamId){
-		Map map = new HashMap();
+	public Message getMessageInfoByBamId(String bamId){
 		Finder finder = Finder.create("");		
 		finder.append(" from Message message");
 		finder.append(" where message.fdType=:fdType and message.fdModelName=:fdModelName and message.fdModelId=:fdModelId ");
@@ -370,12 +369,7 @@ public class StudyTrackService extends SimpleService  {
 		finder.setParam("fdType", Constant.MESSAGE_TYPE_SYS);
 		finder.setParam("fdModelName", BamCourse.class.getName());
 		finder.setParam("fdModelId", bamId);
-		Message message =messageService.find(finder).size()==0?null:(Message) messageService.find(finder).get(0);
-		if(message!=null){
-			map.put("cot", message.getFdContent());
-			map.put("time", message.getFdCreateTime());
-		}
-		return map;
+		return messageService.find(finder).size()==0?null:(Message) messageService.find(finder).get(0);
 	}
 	
 	
@@ -420,11 +414,11 @@ public class StudyTrackService extends SimpleService  {
 					}
 				}
 				vStudyTrack.setLinkNow(currLecture);
-				Map map2 = getMessageInfoByBamId(bamCourse.getFdId());
-				if(map2.size()==0){
+				Message msg = getMessageInfoByBamId(bamCourse.getFdId());
+				if(msg==null){
 					vStudyTrack.setStudyInofNow("没有学习记录");
 				}else{
-					String studyInfo = (String)map2.get("cot");
+					String studyInfo = msg.getFdContent();
 					studyInfo = studyInfo.replaceAll("</?[^>]+>", "");
 					if(studyInfo.contains("证书")){
 						studyInfo = studyInfo.substring(0,studyInfo.lastIndexOf("，"))+"。";
@@ -475,11 +469,11 @@ public class StudyTrackService extends SimpleService  {
 				}
 			}
 			vStudyTrack.setLinkNow(currLecture);
-			Map map2 = getMessageInfoByBamId(bamCourse.getFdId());
-			if(map2.size()==0){
+			Message msg = getMessageInfoByBamId(bamCourse.getFdId());
+			if(msg==null){
 				vStudyTrack.setStudyInofNow("没有学习记录");
 			}else{
-				vStudyTrack.setStudyInofNow((String)map2.get("cot"));
+				vStudyTrack.setStudyInofNow(msg.getFdContent());
 			}
 			studyTrackList.add(vStudyTrack);
 		}

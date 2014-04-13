@@ -123,9 +123,9 @@ public class PassThroughAjaxController {
 			if(StringUtil.isNotBlank(course.getFdPassword())){
 				map.put("flag", "0");//代表是有密码的加密课程
 			} else {
-				boolean canStudy= courseParticipateAuthService
-						.findCouseParticipateAuthById(courseId,ShiroUtils.getUser().getId());
-				if(canStudy){//无权学习的
+				
+				if(courseParticipateAuthService
+						.findCouseParticipateAuthById(courseId,ShiroUtils.getUser().getId())==null){//无权学习的
 					map.put("flag", "0");//无权学习
 				} else {
 					map.put("flag", "1");//有权学习
@@ -672,7 +672,7 @@ public class PassThroughAjaxController {
 			returnMap.put("name", orgPerson.getRealName());
 			returnMap.put("img", orgPerson.getPoto());
 			returnMap.put("sex", orgPerson.getFdSex());
-			returnMap.put("org", orgPerson.getHbmParent()==null?"不详":orgPerson.getHbmParent().getHbmParentOrg().getFdName());
+			returnMap.put("org", (orgPerson.getHbmParent()==null || orgPerson.getHbmParent().getHbmParentOrg()==null)?"不详":orgPerson.getHbmParent().getHbmParentOrg().getFdName());
 			returnMap.put("dep", orgPerson.getDeptName()==null?"不详":orgPerson.getDeptName());
 			returnMap.put("tel", orgPerson.getFdWorkPhone()==null?"不详":orgPerson.getFdWorkPhone());
 			returnMap.put("bird", orgPerson.getFdBirthDay()==null?"不详":orgPerson.getFdBirthDay());
@@ -737,7 +737,7 @@ public class PassThroughAjaxController {
 						if(string.equals(c2s)){
 							Map item = new HashMap();
 							item.put("id", messages.get(i).getFdId());
-							item.put("mood",  messages.get(i).getFdContent());
+							item.put("mood",  messageService.getMsgContent(messages.get(i),courseId,userId));
 							Map praise = new HashMap();
 							praise.put("count", messageService.getSupportCount(messages.get(i).getFdId()));
 							praise.put("did", messageReplyService.isSupportMessage(ShiroUtils.getUser().getId(), messages.get(i).getFdId())!=null);

@@ -5,6 +5,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.httpclient.HttpMethod;
 
+import com.kuxue.sso.e2.constant.SSOToE2Constant;
 import com.kuxue.sso.e2.vo.UserModel;
 
 public interface IGetUserFromTokenService {
@@ -23,4 +24,5 @@ public interface IGetUserFromTokenService {
 	
 	public HttpMethod getPostMethod(String cookieValue) throws Exception;
 
+	public SSOToE2Constant getSsoToE2Constant() ;
 }

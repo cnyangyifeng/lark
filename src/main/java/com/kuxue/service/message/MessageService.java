@@ -9,6 +9,8 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentHashMap;
 
+import jodd.util.StringUtil;
+
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,12 +18,15 @@ import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.context.ContextLoader;
 
 import com.kuxue.common.hibernate4.Finder;
 import com.kuxue.common.page.Pagination;
 import com.kuxue.model.bam.BamCourse;
 import com.kuxue.model.base.Constant;
 import com.kuxue.model.course.CourseCatalog;
+import com.kuxue.model.course.CourseInfo;
+import com.kuxue.model.course.CourseParticipateAuth;
 import com.kuxue.model.material.MaterialInfo;
 import com.kuxue.model.message.Message;
 import com.kuxue.model.message.MessageReply;
@@ -31,7 +36,10 @@ import com.kuxue.service.AccountService;
 import com.kuxue.service.BaseService;
 import com.kuxue.service.bam.BamCourseService;
 import com.kuxue.service.bam.process.SourceNodeService;
+import com.kuxue.service.course.CourseParticipateAuthService;
+import com.kuxue.service.course.CourseService;
 import com.kuxue.service.material.MaterialService;
+import com.kuxue.utils.ShiroUtils;
 import freemarker.cache.StringTemplateLoader;
 import freemarker.template.Configuration;
 import freemarker.template.Template;
@@ -63,6 +71,12 @@ public class MessageService extends BaseService implements InitializingBean{
 	
 	@Autowired
 	private MaterialService materialService;
+	
+	@Autowired
+	private CourseParticipateAuthService courseParticipateAuthService;
+	
+	@Autowired
+	private CourseService courseService;
 	
 	@SuppressWarnings("unchecked")
 	@Override
@@ -256,7 +270,7 @@ public class MessageService extends BaseService implements InitializingBean{
 		Map<String, String> param = new HashMap<String, String>();
 		param.put("courseName", bamCourse.getCourseInfo().getFdTitle());
 		param.put("link", "getCertificate?bamId="+bamCourse.getFdId());
-		saveSysMessage(bamCourse.getFdId(),"source",param);
+		saveSysMessage(bamCourse.getFdId(),"source",param,null);
 	}
 	
 	/**
@@ -268,7 +282,7 @@ public class MessageService extends BaseService implements InitializingBean{
 		Map<String, String> param = new HashMap<String, String>();
 		param.put("lectureNo", catalog.getFdNo().toString());
 		param.put("lectureName", catalog.getFdName());
-		saveSysMessage(bamCourse.getFdId(),"lecture",param);
+		saveSysMessage(bamCourse.getFdId(),"lecture",param,null);
 	}
 	
 	/**
@@ -307,7 +321,11 @@ public class MessageService extends BaseService implements InitializingBean{
 				param.put("key", "key");
 			}
 		}
-		saveSysMessage(bamCourse.getFdId(),catalog.getMaterialType(),param);
+		String fdKey = material.getFdType();
+		if(note!=null){
+			fdKey += ":"+note.getFdId();
+		}
+		saveSysMessage(bamCourse.getFdId(),catalog.getMaterialType(),param,fdKey);
 	}
 	
 	/**
@@ -349,7 +367,11 @@ public class MessageService extends BaseService implements InitializingBean{
 		}else{
 			param.put("ispass", "提交了");
 		}
-		saveSysMessage(bamCourse.getFdId(),catalog.getMaterialType(),param);
+		String fdKey = material.getFdType();
+		if(note!=null && note.getIsStudy()!=null){
+			fdKey += ":"+note.getFdId();
+		}
+		saveSysMessage(bamCourse.getFdId(),catalog.getMaterialType(),param,fdKey);
 	}
 	
 	/**
@@ -358,7 +380,7 @@ public class MessageService extends BaseService implements InitializingBean{
 	 * @param name 消息配置中的name
 	 * @param parameters 消息配置中填入的参数 
 	 */
-	public void saveSysMessage(String bamId,final String name,final Map<String, ?> parameters){
+	public void saveSysMessage(String bamId,final String name,final Map<String, ?> parameters,String fdKey){
 		Template template = templateCache.get(name);
         String content = processTemplate(template, parameters);
         Message message = new Message();
@@ -367,6 +389,9 @@ public class MessageService extends BaseService implements InitializingBean{
         message.setFdModelId(bamId);
         message.setFdModelName(BamCourse.class.getName());
         message.setFdCreateTime(new Date());
+        if(StringUtils.isNotBlank(fdKey)){
+        	message.setFdKey(fdKey);
+        }
         super.save(message);
 	}
 	
@@ -417,7 +442,35 @@ public class MessageService extends BaseService implements InitializingBean{
     	}
     }
     
-    
+    /**
+	 * 获取消息内容，如果是作业的话，需要根据权限显示作业包链接
+	 * @param message 消息
+	 * @param courseId 课程ID
+	 * @param userId 所查看的用户的ID
+	 * @return String 消息内容
+	 */
+	public String getMsgContent(Message message,String courseId,String userId) {
+		String msg = message.getFdContent();
+		CourseInfo course = courseService.get(courseId);
+		CourseParticipateAuth auth = courseParticipateAuthService.findAuthByCourseIdandUserId(courseId,userId);
+		if(auth==null || auth.getFdAuthorizer()==null){
+			return msg;
+		}
+		//如果是管理员，或者是课程的创建者，或者是该用户学习课程的授权人，都可以查看作业包
+		if(ShiroUtils.isAdmin()||ShiroUtils.getUser().getId().equals(course.getCreator().getFdId()) || 
+				ShiroUtils.getUser().getId().equals(auth.getFdAuthorizer().getFdId())){
+			if(StringUtil.isNotBlank(message.getFdKey())){
+				String msgKey[] = message.getFdKey().split(":");
+				if(msgKey!=null && msgKey.length>1){
+					if(Constant.MATERIAL_TYPE_JOBPACKAGE.equals(msgKey[0]) && StringUtil.isNotBlank(msgKey[1])){
+						String ctx = ContextLoader.getCurrentWebApplicationContext().getServletContext().getContextPath();
+						msg += "<a class='send task' href='"+ctx+"/adviser/getTaskDetail?noteId="+msgKey[1]+"&fdType=checked' target='_blank'>查看批改</a>";
+					}
+				}
+			}
+		}
+		return msg;
+	}
     
     
     

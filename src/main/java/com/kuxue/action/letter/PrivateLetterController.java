@@ -68,9 +68,9 @@ public class PrivateLetterController {
 		if(StringUtil.isNotBlank(fdId)){
 			SysOrgPerson person = accountService.get(fdId);
 			model.addAttribute("person", person);
-			String org = person.getHbmParentOrg().getFdName();
+			String org = person.getHbmParentOrg()!=null?person.getHbmParentOrg().getFdName():"";
 			String deptName = person.getDeptName();
-			String personLength = person.getFdEmail()+person.getHbmParentOrg().getFdName()+person.getDeptName();
+			String personLength = person.getFdEmail()+org+person.getDeptName();
 			if(personLength.length()>40){
 				if(org.length()>10){
 					org = org.substring(0, 9)+"...";

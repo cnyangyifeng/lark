@@ -85,17 +85,16 @@ public class CourseParticipateAuthService extends BaseService{
 	 * 某课程授权教师检查
 	 */
 	@Transactional(readOnly=false)
-	public boolean findCouseParticipateAuthById(String courseId,String teacherId){
+	public CourseParticipateAuth findCouseParticipateAuthById(String courseId,String teacherId){
 		Finder finder=Finder.create(" from CourseParticipateAuth cpa");
 		finder.append(" where cpa.fdUser.fdId=:teacherId and cpa.course.fdId=:courseId");
 		finder.setParam("teacherId", teacherId);
 		finder.setParam("courseId", courseId);
 		List list=find(finder);
 		if(list!=null&&list.size()>0){
-			return false;
-		}else{
-			return true;
+			return (CourseParticipateAuth)list.get(0);
 		}
+			return null;
 		
 	}
 	/**
@@ -154,5 +153,79 @@ public class CourseParticipateAuthService extends BaseService{
 			return true;
 		}
 		
+	}
+
+	/**
+	 * 根据新教师查看授权了该新教师的课程及导师
+	 * 
+	 * @param teacherId 新教师Id
+	 * @param orderStr 排序
+	 * @param pageNo 当前页
+	 * @param pageSize 每页记录数
+	 * @return Pagination 授权列表
+	 */
+	public Pagination findSingleTeacherAuthList(String teacherId,
+			String orderStr, int pageNo, int pageSize, String keyword) {
+		Finder finder=Finder.create(" from CourseParticipateAuth cpa left join cpa.fdTeacher person left join person.hbmParent hbmperson   ");
+//		Finder finder=Finder.create("from CourseParticipateAuth cpa ");//该方式会过滤掉无导师课程
+		finder.append(" where cpa.fdUser.fdId=:teacherId  ");
+		if(!ShiroUtils.isAdmin()){
+			finder.append("and cpa.fdAuthorizer.fdId=:fdAuthorizerId  ");
+			finder.setParam("fdAuthorizerId", ShiroUtils.getUser().getId());
+		}
+		finder.setParam("teacherId", teacherId);
+		if(StringUtil.isNotBlank(keyword)){//搜索关键字是否存在
+			finder.append("and ( cpa.course.fdTitle like :namestr or person.fdName like :tnamestr  or person.fdEmail like :temailstr or hbmperson.fdName like:tdeptstr)");
+			finder.setParam("namestr", "%"+keyword+"%");
+			finder.setParam("tnamestr", "%"+keyword+"%");
+			finder.setParam("tdeptstr", "%"+keyword+"%");
+			finder.setParam("temailstr", "%"+keyword+"%");
+		}
+		if("mentor".equals(orderStr)){//按导师查询
+			finder.append(" order by nlssort(person.fdName,'NLS_SORT=SCHINESE_PINYIN_M')");
+		}else if("course".equals(orderStr)){
+			finder.append(" order by nlssort(cpa.course.fdTitle,'NLS_SORT=SCHINESE_PINYIN_M')");
+		}else{
+			finder.append(" order by cpa.fdCreateTime desc");
+		}
+		
+		return getPage(finder, pageNo, pageSize);
+	}
+	
+	/**
+	 * 根据导师查看授权了该导师的课程及新教师
+	 * 
+	 * @param teacherId 导师Id
+	 * @param orderStr 排序
+	 * @param pageNo 当前页
+	 * @param pageSize 每页记录数
+	 * @return Pagination 授权列表
+	 */
+	public Pagination findSingleTutorAuthList(String tutorId,
+			String orderStr, int pageNo, int pageSize, String keyword) {
+		Finder finder=Finder.create(" from CourseParticipateAuth cpa left join cpa.fdUser person left join person.hbmParent hbmperson   ");
+//		Finder finder=Finder.create("from CourseParticipateAuth cpa ");//该方式会过滤掉无导师课程
+		finder.append(" where cpa.fdTeacher.fdId=:tutorId  ");
+		if(!ShiroUtils.isAdmin()){
+			finder.append("and cpa.fdAuthorizer.fdId=:fdAuthorizerId  ");
+			finder.setParam("fdAuthorizerId", ShiroUtils.getUser().getId());
+		}
+		finder.setParam("tutorId", tutorId);
+		if(StringUtil.isNotBlank(keyword)){//搜索关键字是否存在
+			finder.append("and ( cpa.course.fdTitle like :namestr or person.fdName like :tnamestr  or person.fdEmail like :temailstr or hbmperson.fdName like:tdeptstr)");
+			finder.setParam("namestr", "%"+keyword+"%");
+			finder.setParam("tnamestr", "%"+keyword+"%");
+			finder.setParam("tdeptstr", "%"+keyword+"%");
+			finder.setParam("temailstr", "%"+keyword+"%");
+		}
+		if("mentor".equals(orderStr)){//按导师查询
+			finder.append(" order by nlssort(person.fdName,'NLS_SORT=SCHINESE_PINYIN_M')");
+		}else if("course".equals(orderStr)){
+			finder.append(" order by nlssort(cpa.course.fdTitle,'NLS_SORT=SCHINESE_PINYIN_M')");
+		}else{
+			finder.append(" order by cpa.fdCreateTime desc");
+		}
+		
+		return getPage(finder, pageNo, pageSize);
 	}
 }

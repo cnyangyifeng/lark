@@ -1,6 +1,7 @@
 package com.kuxue.action.common;
 
 import com.kuxue.common.utils.InputStreamZipper;
+import com.kuxue.common.utils.excel.AbsExportExcel;
 import com.kuxue.service.plugin.AttMainPlugin;
 import gui.ava.html.image.generator.HtmlImageGenerator;
 
@@ -527,6 +528,21 @@ public class FileController {
 		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}
+	}
+	
+	/**
+	 * 文件下载
+	 * 
+	 * @param id
+	 *            (对应AttMain的主键)
+	 * @return
+	 */
+	@RequestMapping("/downloadExample/{type}")
+	@ResponseBody
+	public DownloadHelper downloadExample(@PathVariable("type") String type,
+			HttpServletRequest request, HttpServletResponse response) {
+		AbsExportExcel.exportExcel(new ArrayList(), type+".xls", response ,"课程授权示例.xls");
+		return null;
 	}
 
 }

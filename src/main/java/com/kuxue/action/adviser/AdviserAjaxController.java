@@ -234,7 +234,7 @@ public class AdviserAjaxController {
 		Map user = new HashMap();//封装人员信息
 		user.put("name", person.getRealName());
 		user.put("imgUrl", person.getPoto());
-		user.put("org", person.getHbmParent()==null?"":person.getHbmParent().getHbmParentOrg().getFdName());
+		user.put("org", (person.getHbmParent()==null || person.getHbmParent().getHbmParentOrg()==null)?"":person.getHbmParent().getHbmParentOrg().getFdName());
 		user.put("department", person.getDeptName());
 		user.put("phone", person.getFdWorkPhone());
 		user.put("mail", person.getFdEmail());
@@ -398,7 +398,7 @@ public class AdviserAjaxController {
 				Map user = new HashMap();//封装人员信息
 				user.put("name", person.getRealName());
 				user.put("imgUrl", person.getPoto());
-				user.put("org", person.getHbmParent()==null?"":person.getHbmParent().getHbmParentOrg().getFdName());
+				user.put("org", (person.getHbmParent()==null || person.getHbmParent().getHbmParentOrg()==null)?"":person.getHbmParent().getHbmParentOrg().getFdName());
 				user.put("department", person.getDeptName());
 				user.put("phone", person.getFdWorkPhone());
 				user.put("mail", person.getFdEmail());

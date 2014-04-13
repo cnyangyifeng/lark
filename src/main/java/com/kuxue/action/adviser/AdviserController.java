@@ -63,6 +63,15 @@ public class AdviserController {
 		return "/adviser/checkTaskDetail";
 	}
 	
+	/**返回批改作业详情页
+	 * 
+	 * @return
+	 */
+	@RequestMapping(value = "/getTaskDetail")
+	public String getTaskDetail(){
+		return "/adviser/checkTaskDetail";
+	}
+	
 	/**
 	 * 返回到时批改作业页面
 	 * @return

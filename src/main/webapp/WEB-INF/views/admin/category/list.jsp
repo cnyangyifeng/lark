@@ -25,9 +25,6 @@
 			   		<input type="checkbox" name="ids" value="{{=lec.fdId}}" />
 						<span class="index">{{=j}}</span>. 
 						<span class="title">{{?lec.courseCategoryName.length<20}}{{=lec.courseCategoryName}}{{??}}{{=lec.courseCategoryName.substr(0,20)+"..."}}{{?}}</span>
-						<span class="date">
-							<span class="dt"></span> 
-						</span>
 					<div class="state-dragable"><span class="icon-bar"></span><span class="icon-bar"></span><span class="icon-bar"></span><span class="icon-bar"></span><span class="icon-bar"></span></div>
          		</a>
 			</li>

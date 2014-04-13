@@ -260,7 +260,7 @@ public class ExpController {
     	String fdTitle = request.getParameter("fdTitle");
     	String order = request.getParameter("order");
     	Pagination page = courseService.findCourseInfosByName(fdTitle,
-    			Integer.toString(1000), order, Constant.COUSER_AUTH_MANAGE);
+    			Integer.toString(1), order, Constant.COUSER_AUTH_MANAGE,500);
     	if(page.getTotalPage()==1){//全部导出（只导出一个模板，不需要打包）
 			List list = courseService.findAllCourseInfoAuth(page.getList());
 			exportExcel(list, "courseAllAuth.xls", response,"全部课程授权统计报表-"+DateUtil.convertDateToString(date, "yyyyMMddHHmmss")+".xls");
@@ -268,7 +268,7 @@ public class ExpController {
 			String [] attMainIds= new String[page.getTotalPage()];
 			for(int i=1;i<=page.getTotalPage();i++){
 				Pagination pageZip = courseService.findCourseInfosByName(fdTitle,
-		    			Integer.toString(500), order, Constant.COUSER_AUTH_MANAGE);
+		    			Integer.toString(i), order, Constant.COUSER_AUTH_MANAGE,500);
 				AttMain attMain = AbsExportExcel.exportExcels(courseService.findAllCourseInfoAuth(pageZip.getList()), "courseAllAuth.xls");
 				attMainService.save(attMain);
 				attMainIds[i-1] = attMain.getFdId();
@@ -283,6 +283,79 @@ public class ExpController {
 		}
     	return null;
     }
+    
+    /**
+     * 按新教师导出全部授权列表
+     * @param request
+     * @param response
+     * @return
+     */
+    @RequestMapping(value = "/getExpAllTeacherAuth")
+	public String getExpAllTeacherAuth(HttpServletRequest request,HttpServletResponse response){
+    	Date date = new Date();
+    	String fdTitle = request.getParameter("fdTitle");
+    	String order = request.getParameter("order");
+    	Pagination page = courseService.findTeachersByName(fdTitle,
+    			Integer.toString(1), order,500);
+    	if(page.getTotalPage()==1){//全部导出（只导出一个模板，不需要打包）
+			List list = courseService.findAllTeacherAuth(page.getList());
+			exportExcel(list, "teacherAllAuth.xls", response,"按新教师全部授权学习统计报表-"+DateUtil.convertDateToString(date, "yyyyMMddHHmmss")+".xls");
+		}else if(page.getTotalPage()>1){
+			String [] attMainIds= new String[page.getTotalPage()];
+			for(int i=1;i<=page.getTotalPage();i++){
+				Pagination pageZip = courseService.findTeachersByName(fdTitle,
+						Integer.toString(i), order, 500);
+				AttMain attMain = AbsExportExcel.exportExcels(courseService.findAllTeacherAuth(pageZip.getList()), "teacherAllAuth.xls");
+				attMainService.save(attMain);
+				attMainIds[i-1] = attMain.getFdId();
+			}
+			try {
+				downloadZipsByArrayIds(attMainIds, "teacherAllAuth.xls", request, response);
+			} catch (UnsupportedEncodingException e) {
+				  log.error("export excleZip error!", e);
+			}
+			//删除下载后的无用附件
+			attMainService.deleteAttMainByIds(attMainIds);
+		}
+    	return null;
+    }
+    
+    /**
+     * 按导师导出全部授权列表
+     * @param request
+     * @param response
+     * @return
+     */
+    @RequestMapping(value = "/getExpAllTutorAuth")
+	public String getExpAllTutorAuth(HttpServletRequest request,HttpServletResponse response){
+    	Date date = new Date();
+    	String fdTitle = request.getParameter("fdTitle");
+    	String order = request.getParameter("order");
+    	Pagination page = courseService.findTutorsByName(fdTitle,
+    			Integer.toString(1), order,500);
+    	if(page.getTotalPage()==1){//全部导出（只导出一个模板，不需要打包）
+			List list = courseService.findAllTutorAuth(page.getList());
+			exportExcel(list, "tutorAllAuth.xls", response,"按导师全部授权学习统计报表-"+DateUtil.convertDateToString(date, "yyyyMMddHHmmss")+".xls");
+		}else if(page.getTotalPage()>1){
+			String [] attMainIds= new String[page.getTotalPage()];
+			for(int i=1;i<=page.getTotalPage();i++){
+				Pagination pageZip = courseService.findTutorsByName(fdTitle,
+						Integer.toString(i), order, 500);
+				AttMain attMain = AbsExportExcel.exportExcels(courseService.findAllTutorAuth(pageZip.getList()), "tutorAllAuth.xls");
+				attMainService.save(attMain);
+				attMainIds[i-1] = attMain.getFdId();
+			}
+			try {
+				downloadZipsByArrayIds(attMainIds, "tutorAllAuth.xls", request, response);
+			} catch (UnsupportedEncodingException e) {
+				  log.error("export excleZip error!", e);
+			}
+			//删除下载后的无用附件
+			attMainService.deleteAttMainByIds(attMainIds);
+		}
+    	return null;
+    }
+    
     /**
      * 导出授权列表
      * @param request
@@ -330,6 +403,104 @@ public class ExpController {
     	
     	return null;
 	}
+    
+    
+    /**
+     * 导出按新教师授权的列表
+     * @param request
+     * @param response
+     * @return
+     */
+    @RequestMapping(value = "/getExpTeacherAuth")
+	public String getExpTeacherAuth(HttpServletRequest request,HttpServletResponse response){
+    	Date date = new Date();
+    	String currentPage = request.getParameter("currentPage");
+    	String order = request.getParameter("order");
+    	String teacherId = request.getParameter("teacherId");
+    	String isAll = request.getParameter("isAll");
+    	SysOrgPerson teacher = accountService.load(teacherId);
+    	List list = new ArrayList();
+    	if(StringUtil.isBlank(isAll)){
+    		Pagination page = courseParticipateAuthService
+        			.findSingleTeacherAuthList(teacherId, order, Integer.parseInt(currentPage),SimplePage.DEF_COUNT, null);
+    		list = courseService.findCourseInfoAuth(page.getList());
+    		exportExcel(list, "teacherAuth.xls", response,"按新教师授权学习统计报表-"+teacher.getFdName()+"-"+DateUtil.convertDateToString(date, "yyyyMMddHHmmss")+".xls");
+    	}else{
+    		Pagination page = courseParticipateAuthService
+        			.findSingleTeacherAuthList(teacherId, order, 1,5000, null);
+    		if(page.getTotalPage()==1){//全部导出（只导出一个模板，不需要打包）
+    			list = courseService.findCourseInfoAuth(page.getList());
+    			exportExcel(list, "teacherAuth.xls",response, "按新教师授权学习统计报表-"+teacher.getFdName()+"-"+DateUtil.convertDateToString(date, "yyyyMMddHHmmss")+".xls");
+    		}else if(page.getTotalPage()>1){
+    			String [] attMainIds= new String[page.getTotalPage()];
+				for(int i=1;i<=page.getTotalPage();i++){
+					Pagination pageZip = courseParticipateAuthService
+		        			.findSingleTeacherAuthList(teacherId, order, i,5000, null);
+					AttMain attMain = AbsExportExcel.exportExcels(courseService.findCourseInfoAuth(pageZip.getList()), "teacherAuth.xls");
+					attMainService.save(attMain);
+					attMainIds[i-1] = attMain.getFdId();
+				}
+				try {
+					downloadZipsByArrayIds(attMainIds, "teacherAuth.xls", request, response);
+				} catch (UnsupportedEncodingException e) {
+					  log.error("export excleZip error!", e);
+				}
+				//删除下载后的无用附件
+				attMainService.deleteAttMainByIds(attMainIds);
+    		}
+    	}
+    	
+    	return null;
+	}
+    
+    /**
+     * 导出按导师授权的列表
+     * @param request
+     * @param response
+     * @return
+     */
+    @RequestMapping(value = "/getExpTutorAuth")
+	public String getExpTutorAuth(HttpServletRequest request,HttpServletResponse response){
+    	Date date = new Date();
+    	String currentPage = request.getParameter("currentPage");
+    	String order = request.getParameter("order");
+    	String teacherId = request.getParameter("teacherId");
+    	String isAll = request.getParameter("isAll");
+    	SysOrgPerson teacher = accountService.load(teacherId);
+    	List list = new ArrayList();
+    	if(StringUtil.isBlank(isAll)){
+    		Pagination page = courseParticipateAuthService
+        			.findSingleTutorAuthList(teacherId, order, Integer.parseInt(currentPage),SimplePage.DEF_COUNT, null);
+    		list = courseService.findCourseInfoAuth(page.getList());
+    		exportExcel(list, "tutorAuth.xls", response,"按导师授权学习统计报表-"+teacher.getFdName()+"-"+DateUtil.convertDateToString(date, "yyyyMMddHHmmss")+".xls");
+    	}else{
+    		Pagination page = courseParticipateAuthService
+        			.findSingleTutorAuthList(teacherId, order, 1,5000, null);
+    		if(page.getTotalPage()==1){//全部导出（只导出一个模板，不需要打包）
+    			list = courseService.findCourseInfoAuth(page.getList());
+    			exportExcel(list, "tutorAuth.xls",response, "按导师授权学习统计报表-"+teacher.getFdName()+"-"+DateUtil.convertDateToString(date, "yyyyMMddHHmmss")+".xls");
+    		}else if(page.getTotalPage()>1){
+    			String [] attMainIds= new String[page.getTotalPage()];
+				for(int i=1;i<=page.getTotalPage();i++){
+					Pagination pageZip = courseParticipateAuthService
+		        			.findSingleTutorAuthList(teacherId, order, i,5000, null);
+					AttMain attMain = AbsExportExcel.exportExcels(courseService.findCourseInfoAuth(pageZip.getList()), "tutorAuth.xls");
+					attMainService.save(attMain);
+					attMainIds[i-1] = attMain.getFdId();
+				}
+				try {
+					downloadZipsByArrayIds(attMainIds, "tutorAuth.xls", request, response);
+				} catch (UnsupportedEncodingException e) {
+					  log.error("export excleZip error!", e);
+				}
+				//删除下载后的无用附件
+				attMainService.deleteAttMainByIds(attMainIds);
+    		}
+    	}
+    	
+    	return null;
+	}
+    
     /**
 	 * 导出学习跟踪excel方法
 	 * 

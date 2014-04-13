@@ -214,7 +214,7 @@ public class PrivateLetterAjaxController {
 		SysOrgPerson person = accountService.load(fdId);
 		Map<String,String> map = new HashMap<String,String>();
 		map.put("department", person.getDeptName());
-		map.put("org", person.getHbmParentOrg().getFdName());
+		map.put("org", person.getHbmParentOrg()!=null?person.getHbmParentOrg().getFdName():"");
 		map.put("mail", person.getFdEmail());
 		map.put("tel", person.getFdWorkPhone()==null?"不详":person.getFdWorkPhone());
 		map.put("imgUrl", person.getPoto());
@@ -259,7 +259,7 @@ public class PrivateLetterAjaxController {
 			user.put("imgUrl", acceptUser.getPoto());
 			user.put("name", acceptUser.getFdName());
 			user.put("mail", acceptUser.getFdEmail());
-			user.put("org", acceptUser.getHbmParentOrg().getFdName());
+			user.put("org", acceptUser.getHbmParentOrg()!=null?acceptUser.getHbmParentOrg().getFdName():"");
 			user.put("department", acceptUser.getDeptName());
 			map.put("user", user);
 			listMsgData.add(map);

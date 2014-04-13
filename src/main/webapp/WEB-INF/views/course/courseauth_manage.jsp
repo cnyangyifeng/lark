@@ -21,9 +21,9 @@
 <script type="text/javascript" src="${ctx}/resources/js/jquery.placeholder.1.3.min.js"></script>
 <script type="text/javascript" src="${ctx}/resources/js/jquery.validate.min.js"></script>
 <script type="text/javascript" src="${ctx}/resources/js/messages_zh.min.js"></script>
+<script type="text/javascript" src="${ctx}/resources/uploadify/jquery.uploadify.js?id=1211"></script>
 <script type="text/javascript" src="${ctx}/resources/js/jquery.autocomplete.pack.js"></script>
 <script type="text/javascript" src="${ctx}/resources/js/jquery.sortable.min.js"></script>
-
 </head>
 <body>
  <!--老师列表模板-->
@@ -119,6 +119,24 @@
 	 <button class="btn btn-primary btn-ctrl" type="button" {{?it.currentPage == it.totalPage}} disabled {{?}} onclick='pageNavClick({{=it.currentPage+1}})'><i class="icon-chevron-right icon-white"></i></button>
 </div>
 </script>
+<!-- 授权管理 群组列表 模板 -->
+<script id="listTeacherSelTemplate" type="text/x-dot-template">
+<span class="alert alert-tag" data-fdid="{{=it.id}}"><span>{{=it.name}}</span><a href="#" data-dismiss="alert" 
+
+class="close">&times;</a></span>
+<!--
+<tr draggable="true" data-fdid="{{=it.id}}">
+			<td class="tdTit">
+				<div class="pr">
+					{{=it.name}}（{{=it.mail}}）， {{=it.department}}
+				</div>
+			</td>
+			<td>
+				<a href="#" class="icon-remove-blue"></a>
+			</td>
+</tr>
+-->
+</script>
      <script src="${ctx}/resources/js/doT.min.js" type="text/javascript"></script>
 		<section class="container">
 			<section class="clearfix mt20">
@@ -127,7 +145,7 @@
 			  </section>
 				<section class="w790 pull-right" id="rightCont">
 			        <div class="page-header">
-		               <span class="muted">我正在看：授权学习</span> 
+		               <span class="muted">我正在看：按课程授权学习</span>
 		                <div class="backHome">
 		                    <a href="${ctx}/studyTrack/getStudyTrackDirector"><span class="muted">返回</span>主管<span class="muted">首页</span> <i class="icon-home icon-white"></i> </a>
 		                </div>
@@ -154,10 +172,27 @@
                     </div>
                 </section>
                 <section class="section mt20">
+                	<div style="padding:20px;" align="right">
+                    <a class="btn btn-link"  href="${ctx}/common/file/downloadExample/authExample">示例文件</a> 
+		            <button id="importAuth" class="btn btn-primary btn-large" type="button" >导入</button>
+		            </div>
                     <form action="#rightCont" id="formAddTeacher">
-                        <input type="text" required name="inputTeacher" id="inputTeacher"  class="autoComplete input-block" placeholder="授权某位老师学习本课程">
+                    	<input type="hidden" id="teacherIds" name="teacherIds" value="" />
+                    	<div class="keywordWrap" id="list_teacher">
+                          
+                        </div>
+                        <!-- 
+                    	<table class="table table-bordered">
+							<thead>
+								<tr><th>授权教师</th><th>删除</th></tr>
+							</thead>
+							<tbody id="list_teacher">
+								
+							</tbody>
+						</table>
+						 -->
+                        <input type="text" name="inputTeacher" id="inputTeacher"  class="autoComplete input-block" placeholder="授权某位老师学习本课程">
                         <span id="showerror"></span>
-                        <input type="hidden" id="teacher">
                         <div class="divider">
                             <i class="icon-handshake"></i>
                         </div>
@@ -166,8 +201,10 @@
                         <input type="hidden" id="mentor"/>
                         <div class="divider">
                             <button class="btn btn-primary btn-large" type="submit">添加</button>
-                            </div>
+                        </div>
+                        
                      </form> 
+                     
                 </section>
 			          <%-- <div class="page-body" id="page list">
 			        	<%@ include file="/WEB-INF/views/course/divcourseauth.jsp" %>
@@ -275,6 +312,9 @@ function exportData(){
     /*老师列表模板函数*/
     var listTeacherFn = doT.template(document.getElementById("listTeacherTemplate").text);
    
+ 	// 授权管理 教师选择列表 模板
+	var listTeacherSelFn = doT.template(document.getElementById("listTeacherSelTemplate").text);
+    
     $(function(){
     	var courseId="${param.courseId}";//课程id
     	var order="${param.order}";//排序
@@ -284,10 +324,10 @@ function exportData(){
     	//添加新授权
         $("#formAddTeacher").validate({
             submitHandler: function(form){
-            	if($("#teacher").val()==null||$("#teacher").val()==""){
-            		$("#showerror").html("<lable class='error'>输入数据有误,请从下拉菜单中选择数据!</lable>");
-            		return;
-            	}
+            	//if($("#teacher").val()==null||$("#teacher").val()==""){
+            	//	$("#showerror").html("<lable class='error'>输入数据有误,请从下拉菜单中选择数据!</lable>");
+            	//	return;
+            	//}
 				if($("#isOftask").val()=='true'){//是否需要添加导师
 	            	if($("#inputMentor").val()!=null&&$("#inputMentor").val()!=""){
 	            		if($("#mentor").val()==null||$("#mentor").val()==""){
@@ -296,17 +336,20 @@ function exportData(){
 	            		}
 	            	}
 				}
-            	
+				
+				if($("#teacherIds").val().length=0){
+					$("#showerror").html("<lable class='error'>必选字段</lable>");
+					return;
+				}
             	 $.post("${ctx}/ajax/course/saveCourseParticipateAuth",{
                  	'courseId':"${param.courseId}",//课程id
-                 	'teacher':$("#teacher").val(),//教师id//导师id
+                 	'teacher':$("#teacherIds").val(),//教师id//导师id
                  	'mentor':$("#mentor").val()
                		  }).success(function(data){
                			if(data=='true'){
                				window.location.href="${ctx}/course/getSingleCourseAuthInfo?courseId=${param.courseId}&order=createtime&fdType=13";
                			}else{
-               				$("#showerror").html("<lable class='error'>当前所选教师已被授权该课程!</lable>");
-               				$("#teacher").val("");
+               				$("#showerror").html("<lable class='error'>必填字段</lable>");
                			}
                      });
             }
@@ -340,9 +383,10 @@ function exportData(){
         //
         if($("#isOftask").val()=='true'){//必须添加导师
         	$("#inputMentor").attr("required","");
-        }else{
-        	$("#inputMentor").hide();
         }
+        //else{
+        //	$("#inputMentor").hide();
+        //}
         //课程封面
         if(result.coverUrl!=""){
         	$("#coursepage").attr('src','${ctx}/common/file/image/'+result.coverUrl+'?n='+Math.random()*100); 
@@ -398,9 +442,63 @@ function exportData(){
     		scroll: false,
     		width:750
         }).result(function(e,item){
-        	$("#inputTeacher").val(item.name + '（' + item.mail + '），' + item.org + item.department);
-        	$("#teacher").val(item.id);
+        	//$("#inputTeacher").val(item.name + '（' + item.mail + '），' + item.org + item.department);
+        	//$("#teacher").val(item.id);
+        	var flag = true;
+        	$("#showerror").html("");
+        	
+        	var tit = item.id;
+			var _val = $("#teacherIds").val();
+			var strs= new Array(); //定义一数组
+			strs=_val.split(","); //字符分割 
+			for (var i=0;i<strs.length ;i++ ) {
+				var temp = strs[i];
+				if(temp == tit){
+					$("#showerror").html('<label class="error">不能添加重复的教师！</label>');
+					$("#inputTeacher").val("");
+					flag = false;
+				}
+			}
+			
+        	
+		   	
+			//$("#list_teacher>tr").each(function(){
+			//	if($(this).attr("data-fdid")==item.id){
+			//		$("#showerror").html("<lable class='error'>请勿重复添加教师!</lable>");
+			//		$("#inputTeacher").val("");
+			//		flag = false;
+			//	}
+			//});
+			if(flag){
+				$(this).val(item.name);
+				$("#list_teacher").append(listTeacherSelFn(item)).find(".close:last").bind("click",delKeyword);
+				//$addTeacher.find("a").attr("class","close").bind("click",delKeyword);
+				if(_val.length==0){
+					$("#teacherIds").val(tit);
+				}else{
+					$("#teacherIds").val(_val + "," + tit);
+				}
+				
+				//$("#list_teacher").append(listTeacherSelFn(item))
+				//.sortable({
+				//	handle: '.state-dragable',
+				//	forcePlaceholderSize: true
+				//})
+				//.find("a.icon-remove-blue").bind("click",function(e){
+				//	e.preventDefault();
+				//	$(this).closest("tr").remove();
+				//});
+				$("#inputTeacher").val("");
+			}
     	});
+	 	// 删除关键词事件
+		function delKeyword(){
+			var arr = [];
+			$(this).parent().siblings(".alert-tag").each(function(){
+				arr.push($(this).attr("data-fdid"));
+			});
+			$("#teacherIds").val(arr);
+		}
         /****************************************导师信息***************************/
         $("#inputMentor").autocomplete("${ctx}/ajax/user/findByName",{
             formatMatch: function(item) {
@@ -452,18 +550,39 @@ function exportData(){
         	  return false;//此处代码作用防止回车提交两次表单  原因可能为页面存在两个form所致
             }  
      }); 
-        $("#inputTeacher").bind("focus",function(){
-        	if($("#showerror").html()!=null&&$("#showerror").html()!=""){
-        		$("#showerror").html("");
-        		$(this).val("");
-        	}
-        });
         $("#inputMentor").bind("focus",function(){
         	if($("#showerror2").html()!=null&&$("#showerror2").html()!=""){
         		$("#showerror2").html("");
         		$(this).val("");
         	}
         });
+        
+        jQuery("#importAuth").uploadify({
+	        'height' : 38,
+            'width' : 73,
+            'multi' : false,
+            'simUploadLimit' : 1,
+            'swf' : '${ctx}/resources/uploadify/uploadify.swf',
+            "buttonClass": "btn btn-primary btn-large",
+            'buttonText' : '导 入',
+            'uploader' : '${ctx}/ajax/course/importCourseAuth',
+            'auto' : true,// 选中后自动上传文件
+            'fileTypeExts' : '*.xls;*.xlsx;',
+            'formData'     : {'courseId':'${param.courseId}'},  
+            'fileSizeLimit':2048,// 限制文件大小为2m
+            'onInit' : function(){
+            	$("#importAuth").next(".uploadify-queue").remove();
+            },
+            'onUploadStart' : function (file) {},
+            'onUploadSuccess' : function (file, data, Response) {
+            	if(data=="\"0\""){
+            		jalert("导入授权信息成功！");
+            		pageNavClick($("#currentpage").val());
+            	}else{
+            		jalert("导入授权信息失败！");
+            	}
+            }
+ 		});
     });
 /**********************methods***************************************************/
 

@@ -69,7 +69,19 @@ public class Message extends IdEntity{
 	 * 楼层号
 	 */
 	private Integer fdFloorNo;
+	
+	/**
+	 * 记录一些其他信息时可使用此字段
+	 */
+	private String fdKey;
 
+	public String getFdKey() {
+		return fdKey;
+	}
+
+	public void setFdKey(String fdKey) {
+		this.fdKey = fdKey;
+	}
 
 	public String getFdType() {
 		return fdType;

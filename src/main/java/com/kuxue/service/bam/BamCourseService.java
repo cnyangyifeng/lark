@@ -31,7 +31,7 @@ import jodd.util.StringUtil;
  * 一定要小心操作BamCourse类，危险！
  */
 @Service
-@Transactional(readOnly = true)
+@Transactional(readOnly = false)
 public class BamCourseService extends SimpleService {
 
     /**
@@ -188,10 +188,11 @@ public class BamCourseService extends SimpleService {
      * @param courseId
      * 
      */
+    @Transactional(readOnly = false)
 	public void setCourseIsUpdate(String courseId) {
 		// TODO Auto-generated method stub
 		String sql = "update IXDF_NTP_BAM_SCORE set isUpdate=? where courseId=?";
-		super.executeSql(sql, "Y",courseId);
+		super.executeUpdateSql(sql, "Y",courseId);
 	}
 
 

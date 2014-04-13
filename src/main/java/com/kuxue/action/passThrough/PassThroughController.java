@@ -194,9 +194,8 @@ public class PassThroughController {
 					return "redirect:/passThrough/getCourseHome/"+courseId;
 				}
 			}else{//授权课
-				boolean canStudy= courseParticipateAuthService
-						.findCouseParticipateAuthById(courseId,ShiroUtils.getUser().getId());
-				if(canStudy){//无权
+				if(courseParticipateAuthService
+						.findCouseParticipateAuthById(courseId,ShiroUtils.getUser().getId())==null){//无权
 					return "redirect:/passThrough/getCourseHome/"+courseId;
 				}
 			}

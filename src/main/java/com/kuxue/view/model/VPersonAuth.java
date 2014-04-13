@@ -2,6 +2,10 @@ package com.kuxue.view.model;
 
 public class VPersonAuth {
 	/**
+	 * 课程标题
+	 */
+	private String fdTitle;
+	/**
 	 * 人员名称
 	 */
 	private String fdName;
@@ -29,6 +33,12 @@ public class VPersonAuth {
     private String fdCreateTime;
     
     
+	public String getFdTitle() {
+		return fdTitle;
+	}
+	public void setFdTitle(String fdTitle) {
+		this.fdTitle = fdTitle;
+	}
 	public String getTeacherEmail() {
 		return teacherEmail;
 	}

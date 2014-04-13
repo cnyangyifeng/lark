@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <sys-message>
-    <message name="source"><![CDATA[我获得了《<span style="font-weight:bold;">${courseName}</span>》 课程结业证书，点击 <a href="${link}" target="_blank">这里</a> 查看证书。]]>
+    <message name="source"><![CDATA[我获得了《<span style="font-weight:bold;">${courseName}</span>》 课程结业证书，点击 <a class="send source" href="${link}" target="_blank">这里</a> 查看证书。]]>
     </message>
     <message name="lecture"><![CDATA[我学会了第${lectureNo}节“<span style="font-weight:bold;">${lectureName}</span>”。]]>
     </message>

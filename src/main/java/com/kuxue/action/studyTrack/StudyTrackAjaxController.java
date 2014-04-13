@@ -21,6 +21,7 @@ import com.kuxue.common.page.Pagination;
 import com.kuxue.model.course.CourseCatalog;
 import com.kuxue.model.course.CourseInfo;
 import com.kuxue.model.material.MaterialInfo;
+import com.kuxue.model.message.Message;
 import com.kuxue.model.organization.RoleEnum;
 import com.kuxue.model.organization.SysOrgPerson;
 import com.kuxue.service.AccountService;
@@ -130,13 +131,13 @@ public class StudyTrackAjaxController {
 				
 			}
 			map.put("currLecture", currLecture);
-			Map map2 = studyTrackService.getMessageInfoByBamId((String)bamCourse.get("BAMID"));
-			if(map2.size()==0){
+			Message msg = studyTrackService.getMessageInfoByBamId((String)bamCourse.get("BAMID"));
+			if(msg==null){
 				map.put("passMsg","没有学习记录");
 				map.put("passTime", "0000-00-00 00:00:00");
 			}else{
-				map.put("passMsg",map2.get("cot"));
-				map.put("passTime", DateUtil.convertDateToString((Date)map2.get("time")));
+				map.put("passMsg",messageService.getMsgContent(msg, (String)bamCourse.get("COURSEID"), (String)bamCourse.get("PREID")));
+				map.put("passTime", DateUtil.convertDateToString(msg.getFdCreateTime()));
 			}
 			list.add(map);
 		}
@@ -198,7 +199,7 @@ public class StudyTrackAjaxController {
 		map.put("userId", orgPerson.getFdId());
 		map.put("name", orgPerson.getRealName());
 		map.put("url", orgPerson.getPoto());
-		map.put("org", orgPerson.getHbmParent()==null?"":orgPerson.getHbmParent().getHbmParentOrg().getFdName());
+		map.put("org", (orgPerson.getHbmParent()==null || orgPerson.getHbmParent().getHbmParentOrg()==null)?"":orgPerson.getHbmParent().getHbmParentOrg().getFdName());
 		map.put("dep", orgPerson.getDeptName());
 		map.put("sex", orgPerson.getFdSex());
 		map.put("lastTime", logLoginService.getNewLoginDate(orgPerson.getFdId()).equals("0")?"首次登录":"最近登录 "+logLoginService.getNewLoginDate(orgPerson.getFdId()));

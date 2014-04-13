@@ -22,6 +22,11 @@ public class VCourseAuth {
    private String adviserEmail;
    
    /**
+    * 课程
+    */
+   private String courseName;
+   
+   /**
 	 * 创建时间
 	 */
    
@@ -84,5 +89,13 @@ public class VCourseAuth {
    public void setFdCreateTime(String fdCreateTime) {
 	   this.fdCreateTime = fdCreateTime;
    }
+
+public String getCourseName() {
+	return courseName;
+}
+
+public void setCourseName(String courseName) {
+	this.courseName = courseName;
+}
 
 }

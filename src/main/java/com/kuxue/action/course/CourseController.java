@@ -13,6 +13,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.kuxue.common.page.Pagination;
+import com.kuxue.common.page.SimplePage;
 import com.kuxue.common.utils.ComUtils;
 import com.kuxue.model.base.AttMain;
 import com.kuxue.model.base.Constant;
@@ -73,7 +74,7 @@ public class CourseController {
 		String pageNoStr = request.getParameter("pageNo");
 		String orderbyStr = request.getParameter("order");
 		Pagination page = courseService.findCourseInfosByName(fdTitle,
-				pageNoStr, orderbyStr, Constant.COUSER_TEMPLATE_MANAGE);
+				pageNoStr, orderbyStr, Constant.COUSER_TEMPLATE_MANAGE,SimplePage.DEF_COUNT);
 		model.addAttribute("page", page);
 		return "/course/course_list";
 	}
@@ -189,11 +190,21 @@ public class CourseController {
 	 */
 	@RequestMapping(value = "getCourseAuthInfos")
 	public String getCourseAuthInfos(Model model, HttpServletRequest request) {
-		String fdTitle = request.getParameter("fdTitle");
+		String fdType = request.getParameter("fdType");
 		String pageNoStr = request.getParameter("pageNo");
 		String orderbyStr = request.getParameter("order");
-		Pagination page = courseService.findCourseInfosByName(fdTitle,
-				pageNoStr, orderbyStr, Constant.COUSER_AUTH_MANAGE);
+		Pagination page = null;
+		if("14".equals(fdType)){
+			page = courseService.findTeachersByName(null,
+					pageNoStr, orderbyStr,SimplePage.DEF_COUNT);
+		}else if("15".equals(fdType)){
+			page = courseService.findTutorsByName(null,
+					pageNoStr, orderbyStr,SimplePage.DEF_COUNT);
+		}else{
+			page = courseService.findCourseInfosByName(null,
+					pageNoStr, orderbyStr, Constant.COUSER_AUTH_MANAGE,SimplePage.DEF_COUNT);
+		}
+		
 		model.addAttribute("page", page);
 		return "/course/courseauth_list";
 
@@ -204,7 +215,14 @@ public class CourseController {
 	 */
 	@RequestMapping(value = "getSingleCourseAuthInfo")
 	public String getCourseAuthInfo(HttpServletRequest request) {
-		return "/course/courseauth_manage";
+		String fdType = request.getParameter("fdType");
+		if("14".equals(fdType)){
+			return "/course/teacherauth_manage";
+		}else if("15".equals(fdType)){
+			return "/course/tutorauth_manage";
+		}else{
+			return "/course/courseauth_manage";
+		}
 	}
 
 	@RequestMapping(value = "courseIndex")

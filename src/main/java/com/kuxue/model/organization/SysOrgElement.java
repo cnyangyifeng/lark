@@ -189,7 +189,8 @@ public class SysOrgElement extends IdEntity implements SysOrgConstant{
      */
     @Transient
     public SysOrgElement getHbmParentOrg() {
-        if (getFdOrgType().intValue() == 1)
+    	//WG 
+        if (getFdOrgType() == null || getFdOrgType().intValue() == 1)
             return null;
         SysOrgElement element = getHbmParent();
         while (element != null && element.getFdOrgType().intValue() > 1) {

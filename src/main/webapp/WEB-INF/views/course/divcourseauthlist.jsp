@@ -92,39 +92,39 @@
 	<section class="section listWrap">
 		<ul class="nav list">
 			 <j:iter items="${page.list}" var="bean" status="vstatus">
-				 <li><a href="${ctx}/course/getSingleCourseAuthInfo?courseId=${bean.FDID}&fdType=13&order=createtime"><i class="icon-exam-num"></i>
+				 <li><a href="${ctx}/course/getSingleCourseAuthInfo?courseId=${bean.fdId}&fdType=13&order=createtime"><i class="icon-exam-num"></i>
 				
 				    <span class="title">
-					<c:if test="${bean.FDTITLE!=null && bean.FDTITLE!=''}">
-						<tags:title size="35" value="${bean.FDTITLE}"></tags:title>
+					<c:if test="${bean.fdTitle!=null && bean.fdTitle!=''}">
+						<tags:title size="35" value="${bean.fdTitle}"></tags:title>
 					</c:if>
-					<c:if test="${bean.FDTITLE==null || bean.FDTITLE==''}">
+					<c:if test="${bean.fdTitle==null || bean.fdTitle==''}">
 						未命名
-					</c:if>
+					</c:if>（新学员：${bean.teachers}人，导师：${bean.tutors}人）
 					</span> 
 				    <span class="rating-view">
-				    <c:if test="${bean.FDAVERAGE!=null}">
+				    <c:if test="${bean.fdaverage!=null}">
 					  <span class="rating-all">
 					  <c:forEach var="i" begin="1" end="5">
-					  	<c:if test="${i<=bean.FDAVERAGE}">
+					  	<c:if test="${i<=bean.fdaverage}">
 					  	<i class="icon-star active"></i>
 					  	</c:if>
-					  	<c:if test="${i>bean.FDAVERAGE}">
+					  	<c:if test="${i>bean.fdaverage}">
 					  	<i class="icon-star"></i>
 					  	</c:if>
 					  </c:forEach>
 					  
 					  </span> 
 					  <b class="text-warning">
-					  <c:if test="${bean.FDAVERAGE*10%10==0}">
-					  ${bean.FDAVERAGE}.0
+					  <c:if test="${bean.fdaverage*10%10==0}">
+					  ${bean.fdaverage}.0
 					  </c:if>
-					  <c:if test="${bean.FDAVERAGE*10%10!=0}">
-					  ${bean.FDAVERAGE}
+					  <c:if test="${bean.fdaverage*10%10!=0}">
+					  ${bean.fdaverage}
 					  </c:if>
 					  </b>
 					  </c:if>
-					  <c:if test="${bean.FDAVERAGE==null}">
+					  <c:if test="${bean.fdaverage==null}">
 					  <span class="rating-all">
 					  <c:forEach var="i" begin="1" end="5">
 					   <i class="icon-star"></i>
@@ -132,7 +132,7 @@
 					  </span> 
 					  <b class="text-warning">0.0</b>
 					  </c:if>
-					  </span> <span class="date"><i class="icon-time"></i><fmt:formatDate value="${bean.FDCREATETIME}" pattern="yyyy/MM/dd hh:mm aa"/></span>
+					  </span> <span class="date"><i class="icon-time"></i><fmt:formatDate value="${bean.fdCreateTime}" pattern="yyyy/MM/dd hh:mm aa"/></span>
 				</a></li>
 			</j:iter> 
 		</ul>
@@ -184,3 +184,81 @@
 			
 				</div>
 			</div>               
+<script type="text/javascript">
+//导出列表   
+function exportData(){
+	var fdTitle = $("#serach").val();
+	var order = $("#cachorder").val();
+	jalert("您确定要导出全部数据吗？",function(){
+		  window.location.href="${ctx}/common/exp/getExpAllCourseAuth?order="+order+"&fdTitle="+fdTitle;
+	}); 
+}
+</script>
+<script type="text/javascript">	
+function pressEnter(){//回车事件
+	if(event.keyCode==13){
+		findeCoursesByKey(1,$('#cachorder').val());
+	}
+}
+function clearserach(){//清理搜索栏并显示数据列表
+	//alert('ss');
+	$("#serach").attr("value","");
+	$("#markshow").html('<a id="containkey"href="#">全部条目</a>');
+	findeCoursesByKey(1,'fdcreatetime');
+}
+
+function showSearch(){
+	var fdTitle = document.getElementById("serach").value;
+	$("#markshow").html('含“<a id="containkey"href="#"></a>”的条目');
+	if(fdTitle==''){
+		$("#markshow").html('<a id="containkey" href="#">全部条目</a>');
+	}else if(fdTitle.length>2){
+		$("#containkey").html(fdTitle.substr(0,2)+"...");
+		}else{
+			$("#containkey").html(fdTitle);
+		}
+}
+function findeCoursesByKey(pageNo,order){
+	var fdTitle = document.getElementById("serach").value;
+	if($('input[name="selectCheckbox"]:checked').val()==1){
+		$("#allkey").attr("value",1);
+	}
+	$('#cachorder').attr('value',order);
+	$("#coursekey").attr("value",fdTitle);//关键字赋值
+	$("#pageBody").html("");
+	$.ajax({
+		type: "post",
+		 url: "${ctx}/ajax/course/getCoureAuthInfosOrByKey",
+		data : {
+			"fdTitle" : fdTitle,
+			"pageNo" : pageNo,
+			"order" : order
+		},
+		cache: false, 
+		dataType: "html",
+		success:function(data){
+			//alert(data);
+			var serachkey=$("#coursekey").val();
+			$("#pageBody").html(data);
+			if(fdTitle!=""&&fdTitle!=null){
+				$("#markshow").html('含“<a id="containkey"href="#"></a>”的条目');
+				if(fdTitle.length>2){
+					$("#containkey").html(fdTitle.substr(0,2)+"...");
+					}else{
+						$("#containkey").html(fdTitle);
+					}
+			}
+			else{
+				$("#containkey").html('<a id="containkey"href="#">全部条目</a>');
+				
+			}
+			
+			$("#serach").attr("value",serachkey);
+			if($("#allFlag").val()=='true'){
+				document.getElementById("selectAll").checked=true;
+				selectAll();
+			}
+		}
+	}); 
+}
+</script>

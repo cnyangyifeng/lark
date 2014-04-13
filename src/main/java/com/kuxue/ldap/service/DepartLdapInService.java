@@ -5,6 +5,7 @@ import com.kuxue.ldap.LdapUtils;
 import com.kuxue.utils.DateUtil;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.time.DateUtils;
+import org.mortbay.log.Log;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ldap.core.ContextMapper;
 import org.springframework.ldap.core.DirContextAdapter;
@@ -80,9 +81,19 @@ public class DepartLdapInService extends LdapInService {
 
         for (Map<String, Object> map : values) {
             if (map.get("PARENTID") != null && fdIds.get(map.get("PARENTID").toString()) != null) {
+            	Log.info("部门："+map.get("FD_NAME")+"的上级部门ID为："+fdIds.get(map.get("PARENTID").toString()) );
                 map.put("FD_PARENTID", fdIds.get(map.get("PARENTID").toString()).toString());
+            } else if(map.get("PARENTID") != null){
+            	List<Map> parentlists = findByNamedQuery("selectElementByKey", map, Map.class);
+                if(CollectionUtils.isEmpty(parentlists)){
+                	map.put("FD_PARENTID", "");
+                }else{
+                	map.put("FD_PARENTID", parentlists.get(0).get("FDID").toString());
+                }
+                Log.info("部门："+map.get("FD_NAME")+"的上级部门ID为："+map.get("FD_PARENTID").toString() );
+                //map.put("FD_PARENTID", "");
             } else {
-                map.put("FD_PARENTID", "");
+            	map.put("FD_PARENTID", "");
             }
             updateByNamedQuery("updateElementParent", map);
         }

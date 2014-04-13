@@ -76,7 +76,7 @@ public class HeadPageAjaxContoller {
 	public String getTeacherWord(HttpServletRequest request) {
 		Finder finder=Finder.create( " select * from SYS_PAGE_CONFIG page ");
 		finder.append(" where page.fdtype='01' ");
-		finder.append("   order by  dbms_random.value ");
+//		finder.append("   order by  dbms_random.value ");
 //		Pagination  page1=pageConfigService.getPageBySql(finder, 1, 4);
 		List pages=pageConfigService.getPageBySql(finder, 1, 4).getList();
 		List<Map> teachers=new ArrayList<Map>();

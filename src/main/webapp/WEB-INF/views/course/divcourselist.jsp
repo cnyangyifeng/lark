@@ -163,7 +163,7 @@
 				      </c:if>
 					  <span class="date"><i class="icon-time"></i>
 					  <fmt:formatDate value="${bean.fdCreateTime}" pattern="yyyy/MM/dd hh:mm aa"/>
-					  <span class="dt">发布者</span><em>${bean.fdCreateTime}</em>
+					  <span class="dt">发布者</span><em>${bean.fdAuthor}</em>
 					  </span>
 				</a></li>
 			</j:iter> 

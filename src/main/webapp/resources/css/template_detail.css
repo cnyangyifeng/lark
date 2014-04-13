@@ -1,4 +1,5 @@
 @charset "utf-8";
+@import "pages.css";
 .section{background-color:#FFF; border-bottom:solid #dcdcdc 2px;overflow:hidden;}
 .tit-bar{position:relative;margin:20px 0;}
 .tit-bar > img{position:absolute;left:0;top:0;}
@@ -26,6 +27,8 @@
 .page-body .section{padding:20px;}
 .page-body form .section + .section {margin-top:20px;}
 .page-body form label{margin:17px 0 12px;}
+.page-body form label.pr{border-top: solid #dcdcdc 1px;margin-top: 30px;padding-top: 20px;}
+.page-body form label.pr .pages{position: absolute;right: 5px;top: 13px;}
 .page-body form label.error{margin:0;}
 .page-body form input[type="text"],.page-body form textarea{background-color: #efefef}
 .page-body form .control-group label.control-label{ margin: 0;}
@@ -69,6 +72,8 @@
 .courseSkins .courseSkinList .active a i{display:block;}
 .courseSkins .courseSkinList li h5{font-weight:normal;text-align:center;}
 .icon-right{width:32px;height:32px;background-position:0 -851px;}
+.coverList .courseSkinList{margin-left: -15px;}
+.coverList .courseSkinList li{margin-left: 20px;}
 
 /* 访问权限页 */
 .accessRight-content .nav-pills{margin:-42px 0 0 74px;}

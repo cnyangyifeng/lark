@@ -341,32 +341,31 @@ value="{{=it.coverUrl || 'images/default-cover.png'}}" />
 						     <button id="upMovie" class="btn btn-primary btn-large" type="button" >上传</button>
 
 							<input type="hidden"  name="attId" id="attIdID">
-					</div>		
-	       </div>
+					</div>	
 			<input type="hidden" id="coursePicture" name="coursePicture" value="{{=it.coursePictureId || ''}}" />
 			<div id="coursePicturediv">
 	   		{{?it.coursePictureList.totalCount>0}}
-			<div class="courseSkins">
-		   		 <label >封面图片库</label>
-				<div class="btn-group">
-				<button class="btn btn-primary btn-ctrl" type="button" {{?it.coursePictureList.pageNo<= 1}}disabled{{??}}onclick="pageNavClick({{=it.coursePictureList.pageNo - 1}})"{{?}}>
-					<i class="icon-chevron-left icon-white"></i>
-				</button>
-				<button class="btn btn-primary btn-ctrl" type="button" {{?it.coursePictureList.pageNo>= it.coursePictureList.pageCount}}disabled{{??}}onclick="pageNavClick({{=it.coursePictureList.pageNo + 1}})"{{?}}>
-					<i class="icon-chevron-right icon-white"></i>
-				</button>
+		   		<label class="pr">
+				    	选择封面
+				    	<div class="pages">
+	                        <div class="btn-group">
+	                            <button class="btn btn-primary btn-ctrl" type="button" {{?it.coursePictureList.pageNo<= 1}}disabled{{??}}onclick="pageNavClick({{=it.coursePictureList.pageNo - 1}})"{{?}}><i class="icon-chevron-left icon-white"></i></button>
+	                            <button class="btn btn-primary btn-ctrl" type="button" {{?it.coursePictureList.pageNo>= it.coursePictureList.pageCount}}disabled{{??}}onclick="pageNavClick({{=it.coursePictureList.pageNo + 1}})"{{?}}><i class="icon-chevron-right icon-white"></i></button>
+	                        </div>
+	                    </div>
+				</label>
+				<div class="courseSkins coverList">
+						<ul class="nav courseSkinList clearfix coursePicture">
+							{{~ it.coursePictureList.pictureList :picture:index}}
+						 		<li{{?picture.fdId == it.coursePictureId}} class="active"{{?}}><a 
+									href="#" data-fdid="{{=picture.fdId}}" data-img="${ctx}/common/file/image/{{=picture.imgUrl}}"><img src="${ctx}/common/file/image/{{=picture.imgUrl}}" alt="{{=picture.title}}" /><i class="icon-right"></i></a><h5>{{=picture.title}}</h5></li>
+							{{~}}                   	                  
+						</ul>
 				</div>
-				
-				<ul class="nav courseSkinList clearfix coursePicture">
-					{{~ it.coursePictureList.pictureList :picture:index}}
-						 <li{{?picture.fdId == it.coursePictureId}} class="active"{{?}}><a 
-
-href="#" data-fdid="{{=picture.fdId}}" data-img="${ctx}/common/file/image/{{=picture.imgUrl}}"><img src="${ctx}/common/file/image/{{=picture.imgUrl}}" alt="{{=picture.title}}" /><i class="icon-right"></i></a><h5>{{=picture.title}}</h5></li>
-					{{~}}                    	                  
-				</ul>
-			</div>	
 			{{?}}
-		   </div>		  
+		   </div>	
+	       </div>
+			
 		   <div class="courseSkins">
 		   		 <label >课程皮肤</label>
 				<input type="hidden" id="courseSkin" name="courseSkin" value="{{=it.courseSkinId ||  
@@ -1080,10 +1079,11 @@ function successSelectArea(imgSrc){
 			  dataType:'json',
 			  success: function(rsult){
 				  var strhtm = "";
+				  
 				  if(rsult.coursePictures.totalCount>0){
 					  
-					  strhtm += "<div class='courseSkins'>";
-					  strhtm += "<label >封面图片库</label>";
+					  strhtm += "<label class='pr'>选择封面";
+					  strhtm += "<div class='pages'>";
 					  strhtm += "<div class='btn-group'>";
 					  strhtm += "<button class='btn btn-primary btn-ctrl' type='button' ";
 					  if(parseInt(rsult.coursePictures.pageNo)<= 1){
@@ -1104,6 +1104,8 @@ function successSelectArea(imgSrc){
 					  strhtm += " <i class='icon-chevron-right icon-white'></i> ";
 					  strhtm += "</button> ";
 					  strhtm += "</div> ";
+					  strhtm += "</div> ";
+					  strhtm += "<div class='courseSkins coverList'>";
 					  strhtm += "<ul class='nav courseSkinList clearfix coursePicture'> ";
 					  for(var i=0;i<rsult.coursePictures.pictureList.length;i++){
 						  strhtm += "<li ";

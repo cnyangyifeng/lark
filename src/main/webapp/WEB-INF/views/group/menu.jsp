@@ -11,14 +11,15 @@
                 <a href="${ctx}/studyTrack/getStudyTrackDirector?fdType=18">学习跟踪<b class="caret"></b></a></li>
                 
                 
-	            <c:if test="${param.fdType=='13'}">
-	            <li class="nav-header active">
-	            </c:if>
-	            <c:if test="${param.fdType!='13'}">
-	            <li class="nav-header">
-	            </c:if>
-	            <a href="${ctx}/course/getCourseAuthInfos?fdType=13&order=fdcreatetime">授权学习<b class="caret"></b></a>
-	            </li> 
+                <li class="nav-header">
+                    <span>授权学习<b class="caret"></b></span>
+	            </li>
+	            <tags:shirourl text="按课程" url="${ctx}/course/getCourseAuthInfos?fdType=13&order=fdcreatetime" active="13"  iconName=""  para="${param.fdType}"></tags:shirourl>
+	            
+	            <tags:shirourl text="按新教师" url="${ctx}/course/getCourseAuthInfos?fdType=14&order=fdcreatetime" active="14"  iconName=""  para="${param.fdType}"></tags:shirourl>
+	            
+	            <tags:shirourl text="按导师" url="${ctx}/course/getCourseAuthInfos?fdType=15&order=fdcreatetime" active="15"  iconName=""  para="${param.fdType}"></tags:shirourl>
+	           
                 
 	            <li class="nav-header">
                     <span>课程管理<b class="caret"></b></span>

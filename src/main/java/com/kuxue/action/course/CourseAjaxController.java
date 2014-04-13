@@ -1,5 +1,6 @@
 package com.kuxue.action.course;
 
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -19,11 +20,15 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.multipart.MultipartHttpServletRequest;
+import org.springframework.web.multipart.commons.CommonsMultipartResolver;
 
 import com.kuxue.common.hibernate4.Finder;
 import com.kuxue.common.json.JsonUtils;
 import com.kuxue.common.page.Pagination;
 import com.kuxue.common.page.SimplePage;
+import com.kuxue.common.utils.excel.AbsImportExcel;
 import com.kuxue.model.bam.BamCourse;
 import com.kuxue.model.base.AttMain;
 import com.kuxue.model.base.Constant;
@@ -568,7 +573,7 @@ public class CourseAjaxController {
 		String pageNoStr = request.getParameter("pageNo");
 		String orderbyStr = request.getParameter("order");
 		Pagination page = courseService.findCourseInfosByName( fdTitle,
-				pageNoStr, orderbyStr,Constant.COUSER_TEMPLATE_MANAGE);
+				pageNoStr, orderbyStr,Constant.COUSER_TEMPLATE_MANAGE,SimplePage.DEF_COUNT);
 		model.addAttribute("page", page);
 		return "/course/divcourselist";
 	}
@@ -582,12 +587,12 @@ public class CourseAjaxController {
 		String pageNoStr = request.getParameter("pageNo");
 		String orderbyStr = request.getParameter("order");
 		Pagination page = courseService.findCourseInfosByName( fdTitle,
-				pageNoStr, orderbyStr,Constant.COUSER_TEMPLATE_MANAGE);
+				pageNoStr, orderbyStr,Constant.COUSER_TEMPLATE_MANAGE,SimplePage.DEF_COUNT);
 		int i = page.getTotalPage();
 		if(i>0){
 			for(int j=0;j<i;j++){
 				page = courseService.findCourseInfosByName( fdTitle,
-						"1", orderbyStr,Constant.COUSER_TEMPLATE_MANAGE);
+						"1", orderbyStr,Constant.COUSER_TEMPLATE_MANAGE,SimplePage.DEF_COUNT);
 				List list = page.getList();
 				if(list!=null && list.size()>0){
 					for(Object obj:list){
@@ -917,10 +922,25 @@ public class CourseAjaxController {
 		String fdTitle = request.getParameter("fdTitle");
 		String pageNoStr = request.getParameter("pageNo");
 		String orderbyStr = request.getParameter("order");
-		Pagination page = courseService.findCourseInfosByName( fdTitle,
-				pageNoStr, orderbyStr,Constant.COUSER_AUTH_MANAGE);
-		model.addAttribute("page", page);
-		return "/course/divcourseauthlist";
+		String fdType = request.getParameter("fdType");
+		if("14".equals(fdType)){
+			Pagination page = courseService.findTeachersByName(fdTitle,
+					pageNoStr, orderbyStr,SimplePage.DEF_COUNT);
+			model.addAttribute("page", page);
+			return "/course/divteacherauthlist";
+		}else if("15".equals(fdType)){
+			Pagination page = courseService.findTutorsByName(fdTitle,
+					pageNoStr, orderbyStr,SimplePage.DEF_COUNT);
+			model.addAttribute("page", page);
+			return "/course/divtutorauthlist";
+		}else{
+			Pagination page = courseService.findCourseInfosByName( fdTitle,
+					pageNoStr, orderbyStr,Constant.COUSER_AUTH_MANAGE,SimplePage.DEF_COUNT);
+			model.addAttribute("page", page);
+			return "/course/divcourseauthlist";
+		}
+		
+		
 	}
 	/**
 	 * 某课程授权列表
@@ -1007,6 +1027,165 @@ public class CourseAjaxController {
 		map.put("endNum", page.getEndNum());
 		return JsonUtils.writeObjectToJson(map);
 	}
+	
+	/**
+	 * 按新教师授权的授权信息（新增、编辑）
+	 */
+	@RequestMapping(value="getSingleTeacherAuths")
+	@ResponseBody
+	public String getSingleTeacherAuths(HttpServletRequest request){
+		String teacherId=request.getParameter("teacherId");
+		String orderStr=request.getParameter("order");
+		String pageNostr=request.getParameter("pageNo");
+		String keyword=request.getParameter("keyword");
+		int pageNo;
+		if (StringUtil.isNotBlank(pageNostr)) {
+			pageNo = Integer.parseInt(pageNostr);
+		} else {
+			pageNo = 1;
+		}
+		//存放新教师信息的map
+		Map tMap=new HashMap();
+		//存放课程的授权信息列表
+		List coursepas=new ArrayList();
+		Pagination page = new Pagination();
+		//如果是编辑，则进行以下处理，否则数据均为空
+		if(StringUtil.isNotBlank(teacherId)){
+			SysOrgPerson teacher = accountService.load(teacherId);
+			tMap.put("imgUrl", teacher.getPoto());
+			tMap.put("teacherName", teacher.getFdName());
+			tMap.put("teacherDept", teacher.getDeptName());
+			tMap.put("teacherMail", teacher.getFdEmail());
+			//获取课程授权列表
+			page=courseParticipateAuthService.findSingleTeacherAuthList(teacherId,orderStr,pageNo,SimplePage.DEF_COUNT,keyword);
+			if(page.getTotalCount()>0){
+				List list = page.getList();
+				for(int i=0;i<list.size();i++){
+					Object [] obj=(Object[]) list.get(i);
+					CourseParticipateAuth cpa =(CourseParticipateAuth)obj[0] ;
+					Map mcpa=new HashMap();//授权信息
+					mcpa.put("id", cpa.getFdId());
+					mcpa.put("time", sdf.format(cpa.getFdCreateTime()));
+					Map course=new HashMap();//教师信息
+					course.put("tid", cpa.getCourse().getFdId());
+					course.put("name",cpa.getCourse().getFdTitle());
+					Map mentor=null;//导师信息
+					if(cpa.getFdTeacher()!=null){
+						mentor=new HashMap();
+						mentor.put("mid", cpa.getFdTeacher().getFdId());
+						mentor.put("imgUrl",  cpa.getFdTeacher().getPoto());
+						mentor.put("link",  "");
+						mentor.put("name",cpa.getFdTeacher().getRealName());
+						mentor.put("mail",  cpa.getFdTeacher().getFdEmail()==null?"":cpa.getFdTeacher().getFdEmail());
+						mentor.put("department",  cpa.getFdTeacher().getDeptName()==null?"":cpa.getFdTeacher().getDeptName());
+//						mentor.put("org", cpa.getFdTeacher().getHbmParent().getFdName());
+					}
+					mcpa.put("course", course);
+					mcpa.put("mentor", mentor);
+					coursepas.add(mcpa);
+				}
+			}
+		}else{
+			tMap.put("imgUrl", "");
+			tMap.put("teacherName", "");
+			tMap.put("teacherDept", "");
+			tMap.put("teacherMail", "");
+		}
+		
+		Map map=new HashMap();
+		map.put("totalPage", page.getTotalPage());
+		map.put("currentPage", pageNo);
+		map.put("list", coursepas);
+		map.put("totalCount", page.getTotalCount());
+		map.put("teacher",tMap);
+		map.put("StartPage", page.getStartPage());
+		map.put("EndPage",page.getEndPage());
+		map.put("StartOperate", page.getStartOperate());
+		map.put("EndOperate", page.getEndOperate());
+		map.put("startNum",page.getStartNum());;
+		map.put("endNum", page.getEndNum());
+		return JsonUtils.writeObjectToJson(map);
+	}
+	
+	/**
+	 * 按导师授权的授权信息（新增、编辑）
+	 */
+	@RequestMapping(value="getSingleTutorAuths")
+	@ResponseBody
+	public String getSingleTutorAuths(HttpServletRequest request){
+		String teacherId=request.getParameter("teacherId");
+		String orderStr=request.getParameter("order");
+		String pageNostr=request.getParameter("pageNo");
+		String keyword=request.getParameter("keyword");
+		int pageNo;
+		if (StringUtil.isNotBlank(pageNostr)) {
+			pageNo = Integer.parseInt(pageNostr);
+		} else {
+			pageNo = 1;
+		}
+		//存放新教师信息的map
+		Map tMap=new HashMap();
+		//存放课程的授权信息列表
+		List coursepas=new ArrayList();
+		Pagination page = new Pagination();
+		//如果是编辑，则进行以下处理，否则数据均为空
+		if(StringUtil.isNotBlank(teacherId)){
+			SysOrgPerson teacher = accountService.load(teacherId);
+			tMap.put("imgUrl", teacher.getPoto());
+			tMap.put("teacherName", teacher.getFdName());
+			tMap.put("teacherDept", teacher.getDeptName());
+			tMap.put("teacherMail", teacher.getFdEmail());
+			//获取课程授权列表
+			page=courseParticipateAuthService.findSingleTutorAuthList(teacherId,orderStr,pageNo,SimplePage.DEF_COUNT,keyword);
+			if(page.getTotalCount()>0){
+				List list = page.getList();
+				for(int i=0;i<list.size();i++){
+					Object [] obj=(Object[]) list.get(i);
+					CourseParticipateAuth cpa =(CourseParticipateAuth)obj[0] ;
+					Map mcpa=new HashMap();//授权信息
+					mcpa.put("id", cpa.getFdId());
+					mcpa.put("time", sdf.format(cpa.getFdCreateTime()));
+					Map course=new HashMap();//教师信息
+					course.put("tid", cpa.getCourse().getFdId());
+					course.put("name",cpa.getCourse().getFdTitle());
+					Map mentor=null;//新教师信息
+					if(cpa.getFdTeacher()!=null){
+						mentor=new HashMap();
+						mentor.put("mid", cpa.getFdUser().getFdId());
+						mentor.put("imgUrl",  cpa.getFdUser().getPoto());
+						mentor.put("link",  "");
+						mentor.put("name",cpa.getFdUser().getRealName());
+						mentor.put("mail",  cpa.getFdUser().getFdEmail()==null?"":cpa.getFdUser().getFdEmail());
+						mentor.put("department",  cpa.getFdUser().getDeptName()==null?"":cpa.getFdUser().getDeptName());
+//						mentor.put("org", cpa.getFdTeacher().getHbmParent().getFdName());
+					}
+					mcpa.put("course", course);
+					mcpa.put("mentor", mentor);
+					coursepas.add(mcpa);
+				}
+			}
+		}else{
+			tMap.put("imgUrl", "");
+			tMap.put("teacherName", "");
+			tMap.put("teacherDept", "");
+			tMap.put("teacherMail", "");
+		}
+		
+		Map map=new HashMap();
+		map.put("totalPage", page.getTotalPage());
+		map.put("currentPage", pageNo);
+		map.put("list", coursepas);
+		map.put("totalCount", page.getTotalCount());
+		map.put("teacher",tMap);
+		map.put("StartPage", page.getStartPage());
+		map.put("EndPage",page.getEndPage());
+		map.put("StartOperate", page.getStartOperate());
+		map.put("EndOperate", page.getEndOperate());
+		map.put("startNum",page.getStartNum());;
+		map.put("endNum", page.getEndNum());
+		return JsonUtils.writeObjectToJson(map);
+	}
+	
 	/**
 	 * 某课程授权添加
 	 */
@@ -1014,32 +1193,146 @@ public class CourseAjaxController {
 	@ResponseBody
 	public boolean saveCourseParticipateAuth(HttpServletRequest request){
 		String courseId=request.getParameter("courseId");
-		String teacherId=request.getParameter("teacher");
-		//查看当前用户是否已授权
-		boolean isexist=courseParticipateAuthService.findCouseParticipateAuthById(courseId,teacherId);
-		if(isexist){
-			String mentorId=request.getParameter("mentor");
-			if(StringUtil.isNotEmpty(mentorId)){
-				//添加导师角色,如果已存在则不能保存
-				if(userRoleService.isEmptyPerson(mentorId, RoleEnum.valueOf("guidance"))){
-					userRoleService.addUserRole(mentorId,"guidance");
-				}
-			}
-			CourseInfo courseInfo=courseService.load(courseId);
-			SysOrgPerson teacher=accountService.findById(teacherId);
-			SysOrgPerson mentor=accountService.findById(mentorId);
-			SysOrgPerson authorizer=accountService.findById(ShiroUtils.getUser().getId());
-			CourseParticipateAuth cpa=new CourseParticipateAuth();
-			cpa.setCourse(courseInfo);
-			cpa.setFdUser(teacher);//教师
-			cpa.setFdTeacher(mentor);//导师
-			cpa.setFdAuthorizer(authorizer);//课程授权人
-		    cpa.setFdCreateTime(new Date());
-		    cpa.setVersion(0);
-		    courseParticipateAuthService.save(cpa);
+		String teacherIds=request.getParameter("teacher");
+		String mentorId=request.getParameter("mentor");
+		if(StringUtil.isBlank(teacherIds)){
+			return false;
 		}
-		return isexist;	
+		saveAuth(courseId,teacherIds,mentorId);
+		return true;	
 	    
+	}
+	
+	/**
+	 * 保存按新教师授权
+	 */
+	@RequestMapping(value="saveAuthByTeacher")
+	@ResponseBody
+	public boolean saveAuthByTeacher(HttpServletRequest request){
+		String courseIds=request.getParameter("course");
+		String teacherId=request.getParameter("teacherId");
+		String mentorId=request.getParameter("mentor");
+		if(StringUtil.isBlank(courseIds)){
+			return false;
+		}
+		String courses[] = courseIds.split(",");
+		for(String courseId:courses){
+			saveAuth(courseId,teacherId,mentorId);
+		}
+		return true;	
+	    
+	}
+	
+	
+	/**
+	 * 保存授权信息
+	 * 
+	 * @param courseId 课程ID
+	 * 
+	 * @param teacherIds 新教师ID集合
+	 * 
+	 * @param mentorId 导师ID
+	 */
+	private void saveAuth(String courseId,String teacherIds,String mentorId){
+		if(StringUtil.isBlank(courseId) || StringUtil.isBlank(teacherIds)){
+			return;
+		}
+		if(StringUtil.isNotEmpty(mentorId)){
+			//添加导师角色,如果已存在则不能保存
+			if(userRoleService.isEmptyPerson(mentorId, RoleEnum.valueOf("guidance"))){
+				userRoleService.addUserRole(mentorId,"guidance");
+			}
+		}
+		if(StringUtil.isNotBlank(teacherIds)){
+			String teacherId[] = teacherIds.split(",");
+			for(String id:teacherId){
+				CourseParticipateAuth cpa = courseParticipateAuthService.findCouseParticipateAuthById(courseId,id);
+				if(cpa!=null){
+					SysOrgPerson mentor=accountService.findById(mentorId);
+					cpa.setFdTeacher(mentor);//导师
+					SysOrgPerson authorizer=accountService.findById(ShiroUtils.getUser().getId());
+					cpa.setFdAuthorizer(authorizer);//课程授权人
+					cpa.setFdCreateTime(new Date());
+					cpa.setVersion(cpa.getVersion()+1);
+					courseParticipateAuthService.save(cpa);
+				}else{
+					CourseInfo courseInfo=courseService.load(courseId);
+					SysOrgPerson teacher=accountService.findById(id);
+					SysOrgPerson mentor=accountService.findById(mentorId);
+					SysOrgPerson authorizer=accountService.findById(ShiroUtils.getUser().getId());
+					cpa=new CourseParticipateAuth();
+					cpa.setCourse(courseInfo);
+					cpa.setFdUser(teacher);//教师
+					cpa.setFdTeacher(mentor);//导师
+					cpa.setFdAuthorizer(authorizer);//课程授权人
+				    cpa.setFdCreateTime(new Date());
+				    cpa.setVersion(0);
+				    courseParticipateAuthService.save(cpa);
+				}
+				
+			}
+		}
+	}
+	
+	/**
+	 * 某课程授权添加
+	 */
+	@RequestMapping(value="importCourseAuth")
+	@ResponseBody
+	public String importCourseAuth(HttpServletRequest request){
+		String status="0";
+		String courseId=request.getParameter("courseId");
+		CommonsMultipartResolver commonsMultipartResolver = new CommonsMultipartResolver(
+				request.getSession().getServletContext());
+
+		commonsMultipartResolver.setDefaultEncoding("utf-8");
+		MultipartHttpServletRequest multipartRequest = (MultipartHttpServletRequest) request;
+		MultipartFile file = multipartRequest.getFile("Filedata");
+		try {
+			AbsImportExcel importExcel = new AbsImportExcel();
+			List list = importExcel.read(file.getOriginalFilename(),file.getInputStream());
+			saveAuthByImport(courseId,list);
+		} catch (IOException e) {
+			status = "1";
+		}
+		return status;
+	}
+	
+	/**
+	 * 保存导入的授权信息
+	 * 
+	 * @param courseId 课程Id
+	 * 
+	 * @param list 导入的授权信息
+	 * 
+	 */
+	private void saveAuthByImport(String courseId,List list) {
+		if(list==null){
+			return;
+		}
+		if(StringUtil.isBlank(courseId)){
+			return;
+		}
+		for(int i=0;i<list.size();i++){
+			if(list.get(i)!=null){
+				List auth = (List)list.get(i);
+					if(auth.get(0)!=null && !auth.get(0).equals("")){
+						//根据读入的新教师邮箱判断新教师是否存在
+						SysOrgPerson teacher = accountService.findUserByEmail((String)auth.get(0));
+						if(teacher==null){
+							continue;
+						}
+						//根据读入的导师邮箱判断导师是否存在
+						if(auth.get(1)!=null){
+							SysOrgPerson tutor = accountService.findUserByEmail((String)auth.get(1));
+							saveAuth(courseId,teacher.getFdId(),tutor==null?"":tutor.getFdId());
+						}else{
+							saveAuth(courseId,teacher.getFdId(),"");
+						}
+					}
+			}
+		}
+		
 	}
 	/**
 	 * 根据id删除某课程授权数据
@@ -1093,6 +1386,75 @@ public class CourseAjaxController {
 		}
 	}
 
+	/**
+	 * 根据关键字及新教师删除其课程授权的数据 ,若没有关键字,则删除该新教师的所有授权信息
+	 * 
+	 */
+	@RequestMapping(value="deleteAuthByTeacherId")
+	@ResponseBody
+	public void deleteAuthByTeacherId(HttpServletRequest request){
+		String teacherId=request.getParameter("teacherId");
+		String orderStr=request.getParameter("order");
+		String pageNostr=request.getParameter("pageNo");
+		String keyword=request.getParameter("keyword");
+		int pageNo;
+		if (StringUtil.isNotBlank(pageNostr)) {
+			pageNo = Integer.parseInt(pageNostr);
+		} else {
+			pageNo = 1;
+		}
+		Pagination page=courseParticipateAuthService.findSingleTeacherAuthList(teacherId,orderStr,pageNo,SimplePage.DEF_COUNT,keyword);
+		int i = page.getTotalPage();
+		if(i>0){
+			for(int j=0;j<i;j++){
+				page = courseParticipateAuthService.findSingleTeacherAuthList(teacherId,orderStr,1,SimplePage.DEF_COUNT,keyword);
+				List list = page.getList();
+				if(list!=null && list.size()>0){
+					for(Object obj:list){
+						Object [] temp=(Object[]) obj;
+						CourseParticipateAuth cpa =(CourseParticipateAuth)temp[0] ;
+						courseParticipateAuthService.delete(cpa.getFdId());
+					}
+				}
+			}
+		}
+	}
+	
+	/**
+	 * 根据关键字及导师删除其课程授权的数据 ,若没有关键字,则删除该导师的所有授权信息
+	 * 
+	 */
+	@RequestMapping(value="deleteAuthByTutorId")
+	@ResponseBody
+	public void deleteAuthByTutorId(HttpServletRequest request){
+		String teacherId=request.getParameter("teacherId");
+		String orderStr=request.getParameter("order");
+		String pageNostr=request.getParameter("pageNo");
+		String keyword=request.getParameter("keyword");
+		int pageNo;
+		if (StringUtil.isNotBlank(pageNostr)) {
+			pageNo = Integer.parseInt(pageNostr);
+		} else {
+			pageNo = 1;
+		}
+		Pagination page=courseParticipateAuthService.findSingleTutorAuthList(teacherId,orderStr,pageNo,SimplePage.DEF_COUNT,keyword);
+		int i = page.getTotalPage();
+		if(i>0){
+			for(int j=0;j<i;j++){
+				page = courseParticipateAuthService.findSingleTutorAuthList(teacherId,orderStr,1,SimplePage.DEF_COUNT,keyword);
+				List list = page.getList();
+				if(list!=null && list.size()>0){
+					for(Object obj:list){
+						Object [] temp=(Object[]) obj;
+						CourseParticipateAuth cpa =(CourseParticipateAuth)temp[0] ;
+						courseParticipateAuthService.delete(cpa.getFdId());
+					}
+				}
+			}
+		}
+	}
+	
+	
 	@RequestMapping(value="getMyCoursesIndexInfo")
 	@ResponseBody
 	public String getMyCoursesIndexInfo(HttpServletRequest request){
@@ -1111,7 +1473,7 @@ public class CourseAjaxController {
 		
 		Finder finder = Finder.create("");
 		finder.append("select course.fdId id ");
-		finder.append("  from ixdf_ntp_course course ");
+		finder.append("  from IXDF_NTP_COURSE course ");
 		finder.append("  left join IXDF_NTP_COURSE_PARTICI_AUTH cpa ");
 		finder.append("    on (course.fdId = cpa.fdcourseid and cpa.fduserid ='"+userId+"') ");
 		
@@ -1123,7 +1485,7 @@ public class CourseAjaxController {
 		finder.append("         ((course.fdId in  ");
 		finder.append("                      (select ga.fdCourseId from IXDF_NTP_COURSE_GROUP_AUTH ga  ");
 		finder.append("                      where ga.fdgroupid in  ");
-		finder.append("                           (select ga.fdgroupid from sys_org_group_element soge ,sys_org_element soe1org,sys_org_element soe2dep,sys_org_element soe3per ");
+		finder.append("                           (select ga.fdgroupid from SYS_ORG_GROUP_ELEMENT soge ,SYS_ORG_ELEMENT soe1org,SYS_ORG_ELEMENT soe2dep,SYS_ORG_ELEMENT soe3per ");
 		finder.append("                            where ga.fdgroupid = soge.fd_groupid and (soe1org.fdid = soe2dep.fd_parentid and soe2dep.fdid = soe3per.fd_parentid and soe3per.fdid='"+userId+"' ) and ( soge.fd_elementid = soe1org.fdid or  soge.fd_elementid = soe3per.fdid or  soge.fd_elementid = soe2dep.fdid ) ");
 		finder.append("                            ) ");
 		finder.append("                       ) ");
@@ -1176,7 +1538,7 @@ public class CourseAjaxController {
 		List<Map> lists = new ArrayList<Map>();
 		if(pag.getTotalPage()>=pageNo){
 			for (Map courseInfoMap : courseInfos) {
-				CourseInfo courseInfo = courseService.get((String)courseInfoMap.get("ID")); 
+				CourseInfo courseInfo = courseService.get((String)courseInfoMap.get("id")); 
 				Map map = new HashMap();
 				String imgurl = courseService.getCoursePicture(courseInfo.getFdId());
 				map.put("imgUrl", StringUtil.isBlank(imgurl)?imgurl:imgurl+"?n="+new Random().nextInt(100));
@@ -1270,7 +1632,7 @@ public class CourseAjaxController {
 		returnMap.put("finishSum", finishSum);
 		Finder finder = Finder.create("");
 		finder.append("select count(*) sum ");
-		finder.append("  from ixdf_ntp_course course ");
+		finder.append("  from IXDF_NTP_COURSE course ");
 		finder.append("  left join IXDF_NTP_COURSE_PARTICI_AUTH cpa ");
 		finder.append("    on (course.fdId = cpa.fdcourseid and cpa.fduserid ='"+userId+"') ");
 		finder.append("  left join IXDF_NTP_BAM_SCORE bam ");
@@ -1280,7 +1642,7 @@ public class CourseAjaxController {
 		finder.append("         ((course.fdId in  ");
 		finder.append("                      (select ga.fdCourseId from IXDF_NTP_COURSE_GROUP_AUTH ga  ");
 		finder.append("                      where ga.fdgroupid in  ");
-		finder.append("                           (select ga.fdgroupid from sys_org_group_element soge ,sys_org_element soe1org,sys_org_element soe2dep,sys_org_element soe3per ");
+		finder.append("                           (select ga.fdgroupid from SYS_ORG_GROUP_ELEMENT soge ,SYS_ORG_ELEMENT soe1org,SYS_ORG_ELEMENT soe2dep,SYS_ORG_ELEMENT soe3per ");
 		finder.append("                            where ga.fdgroupid = soge.fd_groupid and (soe1org.fdid = soe2dep.fd_parentid and soe2dep.fdid = soe3per.fd_parentid and soe3per.fdid='"+userId+"' ) and ( soge.fd_elementid = soe1org.fdid or  soge.fd_elementid = soe3per.fdid or  soge.fd_elementid = soe2dep.fdid ) ");
 		finder.append("                            ) ");
 		finder.append("                       ) ");
@@ -1407,6 +1769,33 @@ public class CourseAjaxController {
 		}
 		return JsonUtils.writeObjectToJson(returnList);
 	}
+	
+	/**
+	 * 根据课程名称搜索有权限授权的课程列表
+	 * @param request
+	 * @return
+	 */
+	@RequestMapping(value="findAuthByName")
+	@ResponseBody
+	public String findAuthByName(HttpServletRequest request){
+		String key = request.getParameter("q");
+		List<Map> returnList = new ArrayList<Map>();
+		Pagination page = courseService.findCourseInfosByName(key,
+    			Integer.toString(1), null, Constant.COUSER_AUTH_MANAGE,10);
+		if(page.getTotalCount()>0){
+			List list = page.getList();
+			for (int i=0;i<list.size();i++) {
+				Map map = new HashMap();
+				Map res = (Map)list.get(i);
+				map.put("name", res.get("FDTITLE"));
+				map.put("id", res.get("FDID"));
+				returnList.add(map);
+			}
+		}
+		
+		return JsonUtils.writeObjectToJson(returnList);
+	}
+	
 	
 	/**
 	 * 根据bamid查看进度条
